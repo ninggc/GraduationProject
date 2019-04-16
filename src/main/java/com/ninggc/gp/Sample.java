@@ -1,4 +1,4 @@
-package com.ninggc.bs;
+package com.ninggc.gp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
