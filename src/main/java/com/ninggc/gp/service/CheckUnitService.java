@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import com.ninggc.gp.data.CheckUnit;
-import com.ninggc.gp.data.CheckUnitMapper;
+import com.ninggc.gp.mapper.CheckUnitMapper;
 
 @Service
 public class CheckUnitService {

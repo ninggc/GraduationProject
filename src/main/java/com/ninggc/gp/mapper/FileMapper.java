@@ -1,4 +1,4 @@
-package com.ninggc.gp.data;
+package com.ninggc.gp.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import java.util.List;

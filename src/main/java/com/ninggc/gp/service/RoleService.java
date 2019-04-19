@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import com.ninggc.gp.data.Role;
-import com.ninggc.gp.data.RoleMapper;
+import com.ninggc.gp.mapper.RoleMapper;
 
 @Service
 public class RoleService {

@@ -1,25 +1,25 @@
 package com.ninggc.gp.data;
 
 public class File {
-    private int id;
-    private int process_id;
+    private Integer id;
+    private Integer process_id;
     private String filename;
     private short version;
     private String md5;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getProcess_id() {
+    public Integer getProcess_id() {
         return process_id;
     }
 
-    public void setProcess_id(int process_id) {
+    public void setProcess_id(Integer process_id) {
         this.process_id = process_id;
     }
 

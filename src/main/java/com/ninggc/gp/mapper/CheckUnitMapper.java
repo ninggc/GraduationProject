@@ -1,9 +1,11 @@
-package com.ninggc.gp.data;
+package com.ninggc.gp.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import com.ninggc.gp.data.CheckUnit;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public interface CheckUnitMapper {
 
     int insert(@Param("pojo") CheckUnit pojo);

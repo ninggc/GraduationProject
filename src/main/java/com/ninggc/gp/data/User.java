@@ -1,6 +1,6 @@
 package com.ninggc.gp.data;
 
-public class User implements IEntity {
+public class User extends IEntity {
     private String account;
     /**
      * 计算后的md5

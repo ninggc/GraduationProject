@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import com.ninggc.gp.data.Process;
-import com.ninggc.gp.data.ProcessMapper;
+import com.ninggc.gp.mapper.ProcessMapper;
 
 @Service
 public class ProcessService {

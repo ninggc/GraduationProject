@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import com.ninggc.gp.data.File;
-import com.ninggc.gp.data.FileMapper;
+import com.ninggc.gp.mapper.FileMapper;
 
 @Service
 public class FileService {

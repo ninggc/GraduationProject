@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import com.ninggc.gp.data.Stage;
-import com.ninggc.gp.data.StageMapper;
+import com.ninggc.gp.mapper.StageMapper;
 
 @Service
 public class StageService {

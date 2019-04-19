@@ -1,17 +1,17 @@
 package com.ninggc.gp.data;
 
 public class Process {
-    private int id;
+    private Integer id;
     private String name;
     private Long start_time;
     private String description;
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

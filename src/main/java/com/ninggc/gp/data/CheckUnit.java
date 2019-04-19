@@ -1,25 +1,25 @@
 package com.ninggc.gp.data;
 
 public class CheckUnit {
-    private int id;
-    private int stage_id;
+    private Integer id;
+    private Integer stage_id;
     private String name;
     private byte pass;
     private String description;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getStage_id() {
+    public Integer getStage_id() {
         return stage_id;
     }
 
-    public void setStage_id(int stage_id) {
+    public void setStage_id(Integer stage_id) {
         this.stage_id = stage_id;
     }
 

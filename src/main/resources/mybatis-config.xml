@@ -28,8 +28,13 @@
     <mappers>
 
 
+        <mapper resource="mapper/CheckUnitMapper.xml"/>
+        <mapper resource="mapper/FileMapper.xml"/>
+        <mapper resource="mapper/ProcessMapper.xml"/>
+        <mapper resource="mapper/RoleMapper.xml"/>
+        <mapper resource="mapper/StageMapper.xml"/>
         <mapper resource="mapper/UserMapper.xml"/>
-        <!--<mapper class="com.ninggc.gp.data.UserMapper"/>-->
+        <!--<mapper class="com.ninggc.gp.mapper.UserMapper"/>-->
         <!--<package name="com.ninggc.gp.data"/>-->
     </mappers>
 </configuration>

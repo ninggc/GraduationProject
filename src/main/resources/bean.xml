@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!--&lt;!&ndash; 配置Chinese实例，其实现类是Chinese &ndash;&gt;-->
+    <!--<bean id="chinese" class="com.spring.service.impl.Chinese">-->
+        <!--&lt;!&ndash; 将StoneAxe注入给axe属性 &ndash;&gt;-->
+        <!--<property name="axe" ref="stoneAxe" />-->
+        <!--<property name="name" value="孙悟空"/>-->
+    <!--</bean>-->
+
+
+    <!--&lt;!&ndash; 配置stoneAxe实例 &ndash;&gt;-->
+    <!--<bean id="stoneAxe" class="com.spring.service.impl.StoneAxe" />-->
+
+
+    <bean id="checkUnitMapper" class="com.ninggc.gp.mapper.CheckUnitMapper" abstract="true">
+
+    </bean>
+
+    <bean id="session" class="org.apache.ibatis.session.SqlSession" abstract="true">
+
+    </bean>
+
+    <bean id="ning" class="com.ninggc.gp.data.User">
+        <property name="account" value="ninggc"/>
+        <property name="pass_word" value="906978985"/>
+    </bean>
+
+</beans>

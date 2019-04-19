@@ -7,10 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.ninggc.gp.data", "com.ninggc.gp.mapper"})
 @Controller
-//@EnableAutoConfiguration
-public class DemoApplication implements CommandLineRunner {
+//SpringBootApplication包含@Configuration,@EnableAutoConfiguration,@ComponentScan三个注解
+public class MainApplication implements CommandLineRunner {
 
 //	private final DemoMapper demoMapper;
 
@@ -25,7 +25,7 @@ public class DemoApplication implements CommandLineRunner {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(MainApplication.class, args);
 	}
 
 	@Override

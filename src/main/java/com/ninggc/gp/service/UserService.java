@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import com.ninggc.gp.data.User;
-import com.ninggc.gp.data.UserMapper;
+import com.ninggc.gp.mapper.UserMapper;
 
 @Service
 public class UserService {
