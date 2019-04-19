@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace=".data.FileMapper">
+
+<!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.ninggc.gp.data.File">
+        <result column="id" property="id"/>
+        <result column="process_id" property="process_id"/>
+        <result column="filename" property="filename"/>
+        <result column="version" property="version"/>
+        <result column="md5" property="md5"/>
+    </resultMap>
+
+<!--auto generated Code-->
+    <sql id="all_column">
+        id,
+        process_id,
+        filename,
+        version,
+        md5
+    </sql>
+
+<!--auto generated Code-->
+    <insert id="insert">
+        INSERT INTO file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.id != null"> id, </if>
+            <if test="pojo.process_id != null"> process_id, </if>
+            <if test="pojo.filename != null"> filename, </if>
+            <if test="pojo.version != null"> version, </if>
+            <if test="pojo.md5 != null"> md5, </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.id != null"> #{pojo.id}, </if>
+            <if test="pojo.process_id != null"> #{pojo.process_id}, </if>
+            <if test="pojo.filename != null"> #{pojo.filename}, </if>
+            <if test="pojo.version != null"> #{pojo.version}, </if>
+            <if test="pojo.md5 != null"> #{pojo.md5}, </if>
+        </trim>
+    </insert>
+
+<!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO file(
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.id},
+            #{pojo.process_id},
+            #{pojo.filename},
+            #{pojo.version},
+            #{pojo.md5}
+            )
+        </foreach>
+    </insert>
+
+<!--auto generated Code-->
+    <update id="update">
+        UPDATE file
+        <set>
+            <if test="pojo.id != null"> id = #{pojo.id}, </if>
+            <if test="pojo.process_id != null"> process_id = #{pojo.process_id}, </if>
+            <if test="pojo.filename != null"> filename = #{pojo.filename}, </if>
+            <if test="pojo.version != null"> version = #{pojo.version}, </if>
+            <if test="pojo.md5 != null"> md5 = #{pojo.md5} </if>
+        </set>
+         WHERE id = #{pojo.id}
+    </update>
+
+<!--auto generated Code-->
+    <select id="select" resultMap="AllColumnMap">
+        SELECT <include refid="all_column"/>
+        FROM file
+        <where>
+            <if test="pojo.id != null"> AND id = #{pojo.id} </if>
+            <if test="pojo.process_id != null"> AND process_id = #{pojo.process_id} </if>
+            <if test="pojo.filename != null"> AND filename = #{pojo.filename} </if>
+            <if test="pojo.version != null"> AND version = #{pojo.version} </if>
+            <if test="pojo.md5 != null"> AND md5 = #{pojo.md5} </if>
+        </where>
+        LIMIT 1000 
+    </select>
+
+<!--auto generated Code-->
+    <delete id="delete">
+        DELETE FROM file where id = #{id}
+    </delete>
+</mapper>

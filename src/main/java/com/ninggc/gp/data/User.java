@@ -1,12 +1,15 @@
 package com.ninggc.gp.data;
 
-public class User {
+public class User implements IEntity {
     private String account;
     /**
      * 计算后的md5
      */
     private String pass_word;
     private String name;
+    private String addition;
+
+
 
     public String getAccount() {
         return account;
@@ -30,5 +33,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAddition() {
+        return addition;
+    }
+
+    public void setAddition(String addition) {
+        this.addition = addition;
     }
 }

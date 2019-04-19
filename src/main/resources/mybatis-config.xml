@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- 这是根标签  -->
+<configuration>
+
+    <typeAliases>
+        <typeAlias type="com.ninggc.gp.data.User" alias="user"/>
+        <package name="com.ninggc.gp.data"/>
+    </typeAliases>
+
+    <!-- 配置数据源相关的信息  -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://119.28.72.123:3306/gp?characterEncoding=UTF-8"/>
+                <property name="username" value="ninggc"/>
+                <property name="password" value="ninggc"/>
+            </dataSource>
+        </environment>
+
+    </environments>
+
+    <!--http://www.mybatis.org/mybatis-3/zh/configuration.html#mappers-->
+    <mappers>
+
+
+        <mapper resource="mapper/UserMapper.xml"/>
+        <!--<mapper class="com.ninggc.gp.data.UserMapper"/>-->
+        <!--<package name="com.ninggc.gp.data"/>-->
+    </mappers>
+</configuration>

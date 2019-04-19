@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace=".data.StageMapper">
+
+<!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.ninggc.gp.data.Stage">
+        <result column="id" property="id"/>
+        <result column="process_id" property="process_id"/>
+        <result column="order" property="order"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+<!--auto generated Code-->
+    <sql id="all_column">
+        id,
+        process_id,
+        order,
+        name
+    </sql>
+
+<!--auto generated Code-->
+    <insert id="insert">
+        INSERT INTO stage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.id != null"> id, </if>
+            <if test="pojo.process_id != null"> process_id, </if>
+            <if test="pojo.order != null"> order, </if>
+            <if test="pojo.name != null"> name, </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.id != null"> #{pojo.id}, </if>
+            <if test="pojo.process_id != null"> #{pojo.process_id}, </if>
+            <if test="pojo.order != null"> #{pojo.order}, </if>
+            <if test="pojo.name != null"> #{pojo.name}, </if>
+        </trim>
+    </insert>
+
+<!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO stage(
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.id},
+            #{pojo.process_id},
+            #{pojo.order},
+            #{pojo.name}
+            )
+        </foreach>
+    </insert>
+
+<!--auto generated Code-->
+    <update id="update">
+        UPDATE stage
+        <set>
+            <if test="pojo.id != null"> id = #{pojo.id}, </if>
+            <if test="pojo.process_id != null"> process_id = #{pojo.process_id}, </if>
+            <if test="pojo.order != null"> order = #{pojo.order}, </if>
+            <if test="pojo.name != null"> name = #{pojo.name} </if>
+        </set>
+         WHERE id = #{pojo.id}
+    </update>
+
+<!--auto generated Code-->
+    <select id="select" resultMap="AllColumnMap">
+        SELECT <include refid="all_column"/>
+        FROM stage
+        <where>
+            <if test="pojo.id != null"> AND id = #{pojo.id} </if>
+            <if test="pojo.process_id != null"> AND process_id = #{pojo.process_id} </if>
+            <if test="pojo.order != null"> AND order = #{pojo.order} </if>
+            <if test="pojo.name != null"> AND name = #{pojo.name} </if>
+        </where>
+        LIMIT 1000 
+    </select>
+
+<!--auto generated Code-->
+    <delete id="delete">
+        DELETE FROM stage where id = #{id}
+    </delete>
+</mapper>

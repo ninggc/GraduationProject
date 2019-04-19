@@ -1,0 +1,10 @@
+-- auto Generated on 2019-04-19 15:47:33 
+-- DROP TABLE IF EXISTS `file`; 
+CREATE TABLE file(
+    `id` INTEGER(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `process_id` INTEGER(12) NOT NULL DEFAULT -1 COMMENT 'process_id',
+    `filename` VARCHAR(45) NOT NULL DEFAULT '' COMMENT 'filename',
+    `version` TINYINT NOT NULL DEFAULT -1 COMMENT 'version',
+    `md5` VARCHAR(45) NOT NULL DEFAULT '' COMMENT 'md5',
+    PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT 'file';
