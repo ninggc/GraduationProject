@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public interface RoleMapper {
 
     int insert(@Param("pojo") Role pojo);
@@ -15,5 +16,7 @@ public interface RoleMapper {
     List<Role> select(@Param("pojo") Role pojo);
 
     int update(@Param("pojo") Role pojo);
+
+    int delete(@Param("id") int id);
 
 }

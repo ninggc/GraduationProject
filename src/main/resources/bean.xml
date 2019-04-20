@@ -20,13 +20,24 @@
 
     </bean>
 
-    <bean id="session" class="org.apache.ibatis.session.SqlSession" abstract="true">
+    <bean id="roleMapper" class="com.ninggc.gp.mapper.MapperFactory">
+
+    </bean>
+
+    <bean id="sqlSession" class="org.apache.ibatis.session.SqlSession" abstract="true">
 
     </bean>
 
     <bean id="ning" class="com.ninggc.gp.data.User">
         <property name="account" value="ninggc"/>
         <property name="pass_word" value="906978985"/>
+        <property name="name" value="ninggc"/>
+        <property name="addition" value="zero"/>
+    </bean>
+
+    <bean id="role" class="com.ninggc.gp.data.Role">
+        <property name="name" value="manager"/>
+        <property name="description" value="a role of manager"/>
     </bean>
 
 </beans>

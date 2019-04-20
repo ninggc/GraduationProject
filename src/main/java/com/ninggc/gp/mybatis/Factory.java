@@ -5,12 +5,17 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+@Component
 public class Factory {
 
+    @Bean(name = "sqlSessionFactory")
     public static SqlSessionFactory getSqlSessionFactory() throws IOException {
 
         String resource = "mybatis-config.xml";

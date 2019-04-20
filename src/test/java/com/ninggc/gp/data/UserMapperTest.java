@@ -1,6 +1,7 @@
 package com.ninggc.gp.data;
 
 import com.google.gson.Gson;
+import com.ninggc.gp.mapper.RoleMapper;
 import com.ninggc.gp.mybatis.Factory;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.After;
@@ -17,14 +18,17 @@ public class UserMapperTest {
 
     @Test
     public void selectUser() throws IOException {
-//        SqlSession session = Factory.openSession();
-//        try {
-//            UserMapper userMapper  = session.getMapper(UserMapper.class);
-//            User user = userMapper.findByAccount("1503130115");
-//            System.out.println(new Gson().toJson(user));
-//        } finally {
-//            session.close();
-//        }
+        SqlSession session = Factory.openSession();
+        try {
+            RoleMapper mapper = session.getMapper(RoleMapper.class);
+            Role role = new Role();
+            role.setName("test");
+            int i = mapper.insert(role);
+            session.commit();
+            System.out.println(new Gson().toJson(i));
+        } finally {
+            session.close();
+        }
     }
 
     @After

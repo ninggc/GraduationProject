@@ -3,6 +3,8 @@ package com.ninggc.gp;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,6 +28,9 @@ public class MainApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MainApplication.class, args);
+
+		ApplicationContext ctx = new ClassPathXmlApplicationContext("bean.xml");
+
 	}
 
 	@Override
