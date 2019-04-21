@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @SpringBootApplication(scanBasePackages = {"com.ninggc.gp.data", "com.ninggc.gp.mapper"})
 @Controller
@@ -19,12 +20,6 @@ public class MainApplication implements CommandLineRunner {
 //	public DemoApplication(DemoMapper demoMapper) {
 //		this.demoMapper = demoMapper;
 //	}
-
-	@RequestMapping("/")
-	@ResponseBody
-	String home() {
-		return "hello";
-	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(MainApplication.class, args);
@@ -38,4 +33,36 @@ public class MainApplication implements CommandLineRunner {
 		System.out.println("ninggc");
 //		System.out.println(demoMapper.findName("ninggc"));
 	}
+
+	//	@RequestMapping("/")
+//    public ModelAndView home() {
+//		return new ModelAndView("/idx.html");
+//	}
+	@GetMapping("/")
+	public String home() {
+		return "idx";
+	}
+
+	@GetMapping("/idx.html")
+	public String idx() {
+		return "idx";
+	}
+
+	@GetMapping("/index.html")
+	public String index() {
+		return "idx";
+	}
+
+	@GetMapping("/about")
+	public String about() {
+		return "about";
+	}
+
+	@RequestMapping("/test")
+	public String test(ModelMap model) {
+		model.addAttribute("test", "test_value");
+		model.addAttribute("key", "test_value");
+		return "test.html";
+	}
+
 }

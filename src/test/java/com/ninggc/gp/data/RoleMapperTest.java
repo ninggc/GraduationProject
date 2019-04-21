@@ -99,6 +99,4 @@ public class RoleMapperTest {
             e.printStackTrace();
         }
     }
-
-
 }
