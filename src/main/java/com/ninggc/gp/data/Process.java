@@ -1,18 +1,21 @@
 package com.ninggc.gp.data;
 
-public class Process {
+import java.util.List;
+
+public class Process extends IEntity {
     private Integer id;
     private String name;
-    private Long start_time;
+    private String start_time;
     private String description;
-
+    private transient List<Stage> stageList;
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public Process setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {
@@ -23,11 +26,11 @@ public class Process {
         this.name = name;
     }
 
-    public Long getStart_time() {
+    public String getStart_time() {
         return start_time;
     }
 
-    public void setStart_time(Long start_time) {
+    public void setStart_time(String start_time) {
         this.start_time = start_time;
     }
 
@@ -37,5 +40,13 @@ public class Process {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Stage> getStageList() {
+        return stageList;
+    }
+
+    public void setStageList(List<Stage> stageList) {
+        this.stageList = stageList;
     }
 }

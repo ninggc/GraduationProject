@@ -1,5 +1,6 @@
 package com.ninggc.gp.service;
 
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
@@ -11,6 +12,10 @@ public class CheckUnitService {
 
     @Resource
     private CheckUnitMapper checkUnitMapper;
+
+    public CheckUnitService(SqlSession session) {
+        checkUnitMapper = session.getMapper(CheckUnitMapper.class);
+    }
 
     public int insert(CheckUnit pojo){
         return checkUnitMapper.insert(pojo);

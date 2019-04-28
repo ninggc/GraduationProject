@@ -1,5 +1,6 @@
 package com.ninggc.gp.service;
 
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
@@ -11,6 +12,10 @@ public class UserService {
 
     @Resource
     private UserMapper userMapper;
+
+    public UserService(SqlSession session) {
+        userMapper = session.getMapper(UserMapper.class);
+    }
 
     public int insert(User pojo){
         return userMapper.insert(pojo);
@@ -26,6 +31,10 @@ public class UserService {
 
     public int update(User pojo){
         return userMapper.update(pojo);
+    }
+
+    public int delete(int account){
+        return userMapper.delete(account);
     }
 
 }

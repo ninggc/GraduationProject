@@ -14,4 +14,5 @@ public interface StageMapper {
 
     int update(@Param("pojo") Stage pojo);
 
+    int delete(@Param("id") int id);
 }

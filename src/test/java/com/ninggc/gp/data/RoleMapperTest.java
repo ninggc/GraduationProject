@@ -42,8 +42,6 @@ public class RoleMapperTest {
             int i = roleService.insert(bean);
             session.commit();
             System.out.println(i);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -79,8 +77,6 @@ public class RoleMapperTest {
             int i = roleService.update(bean);
             session.commit();
             System.out.println(i);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -95,8 +91,6 @@ public class RoleMapperTest {
             int i = roleService.delete(bean.getId());
             session.commit();
             System.out.println(i);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

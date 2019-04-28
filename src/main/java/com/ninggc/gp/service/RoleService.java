@@ -17,7 +17,7 @@ public class RoleService {
     @Resource(name = "roleMapper")
     private RoleMapper roleMapper;
 
-    public RoleService(SqlSession session) throws IOException {
+    public RoleService(SqlSession session) {
         this.roleMapper = session.getMapper(RoleMapper.class);
     }
 

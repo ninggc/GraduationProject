@@ -9,14 +9,21 @@ public class User extends IEntity {
     private String name;
     private String addition;
 
+//    public User(){};
+//
+//    public User(String account, String name) {
+//        this.account = account;
+//        this.name = name;
+//    }
 
 
     public String getAccount() {
         return account;
     }
 
-    public void setAccount(String account) {
+    public User setAccount(String account) {
         this.account = account;
+        return this;
     }
 
     public String getPass_word() {

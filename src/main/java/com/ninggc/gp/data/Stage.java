@@ -1,11 +1,14 @@
 package com.ninggc.gp.data;
 
-public class Stage {
+import java.util.List;
+
+public class Stage extends IEntity {
     private Integer id;
     private Integer process_id;
-    private short order;
+    private Short sequence;
     private String name;
-    private byte pass;
+    private Byte pass;
+    private transient List<CheckUnit> unitList;
 
     public Integer getId() {
         return id;
@@ -19,16 +22,17 @@ public class Stage {
         return process_id;
     }
 
-    public void setProcess_id(Integer process_id) {
+    public Stage setProcess_id(Integer process_id) {
         this.process_id = process_id;
+        return this;
     }
 
-    public short getOrder() {
-        return order;
+    public Short getSequence() {
+        return sequence;
     }
 
-    public void setOrder(short order) {
-        this.order = order;
+    public void setSequence(Short sequence) {
+        this.sequence = sequence;
     }
 
     public String getName() {
@@ -39,12 +43,20 @@ public class Stage {
         this.name = name;
     }
 
-    public byte getPass() {
+    public Byte getPass() {
         return pass;
     }
 
-    public void setPass(byte pass) {
+    public void setPass(Byte pass) {
         this.pass = pass;
+    }
+
+    public List<CheckUnit> getUnitList() {
+        return unitList;
+    }
+
+    public void setUnitList(List<CheckUnit> unitList) {
+        this.unitList = unitList;
     }
 }
 

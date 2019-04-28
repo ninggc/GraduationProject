@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace=".data.UserMapper">
+<mapper namespace="com.ninggc.gp.mapper.UserMapper">
 
 <!--auto generated Code-->
     <resultMap id="AllColumnMap" type="com.ninggc.gp.data.User">
-        <result column="id" property="id"/>
         <result column="account" property="account"/>
         <result column="pass_word" property="pass_word"/>
         <result column="name" property="name"/>
@@ -13,7 +12,6 @@
 
 <!--auto generated Code-->
     <sql id="all_column">
-        id,
         account,
         pass_word,
         name,
@@ -24,7 +22,6 @@
     <insert id="insert">
         INSERT INTO user
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.id != null"> id, </if>
             <if test="pojo.account != null"> account, </if>
             <if test="pojo.pass_word != null"> pass_word, </if>
             <if test="pojo.name != null"> name, </if>
@@ -32,7 +29,6 @@
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.id != null"> #{pojo.id}, </if>
             <if test="pojo.account != null"> #{pojo.account}, </if>
             <if test="pojo.pass_word != null"> #{pojo.pass_word}, </if>
             <if test="pojo.name != null"> #{pojo.name}, </if>
@@ -47,7 +43,6 @@
         )VALUES
         <foreach collection="pojos" item="pojo" index="index" separator=",">
             (
-            #{pojo.id},
             #{pojo.account},
             #{pojo.pass_word},
             #{pojo.name},
@@ -60,13 +55,12 @@
     <update id="update">
         UPDATE user
         <set>
-            <if test="pojo.id != null"> id = #{pojo.id}, </if>
             <if test="pojo.account != null"> account = #{pojo.account}, </if>
             <if test="pojo.pass_word != null"> pass_word = #{pojo.pass_word}, </if>
             <if test="pojo.name != null"> name = #{pojo.name}, </if>
             <if test="pojo.addition != null"> addition = #{pojo.addition} </if>
         </set>
-         WHERE id = #{pojo.id}
+         WHERE account = #{pojo.account}
     </update>
 
 <!--auto generated Code-->
@@ -74,7 +68,6 @@
         SELECT <include refid="all_column"/>
         FROM user
         <where>
-            <if test="pojo.id != null"> AND id = #{pojo.id} </if>
             <if test="pojo.account != null"> AND account = #{pojo.account} </if>
             <if test="pojo.pass_word != null"> AND pass_word = #{pojo.pass_word} </if>
             <if test="pojo.name != null"> AND name = #{pojo.name} </if>
@@ -85,6 +78,6 @@
 
 <!--auto generated Code-->
     <delete id="delete">
-        DELETE FROM user where id = #{id}
+        DELETE FROM user where account = #{account}
     </delete>
 </mapper>

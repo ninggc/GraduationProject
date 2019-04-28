@@ -4,7 +4,7 @@ public class File {
     private Integer id;
     private Integer process_id;
     private String filename;
-    private short version;
+    private Short version;
     private String md5;
 
     public Integer getId() {
@@ -29,6 +29,10 @@ public class File {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public void setVersion(Short version) {
+        this.version = version;
     }
 
     public short getVersion() {

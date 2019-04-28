@@ -56,7 +56,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `gp`.`stage` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `process_id` INT NOT NULL,
-  `order` SMALLINT NOT NULL,
+  `sequence` SMALLINT NOT NULL,
   `stage_name` VARCHAR(45) NULL,
   `pass` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),

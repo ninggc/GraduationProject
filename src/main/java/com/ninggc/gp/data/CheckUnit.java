@@ -1,10 +1,10 @@
 package com.ninggc.gp.data;
 
-public class CheckUnit {
+public class CheckUnit extends IEntity {
     private Integer id;
     private Integer stage_id;
     private String name;
-    private byte pass;
+    private Byte pass;
     private String description;
 
     public Integer getId() {
@@ -29,6 +29,10 @@ public class CheckUnit {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setPass(Byte pass) {
+        this.pass = pass;
     }
 
     public byte getPass() {

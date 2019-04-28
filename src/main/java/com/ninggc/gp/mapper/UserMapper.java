@@ -14,4 +14,5 @@ public interface UserMapper {
 
     int update(@Param("pojo") User pojo);
 
+    int delete(@Param("account") int account);
 }

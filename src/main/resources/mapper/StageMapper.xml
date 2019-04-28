@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace=".data.StageMapper">
+<mapper namespace="com.ninggc.gp.mapper.StageMapper">
 
 <!--auto generated Code-->
     <resultMap id="AllColumnMap" type="com.ninggc.gp.data.Stage">
         <result column="id" property="id"/>
         <result column="process_id" property="process_id"/>
-        <result column="order" property="order"/>
+        <result column="sequence" property="sequence"/>
         <result column="name" property="name"/>
+        <result column="pass" property="pass"/>
     </resultMap>
 
 <!--auto generated Code-->
     <sql id="all_column">
         id,
         process_id,
-        order,
-        name
+        sequence,
+        name,
+        pass
     </sql>
 
 <!--auto generated Code-->
@@ -24,15 +26,17 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.id != null"> id, </if>
             <if test="pojo.process_id != null"> process_id, </if>
-            <if test="pojo.order != null"> order, </if>
+            <if test="pojo.sequence != null"> sequence, </if>
             <if test="pojo.name != null"> name, </if>
+            <if test="pojo.pass != null"> pass, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.id != null"> #{pojo.id}, </if>
             <if test="pojo.process_id != null"> #{pojo.process_id}, </if>
-            <if test="pojo.order != null"> #{pojo.order}, </if>
+            <if test="pojo.sequence != null"> #{pojo.sequence}, </if>
             <if test="pojo.name != null"> #{pojo.name}, </if>
+            <if test="pojo.pass != null"> #{pojo.pass}, </if>
         </trim>
     </insert>
 
@@ -45,8 +49,9 @@
             (
             #{pojo.id},
             #{pojo.process_id},
-            #{pojo.order},
+            #{pojo.sequence},
             #{pojo.name}
+            #{pojo.pass}
             )
         </foreach>
     </insert>
@@ -57,8 +62,9 @@
         <set>
             <if test="pojo.id != null"> id = #{pojo.id}, </if>
             <if test="pojo.process_id != null"> process_id = #{pojo.process_id}, </if>
-            <if test="pojo.order != null"> order = #{pojo.order}, </if>
+            <if test="pojo.sequence != null"> sequence = #{pojo.sequence}, </if>
             <if test="pojo.name != null"> name = #{pojo.name} </if>
+            <if test="pojo.pass != null"> pass = #{pojo.pass} </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
@@ -70,8 +76,9 @@
         <where>
             <if test="pojo.id != null"> AND id = #{pojo.id} </if>
             <if test="pojo.process_id != null"> AND process_id = #{pojo.process_id} </if>
-            <if test="pojo.order != null"> AND order = #{pojo.order} </if>
+            <if test="pojo.sequence != null"> AND sequence = #{pojo.sequence} </if>
             <if test="pojo.name != null"> AND name = #{pojo.name} </if>
+            <if test="pojo.pass != null"> AND pass = #{pojo.pass} </if>
         </where>
         LIMIT 1000 
     </select>

@@ -1,5 +1,6 @@
 package com.ninggc.gp.service;
 
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
@@ -11,6 +12,10 @@ public class StageService {
 
     @Resource
     private StageMapper stageMapper;
+
+    public StageService(SqlSession session) {
+        stageMapper = session.getMapper(StageMapper.class);
+    }
 
     public int insert(Stage pojo){
         return stageMapper.insert(pojo);

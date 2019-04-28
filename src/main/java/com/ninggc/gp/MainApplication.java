@@ -10,7 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@SpringBootApplication(scanBasePackages = {"com.ninggc.gp.data", "com.ninggc.gp.mapper"})
+@SpringBootApplication(scanBasePackages = {"com.ninggc.gp.data", "com.ninggc.gp.mapper", "com.ninggc.gp.controller"})
 @Controller
 //SpringBootApplication包含@Configuration,@EnableAutoConfiguration,@ComponentScan三个注解
 public class MainApplication implements CommandLineRunner {
@@ -50,19 +50,24 @@ public class MainApplication implements CommandLineRunner {
 
 	@GetMapping("/index.html")
 	public String index() {
+		System.out.println("index.html");
 		return "idx";
 	}
 
-	@GetMapping("/about")
+	@RequestMapping(value = {"about","about.html"})
 	public String about() {
 		return "about";
 	}
 
-	@RequestMapping("/test")
-	public String test(ModelMap model) {
-		model.addAttribute("test", "test_value");
-		model.addAttribute("key", "test_value");
-		return "test.html";
+	@RequestMapping("/process")
+	public String process() {
+		return "process";
 	}
+
+//	@RequestMapping("/test")
+//	public String test(ModelMap model) {
+//		model.addAttribute("key", "auto_another_deploy");
+//		return "test.html";
+//	}
 
 }
