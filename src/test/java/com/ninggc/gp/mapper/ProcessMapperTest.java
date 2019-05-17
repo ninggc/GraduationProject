@@ -1,10 +1,13 @@
 package com.ninggc.gp.mapper;
 
+import com.ninggc.gp.data.CheckUnit;
 import com.ninggc.gp.data.Process;
 import com.ninggc.gp.data.Stage;
 import com.ninggc.gp.mybatis.Factory;
+import com.ninggc.gp.service.CheckUnitService;
 import com.ninggc.gp.service.ProcessService;
 import com.ninggc.gp.service.StageService;
+import com.ninggc.gp.util.Printer;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.After;
@@ -14,13 +17,14 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static com.ninggc.gp.mybatis.Factory.openSession;
 
 public class ProcessMapperTest implements ITest {
 
     SqlSessionFactory factory = null;
     ProcessService processService = null;
     StageService stageService = null;
+    CheckUnitService checkUnitService = null;
 
     @Before
     public void setUp() throws Exception {
@@ -32,10 +36,29 @@ public class ProcessMapperTest implements ITest {
     }
 
     @Test
-    public void select() throws IOException {
-        SqlSession session = Factory.openSession();
+    public void insert() throws IOException {
 
-        init(session);
+        try(SqlSession session = openSession()) {
+            initService(session);
+
+            Process pojo = new Process();
+            pojo.setName("test");
+            int i = processService.insert(pojo);
+            session.commit();
+
+            System.out.println(gson.toJson(i));
+            System.out.println(gson.toJson(pojo));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void select() throws IOException {
+        SqlSession session = openSession();
+
+        initService(session);
 
         Process process = processService.selectOne(new Process().setId(1));
         List<Stage> stages = stageService.select(new Stage().setProcess_id(process.getId()));
@@ -48,9 +71,26 @@ public class ProcessMapperTest implements ITest {
         }
     }
 
+    @Test
+    public void selectUnitId() throws IOException {
+        SqlSession session = openSession();
+
+        initService(session);
+
+        CheckUnit unit = new CheckUnit();
+        unit.setProcess_id(1);
+        List<CheckUnit> select = checkUnitService.select(unit);
+
+        for (CheckUnit v :
+                select) {
+            System.out.println(Printer.toJson(v));
+        }
+    }
+
     @Override
-    public void init(SqlSession session) {
+    public void initService(SqlSession session) {
         processService = new ProcessService(session);
         stageService = new StageService(session);
+        checkUnitService = new CheckUnitService(session);
     }
 }

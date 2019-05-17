@@ -2,6 +2,7 @@ package com.ninggc.gp.data;
 
 public class CheckUnit extends IEntity {
     private Integer id;
+    private Integer process_id;
     private Integer stage_id;
     private String name;
     private Byte pass;
@@ -13,6 +14,15 @@ public class CheckUnit extends IEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getProcess_id() {
+        return process_id;
+    }
+
+    public CheckUnit setProcess_id(Integer process_id) {
+        this.process_id = process_id;
+        return this;
     }
 
     public Integer getStage_id() {

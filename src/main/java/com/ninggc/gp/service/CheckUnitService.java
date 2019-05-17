@@ -29,6 +29,10 @@ public class CheckUnitService {
         return checkUnitMapper.select(pojo);
     }
 
+    public List<CheckUnit> selectByProcessId(int id){
+        return checkUnitMapper.select(new CheckUnit().setProcess_id(id));
+    }
+
     public int update(CheckUnit pojo){
         return checkUnitMapper.update(pojo);
     }

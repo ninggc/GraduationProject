@@ -15,7 +15,9 @@
         account,
         pass_word,
         name,
-        addition
+        addition,
+        visible,
+        update_time
     </sql>
 
 <!--auto generated Code-->
@@ -26,6 +28,8 @@
             <if test="pojo.pass_word != null"> pass_word, </if>
             <if test="pojo.name != null"> name, </if>
             <if test="pojo.addition != null"> addition, </if>
+            <if test="pojo.visible != null"> visible, </if>
+            <if test="pojo.update_time != null"> update_time, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -33,6 +37,8 @@
             <if test="pojo.pass_word != null"> #{pojo.pass_word}, </if>
             <if test="pojo.name != null"> #{pojo.name}, </if>
             <if test="pojo.addition != null"> #{pojo.addition}, </if>
+            <if test="pojo.visible != null"> #{visible}, </if>
+            <if test="pojo.update_time != null"> #{update_time}, </if>
         </trim>
     </insert>
 
@@ -46,7 +52,9 @@
             #{pojo.account},
             #{pojo.pass_word},
             #{pojo.name},
-            #{pojo.addition}
+            #{pojo.addition},
+            #{pojo.visible},
+            #{pojo.update_time}
             )
         </foreach>
     </insert>
@@ -58,7 +66,9 @@
             <if test="pojo.account != null"> account = #{pojo.account}, </if>
             <if test="pojo.pass_word != null"> pass_word = #{pojo.pass_word}, </if>
             <if test="pojo.name != null"> name = #{pojo.name}, </if>
-            <if test="pojo.addition != null"> addition = #{pojo.addition} </if>
+            <if test="pojo.addition != null"> addition = #{pojo.addition}, </if>
+            <if test="pojo.visible != null"> visible = #{pojo.visible}, </if>
+            <if test="pojo.update_time != null"> update_time = #{pojo.update_time} </if>
         </set>
          WHERE account = #{pojo.account}
     </update>
@@ -72,11 +82,29 @@
             <if test="pojo.pass_word != null"> AND pass_word = #{pojo.pass_word} </if>
             <if test="pojo.name != null"> AND name = #{pojo.name} </if>
             <if test="pojo.addition != null"> AND addition = #{pojo.addition} </if>
+
+            <if test="pojo.visible != null"> AND visible = #{pojo.visible} </if>
+            <if test="pojo.update_time != null"> AND update_time = #{pojo.update_time} </if>
         </where>
         LIMIT 1000 
     </select>
 
-<!--auto generated Code-->
+    <select id="selectWithLimit" resultType="com.ninggc.gp.data.User">
+        SELECT <include refid="all_column"/>
+        FROM user
+        <where>
+            <if test="pojo.account != null"> AND account = #{pojo.account} </if>
+            <if test="pojo.pass_word != null"> AND pass_word = #{pojo.pass_word} </if>
+            <if test="pojo.name != null"> AND name = #{pojo.name} </if>
+            <if test="pojo.addition != null"> AND addition = #{pojo.addition} </if>
+
+            <if test="pojo.visible != null"> AND visible = #{pojo.visible} </if>
+            <if test="pojo.update_time != null"> AND update_time = #{pojo.update_time} </if>
+        </where>
+        LIMIT #{index}, #{size}
+    </select>
+
+    <!--auto generated Code-->
     <delete id="delete">
         DELETE FROM user where account = #{account}
     </delete>

@@ -1,9 +1,8 @@
 package com.ninggc.gp.mapper;
 
-import com.ninggc.gp.data.CheckUnit;
+import com.ninggc.gp.data.Progress;
 import com.ninggc.gp.mybatis.Factory;
-import com.ninggc.gp.service.CheckUnitService;
-import com.ninggc.gp.util.Printer;
+import com.ninggc.gp.service.ProgressService;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.After;
@@ -11,14 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
 
-import static org.junit.Assert.*;
-
-public class CheckUnitMapperTest {
+public class ProgressMapperTest implements ITest {
 
     SqlSessionFactory factory = null;
-
+    ProgressService progressService = null;
+    
     @Before
     public void setUp() throws Exception {
         factory = Factory.getSqlSessionFactory();
@@ -31,13 +28,16 @@ public class CheckUnitMapperTest {
     @Test
     public void select() throws IOException {
         SqlSession session = Factory.openSession();
-        CheckUnit pojo = new CheckUnit();
-        pojo.setProcess_id(1);
-        List<CheckUnit> list = new CheckUnitService(session).select(pojo);
 
-        for (CheckUnit unit :
-                list) {
-            System.out.println(Printer.toJson(unit));
-        }
+        initService(session);
+
+        Progress progress = progressService.selectOne(new Progress().setAccount("1503130115").setProcess_id(1));
+
+        System.out.println(progress.toJson());
+    }
+
+    @Override
+    public void initService(SqlSession session) {
+        progressService = new ProgressService(session);
     }
 }

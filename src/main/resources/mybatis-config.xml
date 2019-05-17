@@ -31,6 +31,7 @@
         <mapper resource="mapper/CheckUnitMapper.xml"/>
         <mapper resource="mapper/FileMapper.xml"/>
         <mapper resource="mapper/ProcessMapper.xml"/>
+        <mapper resource="mapper/ProgressMapper.xml"/>
         <mapper resource="mapper/RoleMapper.xml"/>
         <mapper resource="mapper/StageMapper.xml"/>
         <mapper resource="mapper/UserMapper.xml"/>

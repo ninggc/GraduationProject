@@ -1,9 +1,11 @@
-package com.ninggc.gp.data;
+package com.ninggc.gp.mapper;
 
 import com.google.gson.Gson;
+import com.ninggc.gp.data.User;
 import com.ninggc.gp.mapper.RoleMapper;
 import com.ninggc.gp.mybatis.Factory;
 import com.ninggc.gp.service.UserService;
+import com.ninggc.gp.util.Printer;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.After;
 import org.junit.Before;
@@ -25,7 +27,7 @@ public class UserMapperTest {
         try (SqlSession session = Factory.openSession()) {
             service = new UserService(session);
             User user = new User();
-            user.setAccount("123");
+            user.setAccount("1503130115");
             List<User> list = service.select(user);
             if (list == null || list.size() == 0) {
                 System.out.println("没有匹配项");
@@ -34,6 +36,22 @@ public class UserMapperTest {
             User u = list.get(0);
             session.commit();
             System.out.println(new Gson().toJson(u));
+
+            Printer.print(u.getUpdate_time());
+        }
+    }
+
+    @Test
+    public void selectUserWithLimit() throws IOException {
+        try (SqlSession session = Factory.openSession()) {
+            service = new UserService(session);
+            User user = new User();
+            List<User> list = service.selectWithLimit(user, 0, 1);
+            if (list == null || list.size() == 0) {
+                System.out.println("没有匹配项");
+                return;
+            }
+            System.out.println(new Gson().toJson(list));
         }
     }
 

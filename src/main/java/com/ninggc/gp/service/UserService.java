@@ -29,11 +29,15 @@ public class UserService {
         return userMapper.select(pojo);
     }
 
+    public List<User> selectWithLimit(User pojo, int index, int size){
+        return userMapper.selectWithLimit(pojo, index, size);
+    }
+
     public int update(User pojo){
         return userMapper.update(pojo);
     }
 
-    public int delete(int account){
+    public int delete(String account){
         return userMapper.delete(account);
     }
 

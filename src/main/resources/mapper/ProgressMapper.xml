@@ -1,68 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ninggc.gp.mapper.StageMapper">
+<mapper namespace="com.ninggc.gp.mapper.ProgressMapper">
 
 <!--auto generated Code-->
-    <resultMap id="AllColumnMap" type="com.ninggc.gp.data.Stage">
+    <resultMap id="AllColumnMap" type="com.ninggc.gp.data.Progress">
         <result column="id" property="id"/>
+        <result column="account" property="account"/>
         <result column="process_id" property="process_id"/>
-        <result column="sequence" property="sequence"/>
-        <result column="name" property="name"/>
-        <result column="pass" property="pass"/>
+        <result column="data" property="data"/>
     </resultMap>
 
 <!--auto generated Code-->
     <sql id="all_column">
         id,
+        account,
         process_id,
-        sequence,
-        name,
-        pass
+        data
     </sql>
 
 <!--auto generated Code-->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO stage
+    <insert id="insert">
+        INSERT INTO progress
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.id != null"> id, </if>
+            <if test="pojo.account != null"> account, </if>
             <if test="pojo.process_id != null"> process_id, </if>
-            <if test="pojo.sequence != null"> sequence, </if>
-            <if test="pojo.name != null"> name, </if>
-            <if test="pojo.pass != null"> pass, </if>
+            <if test="pojo.data != null"> data, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.id != null"> #{pojo.id}, </if>
+            <if test="pojo.account != null"> #{pojo.account}, </if>
             <if test="pojo.process_id != null"> #{pojo.process_id}, </if>
-            <if test="pojo.sequence != null"> #{pojo.sequence}, </if>
-            <if test="pojo.name != null"> #{pojo.name}, </if>
-            <if test="pojo.pass != null"> #{pojo.pass}, </if>
+            <if test="pojo.data != null"> #{pojo.data}, </if>
         </trim>
     </insert>
 
 <!--auto generated Code-->
     <insert id="insertList">
-        INSERT INTO stage(
+        INSERT INTO progress(
         <include refid="all_column"/>
         )VALUES
         <foreach collection="pojos" item="pojo" index="index" separator=",">
             (
             #{pojo.id},
+            #{pojo.account},
             #{pojo.process_id},
-            #{pojo.sequence},
-            #{pojo.name}
-            #{pojo.pass}
+            #{pojo.data}
             )
         </foreach>
     </insert>
 
 <!--auto generated Code-->
     <update id="update">
-        UPDATE stage
+        UPDATE progress
         <set>
             <if test="pojo.id != null"> id = #{pojo.id}, </if>
+            <if test="pojo.account != null"> account = #{pojo.account}, </if>
             <if test="pojo.process_id != null"> process_id = #{pojo.process_id}, </if>
-            <if test="pojo.sequence != null"> sequence = #{pojo.sequence}, </if>
-            <if test="pojo.name != null"> name = #{pojo.name} </if>
-            <if test="pojo.pass != null"> pass = #{pojo.pass} </if>
+            <if test="pojo.data != null"> data = #{pojo.data} </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
@@ -70,19 +66,18 @@
 <!--auto generated Code-->
     <select id="select" resultMap="AllColumnMap">
         SELECT <include refid="all_column"/>
-        FROM stage
+        FROM progress
         <where>
             <if test="pojo.id != null"> AND id = #{pojo.id} </if>
+            <if test="pojo.account != null"> AND account = #{pojo.account} </if>
             <if test="pojo.process_id != null"> AND process_id = #{pojo.process_id} </if>
-            <if test="pojo.sequence != null"> AND sequence = #{pojo.sequence} </if>
-            <if test="pojo.name != null"> AND name = #{pojo.name} </if>
-            <if test="pojo.pass != null"> AND pass = #{pojo.pass} </if>
+            <if test="pojo.data != null"> AND data = #{pojo.data} </if>
         </where>
         LIMIT 1000 
     </select>
 
 <!--auto generated Code-->
     <delete id="delete">
-        DELETE FROM stage where id = #{id}
+        DELETE FROM progress where id = #{id}
     </delete>
 </mapper>

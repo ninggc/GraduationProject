@@ -19,17 +19,15 @@
     </sql>
 
 <!--auto generated Code-->
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO process
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.id != null"> id, </if>
             <if test="pojo.name != null"> name, </if>
             <if test="pojo.start_time != null"> start_time, </if>
             <if test="pojo.description != null"> description, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.id != null"> #{pojo.id}, </if>
             <if test="pojo.name != null"> #{pojo.name}, </if>
             <if test="pojo.start_time != null"> #{pojo.start_time}, </if>
             <if test="pojo.description != null"> #{pojo.description}, </if>

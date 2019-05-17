@@ -1,6 +1,7 @@
-package com.ninggc.gp.data;
+package com.ninggc.gp.mapper;
 
 import com.ninggc.gp.MainApplicationTests;
+import com.ninggc.gp.data.Role;
 import com.ninggc.gp.mapper.RoleMapper;
 import com.ninggc.gp.mybatis.Factory;
 import com.ninggc.gp.service.RoleService;

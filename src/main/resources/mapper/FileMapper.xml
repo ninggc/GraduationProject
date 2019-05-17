@@ -17,7 +17,10 @@
         process_id,
         filename,
         version,
-        md5
+        md5,
+
+        account,
+        location
     </sql>
 
 <!--auto generated Code-->
@@ -29,6 +32,9 @@
             <if test="pojo.filename != null"> filename, </if>
             <if test="pojo.version != null"> version, </if>
             <if test="pojo.md5 != null"> md5, </if>
+
+            <if test="pojo.account != null"> account, </if>
+            <if test="pojo.location != null"> location, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -37,6 +43,9 @@
             <if test="pojo.filename != null"> #{pojo.filename}, </if>
             <if test="pojo.version != null"> #{pojo.version}, </if>
             <if test="pojo.md5 != null"> #{pojo.md5}, </if>
+
+            <if test="pojo.account != null"> #{pojo.account}, </if>
+            <if test="pojo.location != null"> #{pojo.location}, </if>
         </trim>
     </insert>
 
@@ -51,7 +60,10 @@
             #{pojo.process_id},
             #{pojo.filename},
             #{pojo.version},
-            #{pojo.md5}
+            #{pojo.md5},
+
+            #{pojo.account},
+            #{pojo.location}
             )
         </foreach>
     </insert>
@@ -64,7 +76,10 @@
             <if test="pojo.process_id != null"> process_id = #{pojo.process_id}, </if>
             <if test="pojo.filename != null"> filename = #{pojo.filename}, </if>
             <if test="pojo.version != null"> version = #{pojo.version}, </if>
-            <if test="pojo.md5 != null"> md5 = #{pojo.md5} </if>
+            <if test="pojo.md5 != null"> md5 = #{pojo.md5}, </if>
+
+            <if test="pojo.account != null"> account = #{pojo.account}, </if>
+            <if test="pojo.location != null"> location = #{pojo.location} </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
@@ -79,6 +94,9 @@
             <if test="pojo.filename != null"> AND filename = #{pojo.filename} </if>
             <if test="pojo.version != null"> AND version = #{pojo.version} </if>
             <if test="pojo.md5 != null"> AND md5 = #{pojo.md5} </if>
+
+            <if test="pojo.account != null"> AND account = #{pojo.account} </if>
+            <if test="pojo.location != null"> AND location = #{pojo.location} </if>
         </where>
         LIMIT 1000 
     </select>

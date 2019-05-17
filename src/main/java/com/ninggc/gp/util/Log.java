@@ -12,6 +12,12 @@ public class Log {
         return msg;
     }
 
+    public static String mapperRequest(String msg) {
+        String x = PROGECT_NAME + " - URL: " + msg;
+        print(x);
+        return msg;
+    }
+
     public static String info(String msg) {
         String x = PROGECT_NAME + " - INFO: " + msg;
         print(x);

@@ -57,7 +57,25 @@
 
 <!-- Main Content -->
 <div class="container">
-    <div class="row">
+    <div class="row" th:unless="${#lists.isEmpty(list)}">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Pass</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:for="progress" th:each="progress : ${list}" id="${progress.}">
+                    <th th:text="${progress.id}">#</th>
+                    <th th:text="${progress.process_id}">process_id</th>
+                    <th th:text="${progress.data}">name</th>
+                    <th th:text="${progress.data}">pass</th>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 

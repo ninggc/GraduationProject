@@ -1,5 +1,7 @@
 package com.ninggc.gp.data;
 
+import java.sql.Timestamp;
+
 public class User extends IEntity {
     private String account;
     /**
@@ -7,7 +9,14 @@ public class User extends IEntity {
      */
     private String pass_word;
     private String name;
+    /**
+     * "student"
+     * "teacher"
+     * "manager"
+     */
     private String addition;
+    private Byte visible;
+    private Timestamp update_time;
 
 //    public User(){};
 //
@@ -48,5 +57,21 @@ public class User extends IEntity {
 
     public void setAddition(String addition) {
         this.addition = addition;
+    }
+
+    public Byte getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Byte visible) {
+        this.visible = visible;
+    }
+
+    public Timestamp getUpdate_time() {
+        return update_time;
+    }
+
+    public void setUpdate_time(Timestamp update_time) {
+        this.update_time = update_time;
     }
 }

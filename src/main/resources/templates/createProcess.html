@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -22,48 +22,19 @@
 
     <!-- Custom fonts for this template -->
     <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+          type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
 
     <!-- Custom styles for this template -->
     <link href="/css/clean-blog.min.css" rel="stylesheet">
 
-    <!--<script type="application/javascript">-->
-        <!--$("document").ready(function () {-->
-            <!--console.log('ready');-->
-            <!--atStart();-->
-        <!--});-->
-    <!--</script>-->
 </head>
 
 <body>
 
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-    <div class="container">
-        <a class="navbar-brand" href="idx.html">高校审批系统</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            Menu
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="idx.html">主页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="about.html">申请审批</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/process">建立审批</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="contact.html">我的信息</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<nav th:include="temp :: navbar"></nav>
 
 <!-- Page Header -->
 <header class="masthead" style="background-image: url('img/home-bg.jpg')">
@@ -85,14 +56,19 @@
     <div class="row">
         <div class="col-md-2">
             <div class="row">
-                <button type="button" class="btn btn-lg btn-primary" onclick="atStart()">开始创建</button>
+                <button type="button" class="btn btn-lg btn-primary" onclick="atStart()">流程信息</button>
                 <br>
                 <button type="button" class="btn btn-lg btn-primary" onclick="addStage()">添加节点</button>
             </div>
-            <div id="div_stage_list" class="form-group">
-                <div id="div_stage" class="row">
+            <div id="div_stage_list" class="form-group d-none">
+                <div id="div_stage" class="row d-none">
                     <button id="" type="button" class="btn btn-lg btn-link" onclick="showUnitList()">stage</button>
+                    <!--<button th:each="${stageList}"-->
+                    <!--<li th:each="u : ${users}" th:text="${u.name}">user name</li>-->
                 </div>
+            </div>
+            <div class="row">
+                <button type="button" class="btn btn-lg btn-primary" onclick="finish()">保存流程</button>
             </div>
         </div>
         <div class="col-md-10">
@@ -116,30 +92,31 @@
                 </table>
             </div>
             <div class="container">
-                <form id="create_process" class="">
+                <form id="create_process">
                     <div class="form-group">
                         <label class="label">流程名称</label>
-                        <input class="form-control" type="text" placeholder="名称">
+                        <input id="process_name" class="form-control" type="text" placeholder="名称">
                     </div>
                     <div class="form-group">
                         <label class="label">描述</label>
-                        <textarea class="form-control" rows="5" placeholder="描述"></textarea>
+                        <textarea id="process_description" class="form-control" rows="5" placeholder="描述"></textarea>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-info">保存</button>
+                        <button type="button" class="btn btn-info" onclick="action_create()">保存</button>
                     </div>
                 </form>
                 <form id="create_unit" class="d-none">
                     <div class="form-group">
                         <label class="label">单元名称</label>
-                        <input id="create_unit_name" class="form-control" type="text" placeholder="名称">
+                        <input id="unit_name" class="form-control" type="text" placeholder="名称">
                     </div>
                     <div class="form-group">
                         <label class="label">描述</label>
-                        <textarea id="create_unit_description" class="form-control" rows="5" placeholder="描述"></textarea>
+                        <textarea id="unit_description" class="form-control" rows="5"
+                                  placeholder="描述"></textarea>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-info">保存</button>
+                        <button type="button" class="btn btn-info" onclick="action_add_unit()">保存</button>
                     </div>
                 </form>
             </div>
@@ -149,46 +126,7 @@
 
 <hr>
 
-<!-- Footer -->
-<footer>
-    <div class="container">
-        <div class="row">
-        </div>
-    </div>
-</footer>
-
-<script type="application/javascript">
-    function atStart() {
-        $("#create_process").removeClass("d-none");
-        $("#unit_list").addClass("d-none");
-        $("#create_unit").addClass("d-none");
-    }
-
-    function addStage() {
-        div_stage = $("#div_stage").clone();
-        // $("#stage").append("<button type=\"button\" class=\"btn btn-lg btn-info\">开始</button><br>");
-        $("#div_stage_list").append(div_stage);
-    }
-
-    function showUnitList() {
-        $("#create_process").addClass("d-none");
-        $("#unit_list").removeClass("d-none");
-        // let $create_unit = $("#create_unit");
-        // $create_unit.removeClass("d-none");
-    }
-
-    function showUnit() {
-        let $create_unit = $("#create_unit");
-        $create_unit.removeClass("d-none");
-    }
-</script>
-
-<!-- Bootstrap core JavaScript -->
-<script src="/vendor/jquery/jquery.min.js"></script>
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- Custom scripts for this template -->
-<script src="/js/clean-blog.min.js"></script>
+<div th:replace="temp :: footer"></div>
 
 </body>
 

@@ -1,5 +1,6 @@
 package com.ninggc.gp.service;
 
+import com.ninggc.gp.data.CheckUnit;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -27,7 +28,7 @@ public class ProcessService {
 
     public Process selectOne(Process pojo) {
         List<Process> select = select(pojo);
-        return select == null ? null : select.get(0);
+        return (select == null || select.size() == 0) ? null : select.get(0);
     }
 
     public List<Process> select(Process pojo){

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Clean Blog - Start Bootstrap Theme</title>
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+          type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+    <link href="/css/clean-blog.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<nav th:include="temp :: navbar"></nav>
+
+<!-- Page Header -->
+<header class="masthead">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>学生管理</h1>
+                    <span class="subheading">---这里是要求---</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <!--id是当前页的index-->
+    <table class="table table-hover" th:id="*{index}">
+        <thead>
+        <tr>
+            <th>学号</th>
+            <th>姓名</th>
+            <th>描述</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="stu: *{list}">
+            <td th:text="${stu.account}">account</td>
+            <td th:text="${stu.name}">name</td>
+            <td th:text="${stu.addition}">addition</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="row">
+        <button class="btn btn-lg btn-primary" onclick="lastPage()">上一页</button>
+        <button class="btn btn-lg btn-primary" onclick="nextPage()">下一页</button>
+    </div>
+</div>
+
+<hr>
+
+<div th:replace="temp :: footer"></div>
+
+<script>
+    function lastPage() {
+
+    }
+
+    function nextPage() {
+        let index = $("table").id;
+        $.get('/user/action/nextPage', {"number": index}, function (msg) {
+            de_log(msg);
+        })
+    }
+</script>
+
+</body>
+</html>

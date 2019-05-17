@@ -12,7 +12,9 @@ public interface UserMapper {
 
     List<User> select(@Param("pojo") User pojo);
 
+    List<User> selectWithLimit(@Param("pojo") User pojo, int index, int size);
+
     int update(@Param("pojo") User pojo);
 
-    int delete(@Param("account") int account);
+    int delete(@Param("account") String account);
 }
