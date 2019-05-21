@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://119.28.72.123:3306/db_order?useSSL=false&requireSSL=false
-    username: ning
-    password: 906978985
+#    username: ning
+#    password: 906978985
 #  server:
 #    port: 80

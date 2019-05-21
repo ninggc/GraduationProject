@@ -8,7 +8,7 @@ public class Stage extends IEntity {
     private Short sequence;
     private String name;
     private Byte pass;
-    private transient List<CheckUnit> unitList;
+    private List<CheckUnit> unitList;
 
     public Integer getId() {
         return id;

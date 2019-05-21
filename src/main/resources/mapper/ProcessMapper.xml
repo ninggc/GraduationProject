@@ -12,7 +12,7 @@
 
 <!--auto generated Code-->
     <sql id="all_column">
-        id,
+        process.id,
         name,
         start_time,
         description
@@ -74,7 +74,14 @@
         LIMIT 1000 
     </select>
 
-<!--auto generated Code-->
+    <select id="selectAllByUser" resultType="com.ninggc.gp.data.Process">
+        SELECT <include refid="all_column"/>
+        , progress.id as progress_id
+        FROM process, progress
+        WHERE process.id = (select id from progress where account = #{account})
+    </select>
+
+    <!--auto generated Code-->
     <delete id="delete">
         DELETE FROM process where id = #{id}
     </delete>

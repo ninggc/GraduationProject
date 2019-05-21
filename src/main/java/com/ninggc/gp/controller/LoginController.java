@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-public class LoginController implements IController {
+public class LoginController extends IController {
     UserService service = null;
 
     @RequestMapping(value = "/register", method = {RequestMethod.POST, RequestMethod.GET})

@@ -1,10 +1,11 @@
 package com.ninggc.gp.data;
 
 import com.google.gson.Gson;
+import com.ninggc.gp.util.Printer;
 
 abstract class IEntity {
 
-    static transient Gson gson = new Gson();
+    static transient Gson gson = Printer.gson;
 
     @Deprecated
     public String toJson() {

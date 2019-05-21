@@ -6,7 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import java.io.IOException;
 
-public class CountController implements IController {
+public class CountController extends IController {
     ProcessService processService = null;
     ProgressService progressService = null;
 

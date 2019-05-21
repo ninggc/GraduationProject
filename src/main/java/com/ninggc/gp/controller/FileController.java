@@ -16,7 +16,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/file")
-public class FileController implements IController {
+public class FileController extends IController {
 
     FileService fileService = null;
     private String folder = "/upload/1/1503130115/";

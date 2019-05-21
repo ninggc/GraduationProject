@@ -14,4 +14,5 @@ public interface  ProcessMapper {
 
     int update(@Param("pojo") Process pojo);
 
+    List<Process> selectAllByUser(String account);
 }

@@ -5,7 +5,10 @@ import com.ninggc.gp.data.Stage;
 import com.ninggc.gp.data.User;
 import com.ninggc.gp.service.CheckUnitService;
 import com.ninggc.gp.service.ProcessService;
+import com.ninggc.gp.service.ProgressService;
 import com.ninggc.gp.service.StageService;
+import com.ninggc.gp.tool.Result;
+import com.ninggc.gp.tool.YanuiResult;
 import com.ninggc.gp.util.Log;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Controller;
@@ -17,14 +20,16 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value = "/process")
-public class ProcessController implements IController {
+public class ProcessController extends IController {
     private ProcessService processService = null;
+    private ProgressService progressService = null;
     private StageService stageService = null;
     private CheckUnitService checkUnitService = null;
 
     @Override
     public void initService(SqlSession session) throws IOException {
             processService = new ProcessService(session);
+            progressService = new ProgressService(session);
             stageService = new StageService(session);
             checkUnitService = new CheckUnitService(session);
     }
@@ -110,6 +115,49 @@ public class ProcessController implements IController {
             e.printStackTrace();
         }
         return result;
+    }
+
+    @ResponseBody
+    @RequestMapping("/layui/list")
+//    public String list(@SessionAttribute User user) {
+    public String layuiList(@SessionAttribute User user) {
+        String account = user.getAccount();
+        paramPreview(account);
+
+        Result result = operateData(new OperateHandler<List<Process>>() {
+            @Override
+            public List<Process> onOperate() {
+                return processService.selectAllByUser(account);
+            }
+        });
+
+
+        YanuiResult<List<Process>> yanuiResult = new YanuiResult<>();
+        yanuiResult.success(result.getData());
+
+        resultPreview(yanuiResult);
+        return yanuiResult.format();
+    }
+
+    @ResponseBody
+    @RequestMapping("/layui/list/stage")
+//    public String list(@SessionAttribute User user) {
+    public String layuiListStage(@SessionAttribute User user, @RequestParam int process_id) {
+        paramPreview(process_id);
+
+        Result result = operateData(new OperateHandler<List<Stage>>() {
+            @Override
+            public List<Stage> onOperate() {
+                return stageService.select(new Stage().setProcess_id(process_id));
+            }
+        });
+
+
+        YanuiResult<List<Stage>> yanuiResult = new YanuiResult<>();
+        yanuiResult.success(result.getData());
+
+        resultPreview(yanuiResult);
+        return yanuiResult.format();
     }
 
 

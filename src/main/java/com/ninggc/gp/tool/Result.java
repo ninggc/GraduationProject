@@ -12,7 +12,7 @@ public class Result {
 
     public void success(String data) {
         setCode(IController.CODE_SUCCESS);
-        setMsg(data);
+        setData(data);
     }
 
     public void success(String data, String msg) {
@@ -48,4 +48,5 @@ public class Result {
     public void setMsg(String msg) {
         this.msg = msg;
     }
+
 }

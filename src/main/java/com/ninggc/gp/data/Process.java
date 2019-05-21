@@ -4,10 +4,11 @@ import java.util.List;
 
 public class Process extends IEntity {
     private Integer id;
+    private Integer progress_id;
     private String name;
     private String start_time;
     private String description;
-    private transient List<Stage> stageList;
+    private List<Stage> stageList;
 
     public Integer getId() {
         return id;
@@ -16,6 +17,14 @@ public class Process extends IEntity {
     public Process setId(Integer id) {
         this.id = id;
         return this;
+    }
+
+    public Integer getProgress_id() {
+        return progress_id;
+    }
+
+    public void setProgress_id(Integer progress_id) {
+        this.progress_id = progress_id;
     }
 
     public String getName() {

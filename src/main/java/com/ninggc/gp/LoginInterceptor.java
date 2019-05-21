@@ -11,18 +11,21 @@ import javax.servlet.http.HttpSession;
 public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HttpSession session = request.getSession();
-        Object ob = session.getAttribute("user");
-        if (ob != null) {
-            return true;
-        }
-        Log.debug("LoginInterceptor: " + request.getRequestURI());
-        session.setAttribute("preurl", request.getRequestURI());
-        StringBuffer url = request.getRequestURL();
-        //将url转到login
-        String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append(request.getServletContext().getContextPath()).append("/login").toString();
-        response.sendRedirect(tempContextUrl);
-        return false;
+
+        return true;
+
+//        HttpSession session = request.getSession();
+//        Object ob = session.getAttribute("user");
+//        if (ob != null) {
+//            return true;
+//        }
+//        Log.debug("LoginInterceptor: " + request.getRequestURI());
+//        session.setAttribute("preurl", request.getRequestURI());
+//        StringBuffer url = request.getRequestURL();
+//        //将url转到login
+//        String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append(request.getServletContext().getContextPath()).append("/login").toString();
+//        response.sendRedirect(tempContextUrl);
+//        return false;
     }
 
     @Override
@@ -34,4 +37,5 @@ public class LoginInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                 Object handler, Exception ex) throws Exception {
     }
+
 }

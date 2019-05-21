@@ -11,7 +11,7 @@ import java.util.Enumeration;
 
 @Controller
 @RequestMapping("/test/")
-public class UtilController implements IController {
+public class UtilController extends IController {
 
     @RequestMapping(value = {"/debug"}, method = RequestMethod.POST)
     public String error(@RequestParam String msg, ModelMap map) {

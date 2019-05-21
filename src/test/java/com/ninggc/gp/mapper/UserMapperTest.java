@@ -1,5 +1,7 @@
 package com.ninggc.gp.mapper;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.google.gson.Gson;
 import com.ninggc.gp.data.User;
 import com.ninggc.gp.mapper.RoleMapper;
@@ -7,6 +9,7 @@ import com.ninggc.gp.mybatis.Factory;
 import com.ninggc.gp.service.UserService;
 import com.ninggc.gp.util.Printer;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +38,8 @@ public class UserMapperTest {
             }
             User u = list.get(0);
             session.commit();
+
+
             System.out.println(new Gson().toJson(u));
 
             Printer.print(u.getUpdate_time());
@@ -51,6 +56,7 @@ public class UserMapperTest {
                 System.out.println("没有匹配项");
                 return;
             }
+
             System.out.println(new Gson().toJson(list));
         }
     }

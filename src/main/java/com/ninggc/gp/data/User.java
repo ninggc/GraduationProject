@@ -1,21 +1,28 @@
 package com.ninggc.gp.data;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
+
 import java.sql.Timestamp;
 
 public class User extends IEntity {
+    @Excel(name = "账号", width = 20)
     private String account;
     /**
      * 计算后的md5
      */
-    private String pass_word;
+    @Excel(name = "密码")
+    private transient String pass_word;
+    @Excel(name = "姓名")
     private String name;
     /**
      * "student"
      * "teacher"
      * "manager"
      */
+    @Excel(name = "身份")
     private String addition;
-    private Byte visible;
+    private transient Byte visible;
+    @Excel(name = "更新时间", format =  "yy-MM-dd hh:mm:ss", width = 40)
     private Timestamp update_time;
 
 //    public User(){};

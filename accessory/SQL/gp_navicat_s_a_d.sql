@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-04-28 23:01:41
+Date: 2019-05-18 10:36:47
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,6 +21,7 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `check_unit`;
 CREATE TABLE `check_unit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `process_id` int(11) NOT NULL,
   `stage_id` int(11) NOT NULL,
   `name` varchar(45) NOT NULL,
   `pass` tinyint(4) NOT NULL DEFAULT '0',
@@ -33,10 +34,10 @@ CREATE TABLE `check_unit` (
 -- ----------------------------
 -- Records of check_unit
 -- ----------------------------
-INSERT INTO `check_unit` VALUES ('1', '1', '1-1', '0', null);
-INSERT INTO `check_unit` VALUES ('2', '1', '1-2', '0', null);
-INSERT INTO `check_unit` VALUES ('3', '2', '2-1', '0', null);
-INSERT INTO `check_unit` VALUES ('4', '3', '3-1', '0', null);
+INSERT INTO `check_unit` VALUES ('1', '1', '1', '1-1', '0', null);
+INSERT INTO `check_unit` VALUES ('2', '1', '1', '1-2', '0', null);
+INSERT INTO `check_unit` VALUES ('3', '1', '2', '2-1', '0', null);
+INSERT INTO `check_unit` VALUES ('4', '1', '3', '3-1', '0', null);
 
 -- ----------------------------
 -- Table structure for file
@@ -45,9 +46,11 @@ DROP TABLE IF EXISTS `file`;
 CREATE TABLE `file` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `process_id` int(11) NOT NULL,
+  `account` varchar(255) DEFAULT NULL,
   `filename` varchar(45) DEFAULT NULL,
   `version` smallint(6) DEFAULT NULL,
   `md5` varchar(45) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_file_process1_idx` (`process_id`),
   CONSTRAINT `fk_file_process1` FOREIGN KEY (`process_id`) REFERENCES `process` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -67,12 +70,39 @@ CREATE TABLE `process` (
   `start_time` varchar(45) DEFAULT NULL,
   `description` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of process
 -- ----------------------------
-INSERT INTO `process` VALUES ('1', '测试流程', '2015-1-1 19:00', null);
+INSERT INTO `process` VALUES ('1', '测试流程', '2015-1-1 19:00', 'MYSQL');
+INSERT INTO `process` VALUES ('3', 'test', null, null);
+INSERT INTO `process` VALUES ('4', 'test', null, null);
+INSERT INTO `process` VALUES ('15', '', null, '');
+INSERT INTO `process` VALUES ('16', '', null, '');
+INSERT INTO `process` VALUES ('17', '', null, '');
+INSERT INTO `process` VALUES ('18', '', null, '');
+
+-- ----------------------------
+-- Table structure for progress
+-- ----------------------------
+DROP TABLE IF EXISTS `progress`;
+CREATE TABLE `progress` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `account` varchar(20) NOT NULL,
+  `process_id` int(11) NOT NULL,
+  `data` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `account` (`account`),
+  KEY `process_id` (`process_id`),
+  CONSTRAINT `progress_ibfk_1` FOREIGN KEY (`account`) REFERENCES `user` (`account`),
+  CONSTRAINT `progress_ibfk_2` FOREIGN KEY (`process_id`) REFERENCES `process` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of progress
+-- ----------------------------
+INSERT INTO `progress` VALUES ('1', '1503130115', '1', '{\"1\":1,\"2\":0,\"3\":0,\"4\":0}');
 
 -- ----------------------------
 -- Table structure for role
@@ -89,7 +119,6 @@ CREATE TABLE `role` (
 -- Records of role
 -- ----------------------------
 INSERT INTO `role` VALUES ('1', '管理', '无');
-INSERT INTO `role` VALUES ('6', 'manager', 'update');
 INSERT INTO `role` VALUES ('7', 'manager', 'update');
 
 -- ----------------------------
@@ -135,13 +164,13 @@ DROP TABLE IF EXISTS `stage`;
 CREATE TABLE `stage` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `process_id` int(11) NOT NULL,
-  `sequence` int(6) NOT NULL,
+  `sequence` int(6) DEFAULT NULL,
   `name` varchar(45) DEFAULT NULL,
   `pass` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_stage_process1_idx` (`process_id`),
   CONSTRAINT `fk_stage_process1` FOREIGN KEY (`process_id`) REFERENCES `process` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of stage
@@ -149,6 +178,9 @@ CREATE TABLE `stage` (
 INSERT INTO `stage` VALUES ('1', '1', '1', '节点1', '1');
 INSERT INTO `stage` VALUES ('2', '1', '2', '节点2', '0');
 INSERT INTO `stage` VALUES ('3', '1', '3', '节点3', '0');
+INSERT INTO `stage` VALUES ('6', '15', null, null, '0');
+INSERT INTO `stage` VALUES ('7', '16', null, null, '0');
+INSERT INTO `stage` VALUES ('8', '18', null, null, '0');
 
 -- ----------------------------
 -- Table structure for user
@@ -159,6 +191,8 @@ CREATE TABLE `user` (
   `pass_word` varchar(45) NOT NULL,
   `name` varchar(45) NOT NULL,
   `addition` varchar(45) DEFAULT NULL,
+  `visible` tinyint(4) NOT NULL DEFAULT '0',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`account`),
   UNIQUE KEY `account_UNIQUE` (`account`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -166,4 +200,6 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1503130115', '123', 'ning', null);
+INSERT INTO `user` VALUES ('123', '45', '55', null, '0', '2019-05-17 20:57:22');
+INSERT INTO `user` VALUES ('1503130115', '123', 'ning', 'student', '0', '2019-05-17 18:56:52');
+INSERT INTO `user` VALUES ('1503130116', '123', '16', 'student', '0', '2019-05-17 18:56:52');

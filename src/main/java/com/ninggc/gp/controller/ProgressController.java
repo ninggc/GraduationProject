@@ -1,36 +1,47 @@
 package com.ninggc.gp.controller;
 
-import com.ninggc.gp.data.CheckUnit;
-import com.ninggc.gp.data.Progress;
-import com.ninggc.gp.data.User;
-import com.ninggc.gp.data.UtilPass;
+import com.google.gson.reflect.TypeToken;
+import com.ninggc.gp.data.*;
+import com.ninggc.gp.data.Process;
 import com.ninggc.gp.service.CheckUnitService;
+import com.ninggc.gp.service.ProcessService;
 import com.ninggc.gp.service.ProgressService;
+import com.ninggc.gp.service.StageService;
 import com.ninggc.gp.tool.Result;
+import com.ninggc.gp.tool.YanuiResult;
 import com.ninggc.gp.util.Log;
 import com.ninggc.gp.util.Printer;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.tomcat.jni.Proc;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RequestMapping("/progress")
 @Controller
-public class ProgressController implements IController {
+public class ProgressController extends IController {
     ProgressService progressService = null;
+    ProcessService processService = null;
+    StageService stageService = null;
     CheckUnitService checkUnitService = null;
 
     @Override
     public void initService(SqlSession session) throws IOException {
         progressService = new ProgressService(session);
+        processService = new ProcessService(session);
+        stageService = new StageService(session);
         checkUnitService = new CheckUnitService(session);
     }
 
-    @RequestMapping(value = "/showList")
-    public String show(@SessionAttribute User user, ModelMap map) {
+    @RequestMapping(value = "/list")
+    public String list(@SessionAttribute User user, ModelMap map) {
         try(SqlSession session = openSession()) {
             initService(session);
             List<Progress> list = progressService.select(new Progress().setAccount(user.getAccount()));
@@ -57,6 +68,38 @@ public class ProgressController implements IController {
             e.printStackTrace();
         }
         return "progress";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/detail/stage")
+    public String DetailStageInProcess(@SessionAttribute User user, @RequestParam int process_id) {
+        if (user == null) {
+            return "/login";
+        }
+
+        paramPreview(process_id);
+
+
+        Result result = operateData(new OperateHandler<Process>() {
+            @Override
+            public Process onOperate() {
+                return null;
+            }
+
+            @Override
+            public Process onOperate(Type type) {
+//                Progress progress = progressService.selectOne(new Progress().setProcess_id(process_id));
+                Process process = processService.selectOne(new Process().setId(process_id));
+                List<Stage> stages = stageService.select(new Stage().setProcess_id(process_id));
+
+                process.setStageList(stages);
+                return process;
+            }
+        }, new TypeToken<Process>() {
+        }.getType());
+
+        resultPreview(result);
+        return toJson(result);
     }
 
     @ResponseBody

@@ -35,6 +35,10 @@ public class ProcessService {
         return processMapper.select(pojo);
     }
 
+    public List<Process> selectAllByUser(String account){
+        return processMapper.selectAllByUser(account);
+    }
+
     public int update(Process pojo){
         return processMapper.update(pojo);
     }

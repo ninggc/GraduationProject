@@ -7,6 +7,7 @@ import com.ninggc.gp.mybatis.Factory;
 import com.ninggc.gp.service.CheckUnitService;
 import com.ninggc.gp.service.ProcessService;
 import com.ninggc.gp.service.StageService;
+import com.ninggc.gp.util.Log;
 import com.ninggc.gp.util.Printer;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -56,35 +57,50 @@ public class ProcessMapperTest implements ITest {
 
     @Test
     public void select() throws IOException {
-        SqlSession session = openSession();
+        try(SqlSession session = openSession()){
 
-        initService(session);
+            initService(session);
 
-        Process process = processService.selectOne(new Process().setId(1));
-        List<Stage> stages = stageService.select(new Stage().setProcess_id(process.getId()));
-        process.setStageList(stages);
+            Process process = processService.selectOne(new Process().setId(1));
+            List<Stage> stages = stageService.select(new Stage().setProcess_id(process.getId()));
+            process.setStageList(stages);
 
-        System.out.println(process.toJson());
-        for (Stage s :
-                process.getStageList()) {
-            System.out.println(s.toJson());
-        }
+            System.out.println(process.toJson());
+            for (Stage s :
+                    process.getStageList()) {
+                System.out.println(s.toJson());
+            }
+        };
+    }
+
+    @Test
+    public void selectAllByUser() throws IOException {
+        try(SqlSession session = openSession()){
+
+
+            initService(session);
+
+            List<Process> processes = processService.selectAllByUser("1503130115");
+
+            Log.info(gson.toJson(processes));
+        };
     }
 
     @Test
     public void selectUnitId() throws IOException {
-        SqlSession session = openSession();
+        try(SqlSession session = openSession()){
 
-        initService(session);
+            initService(session);
 
-        CheckUnit unit = new CheckUnit();
-        unit.setProcess_id(1);
-        List<CheckUnit> select = checkUnitService.select(unit);
+            CheckUnit unit = new CheckUnit();
+            unit.setProcess_id(1);
+            List<CheckUnit> select = checkUnitService.select(unit);
 
-        for (CheckUnit v :
-                select) {
-            System.out.println(Printer.toJson(v));
-        }
+            for (CheckUnit v :
+                    select) {
+                System.out.println(Printer.toJson(v));
+            }
+        };
     }
 
     @Override

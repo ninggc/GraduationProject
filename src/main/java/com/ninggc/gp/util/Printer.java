@@ -1,12 +1,13 @@
 package com.ninggc.gp.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
 public class Printer {
-    public static Gson gson = new Gson();
+    public static Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd hh:mm:ss").create();
 
     public static String toJson(Object o) {
         return gson.toJson(o);

@@ -16,6 +16,7 @@
         pass_word,
         name,
         addition,
+
         visible,
         update_time
     </sql>
@@ -84,6 +85,7 @@
             <if test="pojo.addition != null"> AND addition = #{pojo.addition} </if>
 
             <if test="pojo.visible != null"> AND visible = #{pojo.visible} </if>
+            <if test="pojo.visible == null"> AND visible = 1 </if>
             <if test="pojo.update_time != null"> AND update_time = #{pojo.update_time} </if>
         </where>
         LIMIT 1000 
