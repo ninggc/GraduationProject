@@ -2,6 +2,7 @@ package com.ninggc.gp.tool;
 
 import com.ninggc.gp.controller.IController;
 
+@Deprecated
 public class Result {
 //    状态码，CODE对应值详见IController
     private int code;

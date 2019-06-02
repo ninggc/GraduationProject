@@ -4,11 +4,9 @@ import com.google.gson.Gson;
 import com.ninggc.gp.data.User;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 import static com.ninggc.gp.Constant.online;
 
-public class YanuiResultTest {
+public class LayuiResultTest {
 
     @Test
     public void toResult() {
@@ -24,7 +22,7 @@ public class YanuiResultTest {
 //                "data": {
 //            "item": [{}, {}]
 //        }
-        YanuiResult<User> result = new YanuiResult<>();
+        LayuiResult<User> result = new LayuiResult<>();
 
 //        result.setStatus(200);
 //        result.setMsg("");

@@ -9,7 +9,7 @@ import com.ninggc.gp.data.User;
 import com.ninggc.gp.service.UserService;
 import com.ninggc.gp.tool.ModelPackage;
 import com.ninggc.gp.tool.Result;
-import com.ninggc.gp.tool.YanuiResult;
+import com.ninggc.gp.tool.LayuiResult;
 import com.ninggc.gp.util.ExcelUtil;
 import com.ninggc.gp.util.Log;
 import org.apache.ibatis.session.SqlSession;
@@ -89,14 +89,13 @@ public class UserController extends IController {
     @RequestMapping(value = "/action/update")
     public String update(@RequestBody User student) {
         paramPreview(student);
-        Result result = initResult();
 
-        result = operateData(new OperateHandler<Integer>() {
+        LayuiResult<Integer> layuiResult = operateData(new OperateHandler<Integer>() {
             @Override
             public Integer onOperate() {
                 return userService.update(student);
             }
-        });
+        }, new LayuiResult<Integer>());
 
 //        try(SqlSession session = openSession()) {
 //            initService(session);
@@ -108,8 +107,8 @@ public class UserController extends IController {
 //            result.failed(e.getMessage());
 //        }
 
-        resultPreview(result);
-        return toJson(result);
+        resultPreview(layuiResult);
+        return layuiResult.format();
     }
 
     @ResponseBody
@@ -140,31 +139,27 @@ public class UserController extends IController {
     @ResponseBody
     @RequestMapping("/action/list")
     public String list() {
-        final List<User>[] users = new List[]{null};
 
-        Result result = operateData(new OperateHandler<List<User>>() {
-            @Override
-            public List<User> onOperate() {
-                List<User> select = userService.select(DataSample.getStudent());
-                users[0] = select;
-                return select;
-            }
-        });
-        YanuiResult<User> yanuiResult = new YanuiResult<>();
-        yanuiResult.success(users[0].size(), users[0]);
-        return yanuiResult.format();
-    }
-
-    @RequestMapping("/export")
-    public void export(HttpServletResponse response) {
-        Result result = operateData(new OperateHandler<List<User>>() {
+        LayuiResult<List<User>> layuiResult = operateData(new OperateHandler<List<User>>() {
             @Override
             public List<User> onOperate() {
                 return userService.select(DataSample.getStudent());
             }
-        });
+        }, new LayuiResult<List<User>>());
 
-        List<User> list = gson.fromJson(result.getData(), new TypeToken<List<User>>(){}.getType());
+        return layuiResult.format();
+    }
+
+    @RequestMapping("/export")
+    public void export(HttpServletResponse response) {
+        LayuiResult<List<User>> layuiResult = operateData(new OperateHandler<List<User>>() {
+            @Override
+            public List<User> onOperate() {
+                return userService.select(DataSample.getStudent());
+            }
+        }, new LayuiResult<List<User>>());
+
+        List<User> list = layuiResult.getData();
 
         ExportParams params = new ExportParams();
         params.setType(ExcelType.XSSF);

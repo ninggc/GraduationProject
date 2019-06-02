@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static com.ninggc.gp.mybatis.Factory.openSession;
@@ -43,7 +45,10 @@ public class ProcessMapperTest implements ITest {
             initService(session);
 
             Process pojo = new Process();
-            pojo.setName("test");
+            pojo.setName("msg files");
+            List<String> strings = Arrays.asList("qq", "ww", "ee");
+            pojo.setMsg(gson.toJson(strings));
+            pojo.setFiles(gson.toJson(strings));
             int i = processService.insert(pojo);
             session.commit();
 

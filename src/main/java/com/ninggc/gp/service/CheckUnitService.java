@@ -33,6 +33,10 @@ public class CheckUnitService {
         return checkUnitMapper.select(new CheckUnit().setProcess_id(id));
     }
 
+    public List<CheckUnit> selectByTeacherAccount(String account){
+        return checkUnitMapper.selectByAccount(account);
+    }
+
     public int update(CheckUnit pojo){
         return checkUnitMapper.update(pojo);
     }

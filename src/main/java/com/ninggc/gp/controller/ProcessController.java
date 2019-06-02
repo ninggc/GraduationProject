@@ -1,22 +1,23 @@
 package com.ninggc.gp.controller;
 
+import com.google.gson.reflect.TypeToken;
+import com.ninggc.gp.data.*;
 import com.ninggc.gp.data.Process;
-import com.ninggc.gp.data.Stage;
-import com.ninggc.gp.data.User;
 import com.ninggc.gp.service.CheckUnitService;
 import com.ninggc.gp.service.ProcessService;
 import com.ninggc.gp.service.ProgressService;
 import com.ninggc.gp.service.StageService;
-import com.ninggc.gp.tool.Result;
-import com.ninggc.gp.tool.YanuiResult;
+import com.ninggc.gp.tool.LayuiResult;
 import com.ninggc.gp.util.Log;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/process")
@@ -124,19 +125,83 @@ public class ProcessController extends IController {
         String account = user.getAccount();
         paramPreview(account);
 
-        Result result = operateData(new OperateHandler<List<Process>>() {
+        LayuiResult<List<Process>> layuiResult = operateDate(new OperateHandler<List<Process>>() {
             @Override
             public List<Process> onOperate() {
-                return processService.selectAllByUser(account);
+                return processService.select(new Process());
             }
         });
 
+        resultPreview(layuiResult);
+        return layuiResult.format();
+    }
 
-        YanuiResult<List<Process>> yanuiResult = new YanuiResult<>();
-        yanuiResult.success(result.getData());
+    /**
+     * 筛选出用户申请的列表
+     * @param user
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/layui/list/user")
+//    public String list(@SessionAttribute User user) {
+    public String layuiListStudent(@SessionAttribute User user) {
+        String account = user.getAccount();
+        paramPreview(account);
 
-        resultPreview(yanuiResult);
-        return yanuiResult.format();
+        LayuiResult<List<Process>> layuiResult = operateDate(new OperateHandler<List<Process>>() {
+            @Override
+            public List<Process> onOperate() {
+                return processService.selectAllByUser(user.getAccount());
+            }
+        });
+
+        resultPreview(layuiResult);
+        return layuiResult.format();
+    }
+
+    @RequestMapping("/apply")
+    /**
+     * id 申请的process id
+     */
+    public String apply(@SessionAttribute User user, @RequestParam int id, ModelMap map) {
+        paramPreview(user);
+
+        LayuiResult<Process> layuiResult = operateDate(new OperateHandler<Process>() {
+            @Override
+            public Process onOperate() {
+                return processService.selectOne(new Process().setId(id));
+            }
+        });
+
+        Process data = layuiResult.getData();
+        map.addAttribute("process", data);
+        map.addAttribute("msg", (List<String>) gson.fromJson(data.getMsg(), new TypeToken<List<String>>(){}.getType()));
+        map.addAttribute("files", (List<String>) gson.fromJson(data.getFiles(), new TypeToken<List<String>>(){}.getType()));
+        return "apply";
+    }
+
+    @ResponseBody
+    @RequestMapping("/action/apply")
+    /**
+     * id 申请的process id
+     */
+    public String formApply(@SessionAttribute User user, @ModelAttribute Progress progress, HttpServletRequest request) {
+        paramPreview(progress);
+
+        if (progress.getProcess_id() == null) {
+            return new LayuiResult<>().failed("程序异常，缺少process_id").format();
+        }
+
+        LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() {
+                Progress pojo = progress;
+                pojo.setAccount(user.getAccount());
+                return progressService.insert(pojo);
+            }
+        });
+
+        return layuiResult.format();
     }
 
     @ResponseBody
@@ -145,20 +210,63 @@ public class ProcessController extends IController {
     public String layuiListStage(@SessionAttribute User user, @RequestParam int process_id) {
         paramPreview(process_id);
 
-        Result result = operateData(new OperateHandler<List<Stage>>() {
+        LayuiResult layuiResult = operateData(new OperateHandler<List<Stage>>() {
             @Override
             public List<Stage> onOperate() {
                 return stageService.select(new Stage().setProcess_id(process_id));
             }
-        });
+        }, new LayuiResult<List<Stage>>());
 
-
-        YanuiResult<List<Stage>> yanuiResult = new YanuiResult<>();
-        yanuiResult.success(result.getData());
-
-        resultPreview(yanuiResult);
-        return yanuiResult.format();
+        resultPreview(layuiResult);
+        return layuiResult.format();
     }
 
+    @ResponseBody
+    @RequestMapping("/layui/list/unit")
+//    public String list(@SessionAttribute User user) {
+    public String layuiListUnit(@SessionAttribute User user, @RequestParam int stage_id, @RequestParam int process_id) {
+        paramPreview(stage_id);
 
+        LayuiResult<List<CheckUnit>> listLayuiResult = operateData(new OperateHandler<List<CheckUnit>>() {
+            @Override
+            public List<CheckUnit> onOperate() {
+                return checkUnitService.select(new CheckUnit().setStage_id(stage_id));
+            }
+        }, new LayuiResult<>());
+
+        Progress progress = operateData(new OperateHandler<Progress>() {
+            @Override
+            public Progress onOperate() {
+                return progressService.selectOne(new Progress().setAccount(user.getAccount()).setProcess_id(process_id));
+            }
+        }, new LayuiResult<>()).getData();
+        Map<Integer, Byte> map = parseProgress(progress);
+        for (int i = 0; i < listLayuiResult.getData().size(); i++) {
+            Integer unit_id = listLayuiResult.getData().get(i).getId();
+            try {
+                Byte pass = map.get(unit_id);
+                listLayuiResult.getData().get(i).setPass(pass);
+            } catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }
+
+        resultPreview(listLayuiResult);
+        return listLayuiResult.format();
+    }
+
+// TODO: 2019/5/21 cache
+    public Progress getProgress(SqlSession session, String account, int process_id) {
+        LayuiResult<Progress> layuiResult = operateData(new OperateHandler<Progress>() {
+            @Override
+            public Progress onOperate() {
+                return progressService.selectOne(new Progress().setAccount(account).setProcess_id(process_id));
+            }
+        }, new LayuiResult<>());
+        return layuiResult.getData();
+    }
+
+    public Map<Integer, Byte> parseProgress(Progress progress) {
+        return gson.fromJson(progress.getData(), new TypeToken<Map<Integer, Byte>>(){}.getType());
+    }
 }

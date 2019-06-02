@@ -2,8 +2,8 @@ package com.ninggc.gp.controller;
 
 import com.google.gson.Gson;
 import com.ninggc.gp.mybatis.Factory;
+import com.ninggc.gp.tool.LayuiResult;
 import com.ninggc.gp.tool.Result;
-import com.ninggc.gp.tool.YanuiResult;
 import com.ninggc.gp.util.Constant;
 import com.ninggc.gp.util.Log;
 import org.apache.ibatis.session.SqlSession;
@@ -30,7 +30,7 @@ public abstract class IController {
 //        如果Controller有多个Service，可以在这里同意初始化
     };
 
-    protected String getDebugLocation() {
+    String getDebugLocation() {
         return this.getClass().getSimpleName() + ": ";
     }
 
@@ -38,6 +38,7 @@ public abstract class IController {
         return gson.toJson(o);
     }
 
+    @Deprecated
     protected Result initResult() {
         return new Result();
     }
@@ -46,11 +47,11 @@ public abstract class IController {
      * 查看参数
      * @param o param
      */
-    protected void paramPreview(Object o) {
+    void paramPreview(Object o) {
         paramPreview(o, null);
     }
 
-    protected void paramPreview(Object o, Object o1) {
+    void paramPreview(Object o, Object o1) {
         Log.hint("------参数信息预览------");
         Log.info(toJson(o));
         Log.info(toJson(o1));
@@ -61,7 +62,7 @@ public abstract class IController {
      * 查看结果
      * @param o result
      */
-    protected void resultPreview(Object o) {
+    void resultPreview(Object o) {
         Log.hint("------结果预览------");
         Log.info(toJson(o));
         Log.hint("------预览结束------");
@@ -72,50 +73,66 @@ public abstract class IController {
      * @param handler 具体执行
      * @return
      */
-    Result operateData(OperateHandler handler) {
-        return operateData(handler, null);
-    }
+//    LayuiResult operateData(OperateHandler handler) {
+//        return operateData(handler, null);
+//    }
     
+//    Result operateData(OperateHandler handler, Type type) {
+//        Result result = initResult();
+//
+//        try(SqlSession session = openSession()) {
+//            initService(session);
+//            Object o;
+//            if(type == null) {
+//                o = handler.onOperate();
+//            } else {
+//                o = handler.onOperate(type);
+//            }
+//            session.commit();
+//            result.success(toJson(o));
+////            handler.onSuccess();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            result.failed(e.getMessage());
+////            handler.onFailed();
+//        }
+//        resultPreview("in operateData: " + result);
+//        return result;
+//    }
+
     /**
      * 必须重写initService并在里面初始化service
      * @param handler 具体执行
-     * @param type 如果结果不是list，要传入type
      * @return
      */
-    Result operateData(OperateHandler handler, Type type) {
-        Result result = initResult();
+    protected <T> LayuiResult<T> operateDate(OperateHandler<T> handler) {
+        return operateData(handler, new LayuiResult<T>());
+    }
+
+//    其实并不需要传递layuiResult，也可以得到需要的类型
+    @Deprecated()
+    <T> LayuiResult<T> operateData(OperateHandler<T> handler, LayuiResult<T> layuiResult) {
+//        Result result = initResult();
 
         try(SqlSession session = openSession()) {
             initService(session);
-            Object o;
-            if(type == null) {
-                o = handler.onOperate();
-            } else {
-                o = handler.onOperate(type);
-            }
+            T t = handler.onOperate();
             session.commit();
-            result.success(toJson(o));
-//            handler.onSuccess();
+            layuiResult.success(0, t);
         } catch (IOException e) {
             e.printStackTrace();
-            result.failed(e.getMessage());
-//            handler.onFailed();
+            layuiResult.failed(e.getMessage());
         }
-        resultPreview("in operateData: " + result);
-        return result;
+        resultPreview("in operateData: " + layuiResult);
+        return layuiResult;
     }
-
-//    protected <V> YanuiResult<V> resultToLayuiResult(Result result) {
-//
-//    }
 
     /**
      * 在operateData中执行和操作结果
      * @param <T> 操作的结果
      */
-    interface OperateHandler<T> {
-        default T onOperate(){return null;};
-        default T onOperate(Type type){return null;};
+    protected interface OperateHandler<T> {
+        T onOperate();
 //        T onSuccess();
 //        T onFailed();
     }

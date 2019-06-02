@@ -30,6 +30,11 @@ public class FileService {
         return fileMapper.select(pojo);
     }
 
+    public File selectOne(File pojo) {
+        List<File> select = select(pojo);
+        return (select == null || select.size() == 0) ? null : select.get(0);
+    }
+
     public int update(File pojo){
         return fileMapper.update(pojo);
     }

@@ -29,8 +29,9 @@ public class CheckUnit extends IEntity {
         return stage_id;
     }
 
-    public void setStage_id(Integer stage_id) {
+    public CheckUnit setStage_id(Integer stage_id) {
         this.stage_id = stage_id;
+        return this;
     }
 
     public String getName() {
@@ -39,10 +40,6 @@ public class CheckUnit extends IEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setPass(Byte pass) {
-        this.pass = pass;
     }
 
     public byte getPass() {

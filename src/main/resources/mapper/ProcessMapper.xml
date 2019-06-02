@@ -15,7 +15,9 @@
         process.id,
         name,
         start_time,
-        description
+        description,
+        process.msg,
+        process.files
     </sql>
 
 <!--auto generated Code-->
@@ -25,12 +27,18 @@
             <if test="pojo.name != null"> name, </if>
             <if test="pojo.start_time != null"> start_time, </if>
             <if test="pojo.description != null"> description, </if>
+
+            <if test="pojo.msg != null"> msg, </if>
+            <if test="pojo.files != null"> files </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.name != null"> #{pojo.name}, </if>
             <if test="pojo.start_time != null"> #{pojo.start_time}, </if>
             <if test="pojo.description != null"> #{pojo.description}, </if>
+
+            <if test="pojo.msg != null"> #{pojo.msg}, </if>
+            <if test="pojo.files != null"> #{pojo.files} </if>
         </trim>
     </insert>
 
@@ -45,6 +53,9 @@
             #{pojo.name},
             #{pojo.start_time},
             #{pojo.description}
+
+            #{pojo.msg}
+            #{pojo.files}
             )
         </foreach>
     </insert>
@@ -57,6 +68,9 @@
             <if test="pojo.name != null"> name = #{pojo.name}, </if>
             <if test="pojo.start_time != null"> start_time = #{pojo.start_time}, </if>
             <if test="pojo.description != null"> description = #{pojo.description} </if>
+
+            <if test="pojo.msg != null"> description = #{pojo.msg} </if>
+            <if test="pojo.files != null"> description = #{pojo.files} </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
@@ -70,6 +84,9 @@
             <if test="pojo.name != null"> AND name = #{pojo.name} </if>
             <if test="pojo.start_time != null"> AND start_time = #{pojo.start_time} </if>
             <if test="pojo.description != null"> AND description = #{pojo.description} </if>
+
+            <if test="pojo.msg != null"> AND msg = #{pojo.msg} </if>
+            <if test="pojo.files != null"> AND files = #{pojo.files} </if>
         </where>
         LIMIT 1000 
     </select>

@@ -1,5 +1,6 @@
 package com.ninggc.gp.mapper;
 
+import com.google.gson.reflect.TypeToken;
 import com.ninggc.gp.data.Progress;
 import com.ninggc.gp.mybatis.Factory;
 import com.ninggc.gp.service.ProgressService;
@@ -10,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class ProgressMapperTest implements ITest {
 
@@ -31,9 +34,31 @@ public class ProgressMapperTest implements ITest {
 
         initService(session);
 
-        Progress progress = progressService.selectOne(new Progress().setAccount("1503130115").setProcess_id(1));
+        Progress progress = progressService.selectOne(new Progress().setAccount("1503130115"));
 
         System.out.println(progress.toJson());
+
+//        Map<Integer, Byte> map = gson.fromJson(progress.getData(), new TypeToken<Map<Integer, Byte>>(){}.getType());
+//
+//        System.out.println(gson.toJson(map.get(1)));
+
+        session.close();
+    }
+
+    @Test
+    public void selectByTeacher() throws IOException {
+        SqlSession session = Factory.openSession();
+
+        initService(session);
+
+        List<Map<String, Object>> mapList = progressService.selectByTeacher("1503130101");
+
+        for (Map m :
+                mapList) {
+            System.out.println(gson.toJson(m));
+        }
+
+        session.close();
     }
 
     @Override

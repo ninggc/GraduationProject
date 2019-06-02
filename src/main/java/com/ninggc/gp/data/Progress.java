@@ -11,6 +11,9 @@ public class Progress extends IEntity {
     private Integer process_id;
     private String data;
 
+    private String msg;
+    private String files;
+
     public Map<Integer, Byte> parseFromData() {
         Map<Integer, Byte> map = gson.fromJson(data, new TypeToken<Map<Integer, Byte>>() {}.getType());
         return map == null ? new HashMap<>() : map;
@@ -48,5 +51,21 @@ public class Progress extends IEntity {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getFiles() {
+        return files;
+    }
+
+    public void setFiles(String files) {
+        this.files = files;
     }
 }

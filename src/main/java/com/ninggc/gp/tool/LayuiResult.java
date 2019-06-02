@@ -5,12 +5,17 @@ import com.google.gson.reflect.TypeToken;
 import com.ninggc.gp.controller.IController;
 import com.ninggc.gp.data.User;
 import com.ninggc.gp.util.Constant;
+import com.ninggc.gp.util.Log;
 import com.ninggc.gp.util.Printer;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class YanuiResult<T> {
+/**
+ * 返还到前台的数据格式
+ * @param <T> 数据格式
+ */
+public class LayuiResult<T> {
     private static int CODE_SUCCESS = 0;
     private static int CODE_FAILED = 1;
     private transient Gson gson = Constant.gson;
@@ -18,8 +23,7 @@ public class YanuiResult<T> {
     private int code;
     private String msg;
     private int count;
-    private T entity;
-    private List<T> data;
+    private T data;
 
 
     public int getCode() {
@@ -46,59 +50,27 @@ public class YanuiResult<T> {
         this.count = count;
     }
 
-    public T getEntity() {
-        return entity;
-    }
-
-    public void setEntity(T entity) {
-        this.entity = entity;
-    }
-
-    public List<T> getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(List<T> data) {
+    public void setData(T data) {
         this.data = data;
     }
 
-    public void success(int count, List<T> list) {
+    public void success(int count, T t) {
         setCode(CODE_SUCCESS);
         setMsg("");
         setCount(count);
-        setData(list);
+        setData(t);
     }
 
-    public void success(String json) {
-        setCode(CODE_SUCCESS);
-        setMsg("");
-        try {
-            List<T> data = gson.fromJson(json, new TypeToken<List<T>>() {}.getType());
-            setCount(data.size());
-            setData(data);
-        } catch (IllegalStateException ignored) {
-            ignored.printStackTrace();
-        }
-    }
-
-    public void success(String json, Type type) {
-        setCode(CODE_SUCCESS);
-        setMsg("");
-        try {
-            setEntity(gson.fromJson(json, type));
-//            List<T> data = gson.fromJson(json, new TypeToken<List<T>>() {}.getType());
-//            setCount(data.size());
-//            setData(data);
-        } catch (IllegalStateException ignored) {
-            ignored.printStackTrace();
-        }
-    }
-
-    public void filed() {
+    public LayuiResult failed(String msg) {
         setCode(CODE_FAILED);
-        setMsg("");
+        setMsg(msg);
         setCount(0);
         setData(null);
+        return this;
     }
 
     @Override
@@ -111,6 +83,8 @@ public class YanuiResult<T> {
      * @return Yanui result format
      */
     public String format() {
-        return toString();
+        String s = toString();
+        Log.info("format预览" + s);
+        return s;
     }
 }

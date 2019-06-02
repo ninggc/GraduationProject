@@ -1,6 +1,8 @@
 package com.ninggc.gp.controller;
 
+import com.ninggc.gp.data.User;
 import com.ninggc.gp.service.FileService;
+import com.ninggc.gp.tool.LayuiResult;
 import com.ninggc.gp.util.Log;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -18,14 +20,22 @@ import java.util.List;
 @RequestMapping("/file")
 public class FileController extends IController {
 
-    FileService fileService = null;
-    private String folder = "/upload/1/1503130115/";
+    private FileService fileService = null;
+//    路径为   /upload/account/process_id/filename
+    private String folder = "/upload/";
 
     @ResponseBody
-    @RequestMapping(value = "/upload")
-    public String upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    @RequestMapping(value = "/upload/{process_id}")
+    public String upload(@SessionAttribute User user, @PathVariable int process_id, @RequestParam("file") MultipartFile file, HttpServletRequest request) {
+
+        LayuiResult<com.ninggc.gp.data.File> layuiResult = new LayuiResult<>();
+        int code = 0;
+        String msg = "";
 
         if (!file.isEmpty()) {
+//            文件写入的局部硬盘路径
+            folder += user.getAccount() + "/" + process_id + "/";
+
             String saveFileName = file.getOriginalFilename();
             File saveFile = new File(request.getSession().getServletContext().getRealPath(folder) + saveFileName);
             if (!saveFile.getParentFile().exists()) {
@@ -36,18 +46,46 @@ public class FileController extends IController {
                 out.write(file.getBytes());
                 out.flush();
                 out.close();
-                return Log.debug(saveFile.getName() + " 上传成功");
+//                到这里上传并写入成功
+                Log.debug(folder + saveFileName);
+
+                code = 0;
+                msg = saveFile.getPath() + " 上传成功";
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                return Log.debug("上传失败," + e.getMessage());
+                code = 1;
+                msg = "上传失败," + e.getMessage();
             } catch (IOException e) {
                 e.printStackTrace();
-                return Log.debug("上传失败," + e.getMessage());
+                code = 1;
+                msg = "上传失败," + e.getMessage();
+            }
+
+//            开始将文件位置存入数据库
+            if (code == 0) {
+                LayuiResult<com.ninggc.gp.data.File> operateDate = operateDate(new OperateHandler<com.ninggc.gp.data.File>() {
+                    @Override
+                    public com.ninggc.gp.data.File onOperate() {
+                        com.ninggc.gp.data.File pojo = new com.ninggc.gp.data.File();
+                        pojo.setAccount(user.getAccount());
+                        pojo.setLocation(saveFile.getAbsolutePath());
+                        pojo.setFilename(saveFileName);
+                        pojo.setProcess_id(process_id);
+                        fileService.insert(pojo);
+                        return pojo;
+                    }
+                });
+                layuiResult.setData(operateDate.getData());
             }
         } else {
-            return Log.debug("上传失败，因为文件为空.");
+            code = 1;
+            msg = "上传失败，因为文件为空.";
         }
 
+        layuiResult.setCode(code);
+        layuiResult.setMsg(msg);
+
+        return layuiResult.format();
     }
 
 
@@ -104,6 +142,34 @@ public class FileController extends IController {
             response.setContentType("application/x-download");
             //设置请求头 和 文件下载名称
             response.addHeader("Content-Disposition", "attachment;filename=test.txt");
+            //用 common-io 工具 将输入流拷贝到输出流
+            IOUtils.copy(inputStream, outputStream);
+            outputStream.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/download/{file_id}")
+    public void download(@SessionAttribute User user, @PathVariable int file_id, HttpServletRequest request, HttpServletResponse response) {
+
+        LayuiResult<com.ninggc.gp.data.File> layuiResult = operateDate(new OperateHandler<com.ninggc.gp.data.File>() {
+            @Override
+            public com.ninggc.gp.data.File onOperate() {
+                return fileService.selectOne(new com.ninggc.gp.data.File().setId(file_id));
+            }
+        });
+
+        com.ninggc.gp.data.File data = layuiResult.getData();
+        try (InputStream inputStream = new FileInputStream(new File(data.getLocation()));
+             OutputStream outputStream = response.getOutputStream();) {
+
+            //设置内容类型为下载类型
+            response.setContentType("application/x-download");
+            //设置请求头 和 文件下载名称
+            response.addHeader("Content-Disposition", "attachment;filename=" + data.getFilename());
             //用 common-io 工具 将输入流拷贝到输出流
             IOUtils.copy(inputStream, outputStream);
             outputStream.flush();

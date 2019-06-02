@@ -14,8 +14,9 @@ public class File {
         return id;
     }
 
-    public void setId(Integer id) {
+    public File setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     public Integer getProcess_id() {

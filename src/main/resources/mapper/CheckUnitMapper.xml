@@ -82,7 +82,13 @@
         LIMIT 1000 
     </select>
 
-<!--auto generated Code-->
+    <select id="selectByAccount" resultMap="AllColumnMap">
+          select <include refid="all_column"/>
+          from check_unit where role_id =
+          (select role_id from role_has_user where user_account = #{teacher_account});
+    </select>
+
+    <!--auto generated Code-->
     <delete id="delete">
         DELETE FROM check_unit where id = #{id}
     </delete>

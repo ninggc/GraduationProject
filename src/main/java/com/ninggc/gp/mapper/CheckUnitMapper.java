@@ -14,6 +14,7 @@ public interface CheckUnitMapper {
 
     List<CheckUnit> select(@Param("pojo") CheckUnit pojo);
 
-    int update(@Param("pojo") CheckUnit pojo);
+    List<CheckUnit> selectByAccount(@Param("teacher_account") String teacher_account);
 
+    int update(@Param("pojo") CheckUnit pojo);
 }

@@ -14,11 +14,17 @@
 <div>
     <!-- 你的HTML代码 -->
     <ul class="layui-nav" lay-filter="">
-        <li id="index" class="layui-nav-item"><a href="/idx.html">首页</a></li>
-        <li id="progress" class="layui-nav-item"><a href="../process/index.html">进度</a></li>
+        <li id="index" class="layui-nav-item"><a href="/page/index/index.html">高校审批系统</a></li>
+        <li id="progress" class="layui-nav-item"><a href="/page/process/index.html">进度</a></li>
         <li id="create" class="layui-nav-item"><a href="/process/page/create">建立审批</a></li>
-        <li id="manage" class="layui-nav-item"><a href="../user/manage.html">用户管理</a></li>
-        <li id="personal" class="layui-nav-item"><a href="#">我的信息</a></li>
+        <li id="notify" class="layui-nav-item"><a href="/page/progress/notification.html">审批通知</a></li>
+        <li id="manage" class="layui-nav-item"><a href="/page/user/manage.html">用户管理</a></li>
+        <li id="personal" class="layui-nav-item"><a href="#">我的信息</a>
+            <dl class="layui-nav-child">
+                <dd><a href="/page/user/edit.html">信息管理</a></dd>
+                <dd><a href="/page/process/history.html">历史审批</a></dd>
+            </dl>
+        </li>
         <!--<li class="layui-nav-item">-->
         <!--<a href="javascript:;">解决方案</a>-->
         <!--<dl class="layui-nav-child">-->

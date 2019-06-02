@@ -15,9 +15,15 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CheckUnitMapperTest {
+public class CheckUnitMapperTest implements ITest {
 
+    CheckUnitService checkUnitService = null;
     SqlSessionFactory factory = null;
+
+    @Override
+    public void initService(SqlSession session) {
+        checkUnitService= new CheckUnitService(session);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -38,6 +44,15 @@ public class CheckUnitMapperTest {
         for (CheckUnit unit :
                 list) {
             System.out.println(Printer.toJson(unit));
+        }
+    }
+
+    @Test
+    public void selectByAccount() throws IOException {
+        try(SqlSession session = Factory.openSession()) {
+            initService(session);
+            List<CheckUnit> units = checkUnitService.selectByTeacherAccount("1503130101");
+            System.out.println(gson.toJson(units));
         }
     }
 }

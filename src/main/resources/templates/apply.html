@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>高校审批系统</title>
+
+    <link rel="stylesheet" href="/page/layui/css/layui.css">
+    <script src="/page/layui/layui.js"></script>
+    <script src="/page/layui/jquery-3.4.1.min.js"></script>
+    <script src="/page-js/global.js"></script>
+    <script src="/page-js/debug.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // alert('ready');
+            let msg = $(".msg").attr("id");
+            msg = msg.substr(1, msg.length - 2);
+            let files = $(".files").attr("id");
+            files = files.substr(1, files.length - 2);
+
+            de_log_info(msg);
+            de_log_info(files);
+
+            let msg_list = msg.split(",");
+            let file_list = files.split(",");
+
+            de_log_info(msg_list.length);
+
+            //循环生成文件上传按钮
+            for (let i = 0; i < file_list.length; i++) {
+                let value = file_list[i].trim();
+                de_log_info(value);
+
+                let file_sample = $("#file_sample").clone();
+                file_sample.removeClass("layui-hide");
+                $(file_sample).children("button").text("请上传文件：" + value);
+                $(file_sample).children("button").attr("id", value);
+                // $(input_sample).children("input").attr("placeholder", "测试");
+                $("#files").append(file_sample);
+
+
+                layui.use('upload', function () {
+                    var upload = layui.upload;
+                    var upload_url = url + 'file/upload/' + process_id;
+                    de_log_info(url + upload_url);
+                    var uploadInst = upload.render({
+                        elem: '#' + value
+                        , url: upload_url
+                        , accept: 'file'
+                        , done: function (res) {
+                            de_log_receive(JSON.stringify(res));
+                            let data = res.data;
+                            de_log_receive(data);
+                            de_log_receive(data.id);
+                            $('#'+value).attr("value", data.id);
+                            alert('上传成功');
+                            $('#'+value).text(value + "已上传");
+
+                        }
+                        , error: function () {
+                            alert('上传失败')
+                        }
+                    })
+                });
+            }
+
+            //循环生成输入框
+            for (let i = 0; i < msg_list.length; i++) {
+                var string = msg_list[i];
+
+                let input_sample = $("#input_sample").clone();
+                input_sample.removeClass("layui-hide");
+                $(input_sample).children("label").text(string);
+
+                $(input_sample).children("div").children("input").attr("id", string);
+                $("#msg").append(input_sample);
+
+            }
+        })
+    </script>
+</head>
+<body>
+<div id="header"></div>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-sm3 layui-col-md6">
+            <div class="layui-row">
+                <div class="layui-col-sm3 layui-col-md3">
+                    <br>
+                    <br>
+                    <h2>名称：</h2><h2 th:text="*{process.name}"></h2>
+                    <br>
+                    <h2>描述：</h2><h2 th:text="*{process.description}"></h2>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div id = "process_id" th:value="*{process.id}">
+                    <div id="input_sample" class="layui-form-item layui-hide">
+                        <label class="layui-form-label">输入框</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="title" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div id="file_sample" class="layui-form-item layui-hide">
+                        <button type="button" class="layui-btn" id="test1">
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                        </button>
+                    </div>
+                    <div id="msg">
+                        <div th:id="${msg}" class="msg"></div>
+                        <button></button>
+                    </div>
+                    <div id="files">
+                        <div th:id="${files}" class="files"></div>
+                    </div>
+                    <div class="layui-nav-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" onclick="apply()">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm3 layui-col-md3"></div>
+    </div>
+</div>
+
+<script>
+    $("#header").load("/page/template/header.html", function () {
+        $("#index").addClass("layui-this");
+    });
+
+    //当前申请的process_id
+    var process_id = $("#process_id").attr("value");
+
+    function apply() {
+        de_log_send();
+        let msg = {};
+        let files = {};
+
+        for (let i = 0; i < $("#msg input").length; i++) {
+            var input_msg = $("#msg input");
+            var value = input_msg[i].value;
+            if (value !== null && value !== undefined && value !== '') {
+                msg[input_msg[i].id] = value;
+            } else {
+                layer.msg("请输入" + input_msg[i].id);
+                return;
+            }
+        }
+
+        de_log_info(JSON.stringify(msg));
+
+        for (let i = 0; i < $("#files button").length; i++) {
+            let button_file = $("#files button");
+            files[button_file[i].id] = button_file[i].value;
+        }
+
+        de_log_info(JSON.stringify(files));
+
+        $.post(url + 'process/action/apply', {
+            'msg': JSON.stringify(msg)
+            , 'files': JSON.stringify(files)
+            , 'process_id': process_id
+        }, function (data) {
+            de_log_receive(data);
+            if (data.data === 1) {
+                alert("申请成功");
+            }
+        });
+
+    }
+</script>
+</body>
+</html>

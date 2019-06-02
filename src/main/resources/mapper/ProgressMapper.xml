@@ -15,7 +15,10 @@
         id,
         account,
         process_id,
-        data
+        data,
+
+        msg,
+        files
     </sql>
 
 <!--auto generated Code-->
@@ -26,6 +29,9 @@
             <if test="pojo.account != null"> account, </if>
             <if test="pojo.process_id != null"> process_id, </if>
             <if test="pojo.data != null"> data, </if>
+
+            <if test="pojo.msg != null"> msg, </if>
+            <if test="pojo.files != null"> files, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -33,6 +39,9 @@
             <if test="pojo.account != null"> #{pojo.account}, </if>
             <if test="pojo.process_id != null"> #{pojo.process_id}, </if>
             <if test="pojo.data != null"> #{pojo.data}, </if>
+
+            <if test="pojo.msg != null"> #{pojo.msg}, </if>
+            <if test="pojo.files != null"> #{pojo.files}, </if>
         </trim>
     </insert>
 
@@ -46,7 +55,9 @@
             #{pojo.id},
             #{pojo.account},
             #{pojo.process_id},
-            #{pojo.data}
+            #{pojo.data},
+            #{pojo.msg},
+            #{pojo.files},
             )
         </foreach>
     </insert>
@@ -59,6 +70,9 @@
             <if test="pojo.account != null"> account = #{pojo.account}, </if>
             <if test="pojo.process_id != null"> process_id = #{pojo.process_id}, </if>
             <if test="pojo.data != null"> data = #{pojo.data} </if>
+
+            <if test="pojo.msg != null"> data = #{pojo.msg} </if>
+            <if test="pojo.files != null"> data = #{pojo.files} </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
@@ -72,11 +86,23 @@
             <if test="pojo.account != null"> AND account = #{pojo.account} </if>
             <if test="pojo.process_id != null"> AND process_id = #{pojo.process_id} </if>
             <if test="pojo.data != null"> AND data = #{pojo.data} </if>
+
+            <if test="pojo.msg != null"> AND data = #{pojo.msg} </if>
+            <if test="pojo.files != null"> AND data = #{pojo.files} </if>
         </where>
-        LIMIT 1000 
+         LIMIT 1000
     </select>
 
-<!--auto generated Code-->
+    <select id="selectByTeacher" resultType="java.util.HashMap">
+        select u.name as user_name, u.account as user_account, p.id as process_id, p1.name as process_name, data, stage_id, c.id as unit_id, c.name as unit_name, c.description as unit_description, role_id
+        from (
+              ((progress p left join process p1 on p1.id = p.process_id) left join user u on p.account=u.account)
+                 left join check_unit c on p.process_id = c.process_id)
+        where c.role_id =
+              (select role_id from role_has_user where user_account = #{account});
+    </select>
+
+    <!--auto generated Code-->
     <delete id="delete">
         DELETE FROM progress where id = #{id}
     </delete>

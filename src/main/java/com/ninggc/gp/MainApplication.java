@@ -58,7 +58,7 @@ public class MainApplication implements CommandLineRunner, WebMvcConfigurer {
 			return "login";
 		}
 
-		return "idx";
+		return "/page/index/index.html";
 	}
 
 	@GetMapping("/idx.html")
@@ -67,7 +67,7 @@ public class MainApplication implements CommandLineRunner, WebMvcConfigurer {
 			return "login";
 		}
 
-		return "idx";
+		return "/page/index/index.html";
 	}
 //
 //	@GetMapping("/index.html")

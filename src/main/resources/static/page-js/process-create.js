@@ -18,7 +18,7 @@ function addStage() {
             let div_stage = $("#div_stage").clone();
             div_stage.removeClass("d-none");
             $(div_stage).children("button").text(stage.id);
-
+i
             $("#div_stage_list").append(div_stage);
         })
     }

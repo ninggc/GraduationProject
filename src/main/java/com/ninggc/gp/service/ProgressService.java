@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProgressService {
@@ -28,6 +29,10 @@ public class ProgressService {
 
     public List<Progress> select(Progress pojo){
         return progressMapper.select(pojo);
+    }
+
+    public List<Map<String, Object>> selectByTeacher(String account){
+        return progressMapper.selectByTeacher(account);
     }
 
     public Progress selectOne(Progress pojo) {
