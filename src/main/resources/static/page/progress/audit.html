@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>审批通知</title>
+
+    <script src="../../vendor/jquery/jquery.js"></script>
+    <script src="../../page-js/global.js"></script>
+    <script src="../../page-js/debug.js"></script>
+    <script src="../layui/layui.js"></script>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+
+<body>
+<div id="header"></div>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-space3">
+            <p>待审核列表</p>
+            <table id="list_under_reviewed" class="layui-table" lay-filter="under_reviewed"></table>
+        </div>
+    </div>
+
+    <div id="detail_unit" class="layui-row">
+        <div id="sample_detail" class="layui-col-space3 layui-hide">
+            <fieldset class="layui-elem-field">
+                <legend>审批资料</legend>
+                <div class="layui-field-box">
+                    <div id="detail_row" class="layui-row">
+                        <div id="input_sample" class="layui-form-item layui-hide">
+                            <label class="layui-form-label">评价: </label>
+                            <div class="layui-input-block">
+                                <input id="content" type="text" placeholder="不可编辑" autocomplete="off"
+                                       class="layui-input" disabled>
+                            </div>
+                        </div>
+
+                        <div id="div_hr_blue" class="layui-row layui-hide">
+                            相关文件
+                            <hr id="hr_blue" class="layui-bg-blue">
+                        </div>
+
+                        <div id="button_sample" class="layui-form-item layui-hide">
+                            <label id="" class="layui-form-label">下载文件：</label>
+                            <div class="layui-input-block">
+                                <button type="button" class="layui-btn" onclick="downloadFile(this.id)">文件名</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <!-- <div class="layui-col-md8 layui-col-space5">
+            <p>name</p>
+            <p>description</p>
+        </div> -->
+    </div>
+
+    <div id="div_hr_red" class="layui-row layui-hide">
+        <p id="process_status"></p>
+        请输入评价，并选择是否审核通过
+        <hr id="hr_red" class="layui-bg-blue">
+
+        <div id="div_submit_description" class="layui-form-item">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block">
+                <textarea id="input_submit_description" placeholder="请输入对此项申请的评价" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" onclick="submitCheckResult(1)">通过</button>
+                <button class="layui-btn layui-btn-danger"
+                        onclick="submitCheckResult(2)">不通过
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+<br>
+<br>
+
+<script>
+    $("#header").load("../template/header.html", function () {
+        $("#notify").addClass("layui-this");
+
+        //注意：导航 依赖 element 模块，否则无法进行功能性操作
+        layui.use('element', function () {
+            var element = layui.element;
+
+            //…
+        });
+
+        layui.use('table', function () {
+            var table = layui.table;
+
+            table.render({
+                elem: '#list_under_reviewed'
+                , url: url + 'progress/review'
+                , cols: [[
+                    {field: 'process_id', title: 'process id', hide: true}
+                    , {field: 'stage_id', title: 'stage id', hide: true}
+                    , {field: 'unit_id', title: 'unit id', hide: true}
+                    , {field: 'user_name', title: '学生姓名', width: 160}
+                    , {field: 'role_id', title: '教师角色', width: 160}
+                    , {field: 'process_name', title: '审批名称', width: 160}
+                    , {field: 'unit_name', title: '单元名称', width: 160}
+                    , {field: 'user_account', title: '学生学号', width: 160}
+                    , {field: 'unit_description', title: '单元描述'}
+                ]]
+            });
+
+            table.on('row(under_reviewed)', function (obj) {
+                let data = obj.data;
+                de_log_info(JSON.stringify(data));
+                detail_unit(data);
+                document.cookie = JSON.stringify(data);
+            })
+        })
+    });
+
+    function detail_unit(data) {
+        if ($("#real_detail")) {
+            $("#real_detail").remove();
+        }
+
+        let msg = jQuery.parseJSON(data.progress_msg);
+        let files = jQuery.parseJSON(data.progress_files);
+
+        // 整个显示资料的div层
+        let div_detail = $("#sample_detail").clone();
+        div_detail.attr("id", "real_detail");
+
+        //input和button的克隆实例
+        let input_item = $("#input_sample").clone();
+        let button_item = $("#button_sample").clone();
+        input_item.removeClass("layui-hide");
+        button_item.removeClass("layui-hide");
+
+        // 容纳input和button的div
+        let detail_row = div_detail.find("#detail_row");
+
+        for (let key in msg) {
+            input_item.find("label").text(key);
+            input_item.find("input").val(msg[key]);
+            detail_row.append(input_item.clone());
+        }
+
+        let div_hr_blue = $("#div_hr_blue");
+        div_hr_blue.removeClass("layui-hide");
+        detail_row.append(div_hr_blue.clone());
+
+        for (let key in files) {
+            // button_item.find("label").text();
+            button_item.find("button").text(key);
+            button_item.find("button").attr("id", files[key]);
+            detail_row.append(button_item.clone());
+        }
+
+        let div_hr_red = $("#div_hr_red");
+        if (data.unit_pass_description) {
+            div_hr_red.find("p").text("当前审核状态: " + data.unit_pass_description);
+        }
+        div_hr_red.removeClass("layui-hide");
+
+        div_detail.removeClass("layui-hide");
+        $("#detail_unit").append(div_detail);
+    }
+
+    function downloadFile(id) {
+        window.open(url+'file/download/'+id);
+    }
+
+    function submitCheckResult(pass) {
+        let description = $("#input_submit_description").val();
+        let data = jQuery.parseJSON(document.cookie);
+
+        if (pass === 1) {
+            // layer.msg("通过审核: " + description);
+        } else if (pass === 2) {
+            if (!description || description === "") {
+                layer.open({
+                    title: "警告"
+                    , content: '如果不批准通过必须输入理由！'
+                });
+                return;
+            }
+        }
+
+        $layui_post(url + 'progress/update', {
+            process_id: data.process_id
+            , stage_id: data.stage_id
+            , unit_id: data.unit_id
+            , progress_account: data.progress_account
+            , 'pass': pass
+            , 'description': description
+        }, function success() {
+            layer.open({
+                title: '成功'
+                , content: '保存成功'
+                , end: function () {
+                    window.location.href = url + "page/progress/audit.html";
+                }
+            });
+        });
+    }
+</script>
+
+
+</body>
+
+</html>

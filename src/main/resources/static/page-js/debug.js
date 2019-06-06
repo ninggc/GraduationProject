@@ -13,3 +13,7 @@ function de_log_send(msg) {
 function de_log_receive(msg) {
     de_log('收到：' + msg)
 }
+
+function de_log_error(msg) {
+    de_log('错误：' + msg)
+}

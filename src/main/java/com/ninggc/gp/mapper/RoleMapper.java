@@ -15,6 +15,10 @@ public interface RoleMapper {
 
     List<Role> select(@Param("pojo") Role pojo);
 
+    List<Role> selectWithUser(@Param("account") String account);
+
+    List<Role> selectWithProcess(@Param("process_id") Integer process_id);
+
     int update(@Param("pojo") Role pojo);
 
     int delete(@Param("id") int id);

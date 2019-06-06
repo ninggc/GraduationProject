@@ -1,6 +1,7 @@
 package com.ninggc.gp.controller;
 
 import com.google.gson.Gson;
+import com.ninggc.gp.data.User;
 import com.ninggc.gp.mybatis.Factory;
 import com.ninggc.gp.tool.LayuiResult;
 import com.ninggc.gp.tool.Result;
@@ -122,6 +123,9 @@ public abstract class IController {
         } catch (IOException e) {
             e.printStackTrace();
             layuiResult.failed(e.getMessage());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            layuiResult.failed(e.getMessage());
         }
         resultPreview("in operateData: " + layuiResult);
         return layuiResult;
@@ -132,8 +136,38 @@ public abstract class IController {
      * @param <T> 操作的结果
      */
     protected interface OperateHandler<T> {
-        T onOperate();
+        T onOperate() throws IOException;
 //        T onSuccess();
 //        T onFailed();
     }
+
+    protected LayuiResult checkPrivilegeWithNotAllowed(User user, String notAllowed)  {
+        LayuiResult<Object> layuiResult = new LayuiResult<>();
+
+        String[] arr = notAllowed.split(" ");
+        for (String s: arr) {
+            if (user.getAddition().equals(s)) {
+                layuiResult.failed("您没有权限");
+                return layuiResult;
+            }
+        }
+
+        return null;
+    }
+
+    class PrivilegeException extends RuntimeException {
+
+        public PrivilegeException() {
+            super();
+        }
+
+        public PrivilegeException(String msg) {
+            super(msg);
+        }
+
+//        public static final String STUDENT = "student";
+//        public static final String TEACHER = "teacher";
+//        public static final String MANAGER = "manager";
+    }
+
 }

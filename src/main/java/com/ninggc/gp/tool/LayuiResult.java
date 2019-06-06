@@ -1,23 +1,17 @@
 package com.ninggc.gp.tool;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.ninggc.gp.controller.IController;
-import com.ninggc.gp.data.User;
 import com.ninggc.gp.util.Constant;
 import com.ninggc.gp.util.Log;
 import com.ninggc.gp.util.Printer;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 /**
  * 返还到前台的数据格式
  * @param <T> 数据格式
  */
 public class LayuiResult<T> {
-    private static int CODE_SUCCESS = 0;
-    private static int CODE_FAILED = 1;
+    public transient static final int LAYUI_CODE_SUCCESS = 0;
+    public transient static final int LAYUI_CODE_FAILED = 1;
     private transient Gson gson = Constant.gson;
 
     private int code;
@@ -59,18 +53,24 @@ public class LayuiResult<T> {
     }
 
     public void success(int count, T t) {
-        setCode(CODE_SUCCESS);
+        setCode(LAYUI_CODE_SUCCESS);
         setMsg("");
         setCount(count);
         setData(t);
     }
 
     public LayuiResult failed(String msg) {
-        setCode(CODE_FAILED);
+        setCode(LAYUI_CODE_FAILED);
         setMsg(msg);
         setCount(0);
         setData(null);
         return this;
+    }
+
+    public static <V> LayuiResult<V> failed(String msg, V data) {
+        LayuiResult<V> layuiResult = new LayuiResult<V>().failed(msg);
+        layuiResult.setData(data);
+        return layuiResult;
     }
 
     @Override

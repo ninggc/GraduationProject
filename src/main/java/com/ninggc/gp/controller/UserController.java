@@ -3,7 +3,6 @@ package com.ninggc.gp.controller;
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
-import com.google.gson.reflect.TypeToken;
 import com.ninggc.gp.data.DataSample;
 import com.ninggc.gp.data.User;
 import com.ninggc.gp.service.UserService;
@@ -24,7 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "user")
+@RequestMapping(value = "/user")
 public class UserController extends IController {
     int pageSize = 35;
     UserService userService = null;
@@ -36,6 +35,7 @@ public class UserController extends IController {
 
     /**
      * 不支持个人注册，由管理员批量导入用户信息
+     *
      * @param file 文本内获得用户信息
      * @return
      */
@@ -47,12 +47,18 @@ public class UserController extends IController {
 
     /**
      * 返回分页用户列表
+     *
      * @return
      */
     @RequestMapping(value = "/list", method = {RequestMethod.GET})
     public String list(@ModelAttribute User user, ModelMap map) {
+        LayuiResult layuiResult = checkPrivilegeWithNotAllowed(user, "student");
+        if (layuiResult != null) {
+            return layuiResult.format();
+        }
+
         int defaultIndex = 0;
-        try(SqlSession session = openSession()) {
+        try (SqlSession session = openSession()) {
             initService(session);
 
             List<User> list = userService.selectWithLimit(DataSample.getStudent(), defaultIndex, pageSize);
@@ -71,7 +77,7 @@ public class UserController extends IController {
         Result result = initResult();
         int index = modelPackage.getNumber() + pageSize;
 
-        try(SqlSession session = openSession()) {
+        try (SqlSession session = openSession()) {
             initService(session);
             List<User> list = userService.selectWithLimit(DataSample.getStudent(), index, pageSize);
             result.success(toJson(list));
@@ -112,12 +118,31 @@ public class UserController extends IController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/action/insert")
+    public String insert(@SessionAttribute User user, @ModelAttribute User addUser) {
+        paramPreview(addUser);
+
+        if (addUser == null || addUser.getAccount() == null || addUser.getPass_word() == null) {
+            return LayuiResult.failed("请输入账号和密码", null).format();
+        }
+
+        LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException {
+                return userService.insert(addUser);
+            }
+        });
+
+        return layuiResult.format();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/action/delete")
     public String delete(@ModelAttribute ModelPackage modelPackage) {
         Result result = initResult();
         String account = modelPackage.getMsg();
 
-        try(SqlSession session = openSession()) {
+        try (SqlSession session = openSession()) {
             initService(session);
             int delete = userService.delete(account);
             session.commit();
@@ -138,7 +163,11 @@ public class UserController extends IController {
 
     @ResponseBody
     @RequestMapping("/action/list")
-    public String list() {
+    public String list(@SessionAttribute User user) {
+        LayuiResult checkLayuiResult = checkPrivilegeWithNotAllowed(user, "student");
+        if (checkLayuiResult != null) {
+            return checkLayuiResult.format();
+        }
 
         LayuiResult<List<User>> layuiResult = operateData(new OperateHandler<List<User>>() {
             @Override
@@ -170,5 +199,40 @@ public class UserController extends IController {
     @RequestMapping("/test")
     public String test() {
         return "page/user/test";
+    }
+
+    @ResponseBody
+    @RequestMapping("/layui/userinfo")
+    public String userinfo(@SessionAttribute User user) {
+        LayuiResult<User> layuiResult = operateDate(new OperateHandler<User>() {
+            @Override
+            public User onOperate() {
+                return userService.selectOne(new User().setAccount(user.getAccount()));
+            }
+        });
+
+//        过滤掉密码
+        if (layuiResult.getData() != null) {
+            layuiResult.getData().setPass_word("");
+        }
+
+        return layuiResult.format();
+    }
+
+    @ResponseBody
+    @RequestMapping("/layui/update/password")
+    public String updatePassword(@SessionAttribute User user, @RequestParam String old_password, @RequestParam String new_password) {
+        if (!old_password.equals(user.getPass_word())) {
+            return new LayuiResult<>().failed("密码输入错误").format();
+        }
+
+        LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() {
+                return userService.updatePassword(user.getAccount(), new_password);
+            }
+        });
+
+        return layuiResult.format();
     }
 }

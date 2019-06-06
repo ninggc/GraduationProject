@@ -14,8 +14,9 @@ public class Stage extends IEntity {
         return id;
     }
 
-    public void setId(Integer id) {
+    public Stage setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     public Integer getProcess_id() {

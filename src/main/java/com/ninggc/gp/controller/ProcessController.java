@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/process")
@@ -71,17 +70,17 @@ public class ProcessController extends IController {
     public String addStage(@ModelAttribute Stage stage) {
         Log.debug(toJson(stage));
 
-        try(SqlSession session = openSession()) {
-            initService(session);
-            //pass是过时字段，此处避免stage无赋值导致的sql异常
-            stage.setPass((byte) 0);
-            stageService.insert(stage);
-            session.commit();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        LayuiResult<Stage> layuiResult = operateDate(new OperateHandler<Stage>() {
+            @Override
+            public Stage onOperate() throws IOException {
+                List<Stage> select = stageService.select(new Stage().setProcess_id(stage.getProcess_id()));
+                stage.setSequence((short) (select.size() + 1));
+                stageService.insert(stage);
+                return stage;
+            }
+        });
 
-        return toJson(stage);
+        return layuiResult.format();
     }
 
     @ResponseBody
@@ -197,11 +196,35 @@ public class ProcessController extends IController {
             public Integer onOperate() {
                 Progress pojo = progress;
                 pojo.setAccount(user.getAccount());
+
+                pojo.setData(initProgressData(checkUnitService, progress.getProcess_id()));
+
                 return progressService.insert(pojo);
             }
         });
 
         return layuiResult.format();
+    }
+
+    private String initProgressData(CheckUnitService unitService, int process_id) {
+        Map<Integer, UtilPass> map = new HashMap<>();
+        Set<Integer> allUnitId = getAllUnitId(unitService, process_id);
+        for (Integer id : allUnitId) {
+            UtilPass utilPass = new UtilPass().setPass((byte) 0);
+            utilPass.setDescription("无");
+            map.put(id, utilPass);
+        }
+        return toJson(map);
+    }
+
+    //        从数据库获取所有unit id
+    private Set<Integer> getAllUnitId(CheckUnitService service, int process_id) {
+        List<CheckUnit> selectByProcessId = checkUnitService.selectByProcessId(process_id);
+        Set<Integer> unitIdList = new HashSet<>();
+        for (CheckUnit v : selectByProcessId) {
+            unitIdList.add(v.getId());
+        }
+        return unitIdList;
     }
 
     @ResponseBody
@@ -240,12 +263,14 @@ public class ProcessController extends IController {
                 return progressService.selectOne(new Progress().setAccount(user.getAccount()).setProcess_id(process_id));
             }
         }, new LayuiResult<>()).getData();
-        Map<Integer, Byte> map = parseProgress(progress);
+//        该用户在该审批的进度
+        Map<Integer, UtilPass> map = parseProgress(progress);
         for (int i = 0; i < listLayuiResult.getData().size(); i++) {
             Integer unit_id = listLayuiResult.getData().get(i).getId();
             try {
-                Byte pass = map.get(unit_id);
-                listLayuiResult.getData().get(i).setPass(pass);
+                UtilPass utilPass = map.get(unit_id);
+                listLayuiResult.getData().get(i).setPass(utilPass.getPass());
+                listLayuiResult.getData().get(i).setProgress_description(utilPass.getDescription());
             } catch (NullPointerException e){
                 e.printStackTrace();
             }
@@ -266,7 +291,7 @@ public class ProcessController extends IController {
         return layuiResult.getData();
     }
 
-    public Map<Integer, Byte> parseProgress(Progress progress) {
-        return gson.fromJson(progress.getData(), new TypeToken<Map<Integer, Byte>>(){}.getType());
+    public Map<Integer, UtilPass> parseProgress(Progress progress) {
+        return gson.fromJson(progress.getData(), new TypeToken<Map<Integer, UtilPass>>(){}.getType());
     }
 }

@@ -48,7 +48,12 @@ public class LoginController extends IController {
                 Log.info("密码正确");
                 map.addAttribute("user", currentUser);
                 httpSession.setAttribute("user", currentUser);
-                return "idx";
+                String preurl = (String) httpSession.getAttribute("preurl");
+                if (preurl == null || "".equals(preurl)) {
+                    return preurl;
+                } else {
+                    return "index";
+                }
             } else {
                 return "failed";
             }

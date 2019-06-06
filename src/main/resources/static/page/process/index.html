@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>审批进度</title>
 
-    <script src="../../vendor/jquery/jquery.js"></script>
+    <script src="../layui/jquery-3.4.1.min.js"></script>
     <script src="../../page-js/global.js"></script>
     <script src="../../page-js/debug.js"></script>
     <script src="../layui/layui.js"></script>
@@ -35,10 +35,11 @@
                     <table id="list_process" lay-filter="processes"></table>
                 </div>
 
+                <!-- 一个layui样式的时间线，用于展示process的各个stage -->
                 <div class="layui-row">
                     <div class="layui-hide">
                         <ul>
-                            <li id="li_timeline" class="layui-timeline-item">
+                            <li id="sample_li_timeline" class="layui-timeline-item">
                                 <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                                 <div class="layui-timeline-content layui-text">
                                     <h3 id="stage_name" class="layui-timeline-title">8月18日</h3>
@@ -51,6 +52,7 @@
                             </li>
                         </ul>
                     </div>
+
                     <div id="div_timeline">
                         <ul id="ul_timeline" id="ul-timeline" class="layui-timeline">
                         </ul>   `
@@ -64,6 +66,7 @@
 
     <script>
         // 页面有效，存储当前所查看的process
+        var process = {};
         var process_id;
         //注意：导航 依赖 element 模块，否则无法进行功能性操作
         layui.use('element', function () {
@@ -97,52 +100,30 @@
                 //obj.del(); //删除当前行
                 //obj.update(fields) //修改当前行数据
 
-                process_id = obj.data.id;
+                process.id = obj.data.id;
+                process_id = process.id;
 
                 // stage list
-                $.post(url + "progress/detail/stage", {"process_id": process_id}, function(json) {
+                $.post(url + "progress/detail/stage", {"process_id": process.id}, function(json) {
                     de_log_info(json);
                     let data = jQuery.parseJSON(json).data;
                     let stage_list = data.stageList;
+
+                    $("#div_timeline").find("li").remove();
                     stage_list.forEach(element => {
                         // alert(element.name);
                         add_timeline(element.id, element.name);
+                    });
+
+                    // $("#div_timeline #ul_timeline").find("li").click(click_timeline());
+                    $("#div_timeline #ul_timeline").find("li").click(function () {
+                        click_timeline(this.id);
                     });
                 })
             });
 
         });
 
-        var stage_size = 0;
-        function add_timeline(id, name) {
-            let clone = $("#li_timeline").clone(true).attr("id", id);
-            clone.find("h3:first").text(name);
-            // alert(clone.find("table:first").attr("id", id));
-            $("#ul_timeline").append(clone);
-        }
-
-
-        $("li").click(function() {
-            var id = this.id;
-            de_log_info(id);
-            layui.use('table', function () {
-                let table = layui.table;
-
-                // unit list
-                table.render({
-                    elem: '#' + id
-                    , url: url + 'process/layui/list/unit' //数据接口
-                    , where: {"stage_id": id, "process_id": process_id}
-                    // , page: true //开启分页
-                    , cols: [[ //表头
-                        { field: 'id', title: 'id', width: 80, sort: true, hide: true }
-                        , { field: 'name', title: '名称', width: 80, sort: true }
-                        , { field: 'pass', title: '审核状态', width: 160 }
-                        , { field: 'description', title: '描述' }
-                    ]]
-                });
-            });
-        });
     </script>
 </body>
 

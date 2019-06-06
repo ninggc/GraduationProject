@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息管理</title>
+
+    <script src="../layui/jquery-3.4.1.min.js"></script>
+    <script src="../../page-js/global.js"></script>
+    <script src="../../page-js/debug.js"></script>
+    <script src="../layui/layui.js"></script>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+
+    <script>
+        $(document).ready(function () {
+            $("#header").load("../template/header.html", function () {
+                $("#personal").addClass("layui-this");
+                layui.use('element', function () {
+                    let element = layui.element;
+                });
+            });
+            $("#footer").load("../template/footer.html");
+        })
+    </script>
+</head>
+
+<body>
+    <div id="header"></div>
+
+    <div class="layui-container">
+        <div class="layui-row">
+            <div class="layui-col-sm3 layui-col-md3"></div>
+            <div class="layui-col-sm8 layui-col-md8">
+                <div class="layui-row">
+                    <button onclick="band_role()" class="layui-btn">Button</button>
+                </div>
+            </div>
+            <div class="layui-col-sm1 layui-col-md1"></div>
+        </div>
+    </div>
+
+    <div id="pop_band_role" class="layui-row layui-form layui-hide">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色类型</label>
+            <div class="layui-input-block">
+                <select id="select_role_type" name="type" lay-verify="required">
+                    <option value="-1">请选择</option>
+                    <option value="0">全局范围</option>
+                    <option value="1">审批范围</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" onclick="filt_role_type()">过滤角色</button>
+            </div>
+        </div>
+        <hr class="layui-bg-black">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色类型</label>
+            <div class="layui-input-block">
+                <select id="select_role_name" name="type">
+                    <option value="0">无</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <script>
+        layui.use(['form', 'layer']);
+
+        // create_role();
+
+        function filt_role_type() {
+            let role_type = $('#select_role_type').val();
+            let process_id = role_type === 0 ? 0 : process.id;
+            switch (role_type) {
+                case -1:
+                    layer.msg('请选择一项');
+                    return;
+                case 0:
+                case 1:
+                    $layui_post(url + '', { 'process_id': process_id }, function success(json) {
+                        let select_defalut_option = $('#select_role_name option[value=0]')
+                        let select = $('#select_role_name')
+                        if (json.data.length !== 0) {                            
+                            select_defalut_option.addClass('layui-hide');
+                            json.data.forEach(element => {
+                                select.append("<option value='"+ element.id + "'>"+ element.name + "</option>")
+                            });
+                        } else {
+                            select_defalut_option.removeClass('layui-hide');
+                            select.children('option').remove();
+                            layer.msg('这个范围没有角色，有点奇怪');
+                        }
+                    });
+                    break;
+
+            }
+        }
+
+        function band_role() {
+            let pop_band_role = $("#pop_band_role");
+            pop_band_role.removeClass("layui-hide");
+
+            layer.open({
+                type: 1
+                , title: '请选择角色'
+                , content: pop_band_role
+                , btn: ['绑定', '取消']
+                , yes: function () {
+                }, btn2: function () {
+                    layer.msg('取消');
+                }
+                , end: function () {
+                    pop_band_role.addClass("layui-hide");
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>

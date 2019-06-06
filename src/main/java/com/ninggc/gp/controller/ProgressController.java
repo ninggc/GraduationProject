@@ -1,5 +1,6 @@
 package com.ninggc.gp.controller;
 
+import com.google.gson.reflect.TypeToken;
 import com.ninggc.gp.data.Process;
 import com.ninggc.gp.data.*;
 import com.ninggc.gp.service.CheckUnitService;
@@ -7,7 +8,7 @@ import com.ninggc.gp.service.ProcessService;
 import com.ninggc.gp.service.ProgressService;
 import com.ninggc.gp.service.StageService;
 import com.ninggc.gp.tool.LayuiResult;
-import com.ninggc.gp.tool.Result;
+import com.ninggc.gp.util.Constant;
 import com.ninggc.gp.util.Log;
 import com.ninggc.gp.util.Printer;
 import org.apache.ibatis.session.SqlSession;
@@ -16,10 +17,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Type;
+import java.util.*;
 
 @RequestMapping("/progress")
 @Controller
@@ -39,7 +38,7 @@ public class ProgressController extends IController {
 
     @RequestMapping(value = "/list")
     public String list(@SessionAttribute User user, ModelMap map) {
-        try(SqlSession session = openSession()) {
+        try (SqlSession session = openSession()) {
             initService(session);
             List<Progress> list = progressService.select(new Progress().setAccount(user.getAccount()));
             Log.debug(getDebugLocation() + gson.toJson(list));
@@ -56,7 +55,7 @@ public class ProgressController extends IController {
             return "/login";
         }
 
-        try(SqlSession session = openSession()) {
+        try (SqlSession session = openSession()) {
             initService(session);
             Progress progress = progressService.selectOne(new Progress().setAccount(user.getAccount()).setProcess_id(process_id));
             map.addAttribute("test", Printer.toJson(progress));
@@ -76,18 +75,16 @@ public class ProgressController extends IController {
 
         paramPreview(process_id);
 
-
-        LayuiResult<Process> layuiResult = operateData(new OperateHandler<Process>() {
+        LayuiResult<Process> layuiResult = operateDate(new OperateHandler<Process>() {
             @Override
-            public Process onOperate() {
-//                Progress progress = progressService.selectOne(new Progress().setProcess_id(process_id));
+            public Process onOperate() throws IOException {
                 Process process = processService.selectOne(new Process().setId(process_id));
                 List<Stage> stages = stageService.select(new Stage().setProcess_id(process_id));
 
                 process.setStageList(stages);
                 return process;
             }
-        }, new LayuiResult<Process>());
+        });
 
         return layuiResult.format();
     }
@@ -120,11 +117,11 @@ public class ProgressController extends IController {
     @ResponseBody
     @RequestMapping(value = "/checkUnit")
     public String passUnit(@ModelAttribute Progress progress, @RequestParam int unit_id, @RequestParam byte pass) {
-        try(SqlSession session = openSession()) {
-           initService(session);
+        try (SqlSession session = openSession()) {
+            initService(session);
             Progress selectOne = progressService.selectOne(progress);
             if (progress != null) {
-                Map<Integer, Byte> data = null;
+                Map<Integer, UtilPass> data = null;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,59 +131,72 @@ public class ProgressController extends IController {
 
 
     /**
-     *
-     * @param progress
      * @param utilPass
      * @return
      */
     @ResponseBody
-//    @RequestMapping("/progress/update")
     @RequestMapping("/update")
-    public String update(@ModelAttribute Progress progress, @ModelAttribute UtilPass utilPass) {
+    public String update(@SessionAttribute User user, @ModelAttribute UtilPass utilPass, @RequestParam String progress_account) {
 
-        Log.debug(gson.toJson(progress));
-        Log.debug(gson.toJson(utilPass));
+        paramPreview(utilPass);
 
-        Result result = initResult();
-        try (SqlSession session = openSession()) {
-            initService(session);
+        LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException {
+//                从数据库获取进度
+                Progress progress = new Progress().setAccount(progress_account);
+                progress.setProcess_id(utilPass.getProcess_id());
+                Progress selectOne = progressService.selectOne(progress);
+                Log.debug(gson.toJson(selectOne));
 
-//            从数据库获取进度
-            Progress selectOne = progressService.selectOne(new Progress().setAccount(progress.getAccount()).setProcess_id(progress.getProcess_id()));
-            Log.debug(gson.toJson(selectOne));
+//              将数据库中新增的unit添加到progress
+                // TODO: 2019/6/6
+//                Map<Integer, UtilPass> map = synchronize(selectOne);
+//              更新当前请求
+                Map<Integer, UtilPass> map = selectOne.parseFromData();
+                map.replace(utilPass.getUnit_id(), utilPass);
 
-//            将数据库中新增的unit添加到progress
-            Map<Integer, Byte> map = synchronize(selectOne);
-//            更新当前请求
-            map.replace(utilPass.getUnit_id(), utilPass.getPass());
-            selectOne.setData(gson.toJson(map));
+//                获取当前stage的sequence
+//                验证 如果当前sequence的unit全部通过审核，则将current_sequence的值加一
+                Stage stage = stageService.selectOne(new Stage().setId(utilPass.getStage_id()));
+                List<CheckUnit> checkUnits = checkUnitService.selectByStageId(utilPass.getStage_id());
+
+                int sequenceAddition = 1;
+                for (CheckUnit u : checkUnits) {
+//                    验证当前stage的所有unit是否全部通过审核
+                    Byte pass = map.get(u.getId()).getPass();
+                    if (!pass.equals(Constant.PASS_YES)) {
+                        sequenceAddition = 0;
+                    }
+                }
+                selectOne.sequenceIncrease(sequenceAddition);
+
+                String data = gson.toJson(map);
+                selectOne.setData(data.replace("\\", ""));
+
 
 //            写回到数据库
-            progressService.update(selectOne);
-            session.commit();
-            result.setCode(CODE_SUCCESS);
+                return progressService.update(selectOne);
+            }
+        });
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.error("更新失败");
-            result.setCode(CODE_FAILED);
-        }
-        return gson.toJson(result);
+
+        return layuiResult.format();
     }
 
-//            从数据库获取同步所有的unit id（未写回数据库）
-    private Map<Integer, Byte> synchronize(Progress progress) {
+    //            从数据库获取同步所有的unit id（未写回数据库）
+    private Map<Integer, UtilPass> synchronize(Progress progress) {
         int process_id = progress.getProcess_id();
 
         Set<Integer> allUnitId = getAllUnitId(checkUnitService, process_id);
 
-        Map<Integer, Byte> map = progress.parseFromData();
+        Map<Integer, UtilPass> map = progress.parseFromData();
         if (map.keySet().size() != allUnitId.size()) {
 //                比较两个set获取处理不同的元素
             allUnitId.removeAll(map.keySet());
 //                将data中没有的id加入进去
             for (int v : allUnitId) {
-                map.put(v, (byte) 0);
+                map.put(v, new UtilPass().setPass((byte) 0));
             }
         }
         Log.debug(gson.toJson(map));
@@ -194,8 +204,8 @@ public class ProgressController extends IController {
     }
 
     //        从数据库获取所有unit id
-    private Set<Integer> getAllUnitId(CheckUnitService service, int id) {
-        List<CheckUnit> selectByProcessId = checkUnitService.selectByProcessId(id);
+    private Set<Integer> getAllUnitId(CheckUnitService service, int process_id) {
+        List<CheckUnit> selectByProcessId = checkUnitService.selectByProcessId(process_id);
         Set<Integer> unitIdList = new HashSet<>();
         for (CheckUnit v :
                 selectByProcessId) {
@@ -205,18 +215,101 @@ public class ProgressController extends IController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/review")
-    public String review(@SessionAttribute User user) {
-        paramPreview(user);
+    @RequestMapping(value = "/layui/select/one")
+    public String select(@SessionAttribute User user, @RequestParam int progress_id) {
+        paramPreview(progress_id);
 
-        LayuiResult<List<Map<String, Object>>> layuiResult = operateDate(new OperateHandler<List<Map<String, Object>>>() {
+        LayuiResult<Progress> layuiResult = operateDate(new OperateHandler<Progress>() {
             @Override
-            public List<Map<String, Object>> onOperate() {
-                return progressService.selectByTeacher("1503130101");
+            public Progress onOperate() throws IOException {
+                return progressService.selectOne(new Progress().setId(progress_id));
             }
         });
 
         return layuiResult.format();
+    }
+
+    /**
+     *
+     * @param user
+     * @return 根据教师account返回需要审核的unit list
+     */
+    @ResponseBody
+    @RequestMapping(value = "/review")
+    public String review(@SessionAttribute User user) {
+        paramPreview(user);
+
+        LayuiResult layuiResult1 = checkPrivilegeWithNotAllowed(user, "student");
+
+        if (layuiResult1 != null) {
+            return layuiResult1.format();
+        }
+
+        LayuiResult<List<Map<String, Object>>> layuiResult = operateDate(new OperateHandler<List<Map<String, Object>>>() {
+            @Override
+            public List<Map<String, Object>> onOperate() {
+                List<Map<String, Object>> selectByTeacher = progressService.selectByTeacher(user.getAccount());
+
+                resultPreview(selectByTeacher);
+
+                List<Map<String, Object>> list = new ArrayList<>();
+                Type type = new TypeToken<Map<Integer, UtilPass>>() {}.getType();
+                // TODO: 2019/6/4 非常耗时
+//                如果需要审核的unit的前一个stage未完成，则过滤
+//                根据table progress中的current_sequence确定当前的stage
+                for (Map<String, Object> map : selectByTeacher) {
+
+//                    如果当前审批已经通过（pass=1）则跳过，（pass=0 || pass=2）则加入
+                    Progress progress = new Progress();
+                    progress.setData((String) map.get("data"));
+                    int unit_id = (int) map.get("unit_id");
+                    UtilPass utilPass = progress.parseFromData().get(unit_id);
+                    Byte pass = utilPass.getPass();
+                    if (pass == 1) {
+                        continue;
+                    } else if (pass == 2)  {
+                        map.put("unit_pass_description", "审核不通过：" + utilPass.getDescription());
+                    } else if (pass == 0) {
+                        map.put("unit_pass_description", "未审核：");
+                    }
+
+                    int currentSequence = (int) map.get("current_sequence");
+                    int stageSequence = (int) map.get("stage_sequence");
+                    if (stageSequence == currentSequence) {
+                        list.add(map);
+                    } else if (stageSequence < currentSequence) {
+//                        throw new RuntimeException("遗漏之前的阶段");
+                    } else if (stageSequence > currentSequence) {
+//                        throw new RuntimeException("未进行到该阶段");
+                    }
+                }
+
+                return list;
+            }
+        });
+
+        return layuiResult.format();
+    }
+
+    List<Map<String, Object>> filtReviewList(List<Map<String, Object>> selectByTeacher) throws RuntimeException {
+        List<Map<String, Object>> list = new ArrayList<>();
+        Type type = new TypeToken<Map<Integer, UtilPass>>() {}.getType();
+        // TODO: 2019/6/4 非常耗时
+//                如果需要审核的unit的前一个stage未完成，则过滤
+//                根据table progress中的current_sequence确定当前的stage
+        for (Map<String, Object> map : selectByTeacher) {
+            int currentSequence = (int) map.get("current_sequence");
+            int stageSequence = (int) map.get("stage_sequence");
+            if (stageSequence == currentSequence) {
+                list.add(map);
+            } else if (stageSequence < currentSequence) {
+                throw new RuntimeException("遗漏之前的阶段");
+            } else if (stageSequence > currentSequence) {
+                throw new RuntimeException("未进行到该阶段");
+            }
+        }
+
+        return list;
     }
 
 }

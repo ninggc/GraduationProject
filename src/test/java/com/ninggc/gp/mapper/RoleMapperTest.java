@@ -20,7 +20,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RoleMapperTest {
+public class RoleMapperTest implements ITest {
 
     SqlSessionFactory factory = null;
     RoleService roleService = null;
@@ -93,5 +93,10 @@ public class RoleMapperTest {
             session.commit();
             System.out.println(i);
         }
+    }
+
+    @Override
+    public void initService(SqlSession session) {
+        roleService = new RoleService(session);
     }
 }

@@ -33,6 +33,10 @@ public class CheckUnitService {
         return checkUnitMapper.select(new CheckUnit().setProcess_id(id));
     }
 
+    public List<CheckUnit> selectByStageId(int stage_id){
+        return checkUnitMapper.select(new CheckUnit().setStage_id(stage_id));
+    }
+
     public List<CheckUnit> selectByTeacherAccount(String account){
         return checkUnitMapper.selectByAccount(account);
     }

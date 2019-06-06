@@ -1,10 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>个人信息管理</title>
-</head>
-<body>
 
+    <script src="../layui/jquery-3.4.1.min.js"></script>
+    <script src="../../page-js/global.js"></script>
+    <script src="../../page-js/debug.js"></script>
+    <script src="../layui/layui.js"></script>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+
+    <script>
+        $(document).ready(function () {
+            $("#header").load("../template/header.html", function () {
+                $("#personal").addClass("layui-this");
+                layui.use('element', function () {
+                    let element = layui.element;
+                });
+            });
+            $("#footer").load("../template/footer.html");
+
+            $.post(url + 'user/layui/userinfo', {}, function (result) {
+                let json = jQuery.parseJSON(result);
+                let user_info = json.data;
+                for (let key in user_info) {
+                    let value = user_info[key];
+                    $("#" + key).val(value);
+                }
+            })
+        })
+    </script>
+</head>
+
+<body>
+<div id="header"></div>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-sm3 layui-col-md3"></div>
+        <div class="layui-col-sm8 layui-col-md8">
+            <div class="layui-row">
+                <h1></h1>
+            </div>
+
+            <fieldset class="layui-elem-field">
+                <legend>个人信息</legend>
+                <div class="layui-field-box">
+                    <div class="layui-row">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">学号</label>
+                            <div class="layui-input-block">
+                                <input id="account" type="text" placeholder="不可编辑" autocomplete="off"
+                                       class="layui-input" disabled>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">姓名</label>
+                            <div class="layui-input-block">
+                                <input id="name" type="text" placeholder="不可编辑" autocomplete="off"
+                                       class="layui-input" disabled>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">身份</label>
+                            <div class="layui-input-block">
+                                <input id="addition" type="text" placeholder="不可编辑" autocomplete="off"
+                                       class="layui-input" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+
+            <fieldset class="layui-elem-field">
+                <legend>修改密码</legend>
+                <div class="layui-field-box">
+                    <div class="layui-row">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">旧密码</label>
+                            <div class="layui-input-block">
+                                <input id="old_password" type="password" placeholder="请输入旧密码" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">新密码</label>
+                            <div class="layui-input-block">
+                                <input id="new_password" type="password" placeholder="请输入新密码" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-col-space10">
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" onclick="update_password()">修改密码</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+    <div class="layui-col-sm1 layui-col-md1"></div>
+</div>
+</div>
+
+<div id="footer"></div>
+
+<script>
+    layui.use('layer');
+
+    function update_password() {
+        let old_password = $("#old_password").val();
+        let new_password = $("#new_password").val();
+        if (old_password === '') {
+            layer.msg('请输入旧密码')
+        } else if (old_password === '') {
+            layer.msg('请输入旧密码')
+        } else {
+            $.post(url + "user/layui/update/password", {
+                "old_password": old_password,
+                "new_password": new_password
+            }, function (result) {
+                let json = jQuery.parseJSON(result);
+
+                if (!json) {
+                    layer.msg("服务器异常");
+                    de_log_error(json);
+                } else if (json.code === 0) {
+                    alert("修改密码成功！请重新登陆");
+                    window.location.href = url + "login";
+                } else if (json.code === 1) {
+                    layer.msg("修改密码失败！" + json.msg);
+                }
+            })
+        }
+
+    }
+</script>
 </body>
+
 </html>

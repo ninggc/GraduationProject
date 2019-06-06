@@ -13,9 +13,10 @@ public class Progress extends IEntity {
 
     private String msg;
     private String files;
+    private Integer current_sequence;
 
-    public Map<Integer, Byte> parseFromData() {
-        Map<Integer, Byte> map = gson.fromJson(data, new TypeToken<Map<Integer, Byte>>() {}.getType());
+    public Map<Integer, UtilPass> parseFromData() {
+        Map<Integer, UtilPass> map = gson.fromJson(data, new TypeToken<Map<Integer, UtilPass>>() {}.getType());
         return map == null ? new HashMap<>() : map;
     }
 
@@ -23,8 +24,9 @@ public class Progress extends IEntity {
         return id;
     }
 
-    public void setId(Integer id) {
+    public Progress setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     public String getAccount() {
@@ -67,5 +69,21 @@ public class Progress extends IEntity {
 
     public void setFiles(String files) {
         this.files = files;
+    }
+
+    public Integer getCurrent_sequence() {
+        return current_sequence;
+    }
+
+    public void setCurrent_sequence(Integer current_sequence) {
+        this.current_sequence = current_sequence;
+    }
+
+    public void sequenceIncrease(int addition) {
+        if (current_sequence != null) {
+            this.current_sequence += addition;
+        } else {
+            throw new RuntimeException("progress的current_sequence为空？？？");
+        }
     }
 }

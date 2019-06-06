@@ -11,24 +11,32 @@
 
 <!--auto generated Code-->
     <sql id="all_column">
-        id,
-        name,
-        description
+        role.id,
+        role.name,
+        role.description,
+        role.process_id,
+        role.scope
     </sql>
 
 <!--auto generated Code-->
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO role
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.id != null"> id, </if>
             <if test="pojo.name != null"> name, </if>
             <if test="pojo.description != null"> description, </if>
+
+            <if test="pojo.process_id != null"> process_id, </if>
+            <if test="pojo.scope != null"> scope, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.id != null"> #{pojo.id}, </if>
             <if test="pojo.name != null"> #{pojo.name}, </if>
             <if test="pojo.description != null"> #{pojo.description}, </if>
+
+            <if test="pojo.process_id != null"> #{pojo.process_id}, </if>
+            <if test="pojo.scope != null"> #{pojo.scope}, </if>
         </trim>
     </insert>
 
@@ -42,6 +50,9 @@
             #{pojo.id},
             #{pojo.name},
             #{pojo.description}
+
+            #{pojo.process_id}
+            #{pojo.scope}
             )
         </foreach>
     </insert>
@@ -52,7 +63,10 @@
         <set>
             <if test="pojo.id != null"> id = #{pojo.id}, </if>
             <if test="pojo.name != null"> name = #{pojo.name}, </if>
-            <if test="pojo.description != null"> description = #{pojo.description} </if>
+            <if test="pojo.description != null"> description = #{pojo.description}, </if>
+
+            <if test="pojo.process_id != null"> description = #{pojo.process_id}, </if>
+            <if test="pojo.scope != null"> description = #{pojo.scope} </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
@@ -65,8 +79,29 @@
             <if test="pojo.id != null"> AND id = #{pojo.id} </if>
             <if test="pojo.name != null"> AND name = #{pojo.name} </if>
             <if test="pojo.description != null"> AND description = #{pojo.description} </if>
+
+            <if test="pojo.process_id != null"> AND description = #{pojo.process_id} </if>
+            <if test="pojo.scope != null"> AND description = #{pojo.scope} </if>
         </where>
         LIMIT 1000 
+    </select>
+
+<!--auto generated Code-->
+    <select id="selectWithUser" resultMap="AllColumnMap">
+        SELECT <include refid="all_column"/>
+        FROM role, role_has_user
+        where role.id = role_has_user.role_id and user_account = #{account}
+        LIMIT 1000
+    </select>
+
+<!--         FROM role r, (role_has_check_unit rhu inner join check_unit c on rhu.check_unit_id = c.id and c.process_id = #{process_id})-->
+<!--         where r.id = rhu.role_id;-->
+    <!--auto generated Code-->
+    <select id="selectWithProcess" resultMap="AllColumnMap">
+        SELECT <include refid="all_column"/>
+        From role
+        where process_id = #{process_id}
+        LIMIT 1000
     </select>
 
 <!--auto generated Code-->

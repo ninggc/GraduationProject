@@ -4,15 +4,16 @@ public class Role extends IEntity {
     private Integer id;
     private String name;
     private String description;
-
-
+    private Integer process_id;
+    private String scope;
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public Role setId(Integer id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {
@@ -29,5 +30,21 @@ public class Role extends IEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getProcess_id() {
+        return process_id;
+    }
+
+    public void setProcess_id(Integer process_id) {
+        this.process_id = process_id;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 }

@@ -18,7 +18,8 @@
         data,
 
         msg,
-        files
+        files,
+        current_sequence
     </sql>
 
 <!--auto generated Code-->
@@ -32,6 +33,7 @@
 
             <if test="pojo.msg != null"> msg, </if>
             <if test="pojo.files != null"> files, </if>
+            <if test="pojo.current_sequence != null"> current_sequence, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -42,6 +44,7 @@
 
             <if test="pojo.msg != null"> #{pojo.msg}, </if>
             <if test="pojo.files != null"> #{pojo.files}, </if>
+            <if test="pojo.current_sequence != null"> #{pojo.current_sequence}, </if>
         </trim>
     </insert>
 
@@ -58,6 +61,7 @@
             #{pojo.data},
             #{pojo.msg},
             #{pojo.files},
+            #{pojo.current_sequence},
             )
         </foreach>
     </insert>
@@ -69,10 +73,11 @@
             <if test="pojo.id != null"> id = #{pojo.id}, </if>
             <if test="pojo.account != null"> account = #{pojo.account}, </if>
             <if test="pojo.process_id != null"> process_id = #{pojo.process_id}, </if>
-            <if test="pojo.data != null"> data = #{pojo.data} </if>
+            <if test="pojo.data != null"> data = #{pojo.data}, </if>
 
-            <if test="pojo.msg != null"> data = #{pojo.msg} </if>
-            <if test="pojo.files != null"> data = #{pojo.files} </if>
+            <if test="pojo.msg != null"> msg = #{pojo.msg}, </if>
+            <if test="pojo.files != null"> files = #{pojo.files}, </if>
+            <if test="pojo.current_sequence != null"> current_sequence = #{pojo.current_sequence} </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
@@ -87,18 +92,29 @@
             <if test="pojo.process_id != null"> AND process_id = #{pojo.process_id} </if>
             <if test="pojo.data != null"> AND data = #{pojo.data} </if>
 
-            <if test="pojo.msg != null"> AND data = #{pojo.msg} </if>
-            <if test="pojo.files != null"> AND data = #{pojo.files} </if>
+            <if test="pojo.msg != null"> AND msg = #{pojo.msg} </if>
+            <if test="pojo.files != null"> AND files = #{pojo.files} </if>
+            <if test="pojo.current_sequence != null"> AND current_sequence = #{pojo.current_sequence} </if>
         </where>
          LIMIT 1000
     </select>
 
     <select id="selectByTeacher" resultType="java.util.HashMap">
-        select u.name as user_name, u.account as user_account, p.id as process_id, p1.name as process_name, data, stage_id, c.id as unit_id, c.name as unit_name, c.description as unit_description, role_id
+        select
+               u.name as user_name, u.account as user_account
+             , c.stage_id, c.id as unit_id, c.name as unit_name, c.description as unit_description, c.role_id
+             , s.sequence as stage_sequence
+             , p.id as progress_id, p1.name as process_name, p.account as progress_account, p.current_sequence as current_sequence
+             , p.data, p.msg as progress_msg, p.files as progress_files
+             , p1.id as process_id
         from (
-              ((progress p left join process p1 on p1.id = p.process_id) left join user u on p.account=u.account)
-                 left join check_unit c on p.process_id = c.process_id)
-        where c.role_id =
+              (
+                (progress p left join process p1 on p1.id = p.process_id)
+                  left join user u on p.account=u.account)
+                left join check_unit c on p.process_id = c.process_id
+              ), stage s
+        where s.id = c.stage_id
+              and c.role_id =
               (select role_id from role_has_user where user_account = #{account});
     </select>
 

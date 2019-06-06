@@ -33,6 +33,19 @@ public class RoleService {
         return roleMapper.select(pojo);
     }
 
+    public List<Role> selectWithUser(String account){
+        return roleMapper.selectWithUser(account);
+    }
+
+    public List<Role> selectWithProcess(Integer process_id){
+        return roleMapper.selectWithProcess(process_id);
+    }
+
+    public Role selectOne(Role pojo){
+        List<Role> select = roleMapper.select(pojo);
+        return select == null || select.size() == 0 ? null : select.get(0);
+    }
+
     public int update(Role pojo){
         return roleMapper.update(pojo);
     }

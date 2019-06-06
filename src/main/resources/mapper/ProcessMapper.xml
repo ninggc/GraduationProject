@@ -67,10 +67,10 @@
             <if test="pojo.id != null"> id = #{pojo.id}, </if>
             <if test="pojo.name != null"> name = #{pojo.name}, </if>
             <if test="pojo.start_time != null"> start_time = #{pojo.start_time}, </if>
-            <if test="pojo.description != null"> description = #{pojo.description} </if>
+            <if test="pojo.description != null"> description = #{pojo.description}, </if>
 
-            <if test="pojo.msg != null"> description = #{pojo.msg} </if>
-            <if test="pojo.files != null"> description = #{pojo.files} </if>
+            <if test="pojo.msg != null"> description = #{pojo.msg}, </if>
+            <if test="pojo.files != null"> description = #{pojo.files}, </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
@@ -95,7 +95,8 @@
         SELECT <include refid="all_column"/>
         , progress.id as progress_id
         FROM process, progress
-        WHERE process.id = (select id from progress where account = #{account})
+        WHERE process.id in (select process_id from progress where account = #{account})
+          and process.id = progress.process_id
     </select>
 
     <!--auto generated Code-->

@@ -96,7 +96,7 @@
         FROM user
         <where>
             <if test="pojo.account != null"> AND account = #{pojo.account} </if>
-            <if test="pojo.pass_word != null"> AND pass_word = #{pojo.pass_word} </if>
+            <!--<if test="pojo.pass_word != null"> AND pass_word = #{pojo.pass_word} </if>-->
             <if test="pojo.name != null"> AND name = #{pojo.name} </if>
             <if test="pojo.addition != null"> AND addition = #{pojo.addition} </if>
 

@@ -23,110 +23,288 @@
     <!-- Custom fonts for this template -->
     <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
-          type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
-          rel='stylesheet' type='text/css'>
+        type='text/css'>
+    <link
+        href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+        rel='stylesheet' type='text/css'>
 
     <!-- Custom styles for this template -->
     <link href="/css/clean-blog.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/page/layui/css/layui.css">
+    <script src="/page/layui/layui.js"></script>
+    <script src="/page/layui/jquery-3.4.1.min.js"></script>
+    <script src="/page-js/global.js"></script>
+    <script src="/page-js/debug.js"></script>
 
 </head>
 
 <body>
 
-<nav th:include="temp :: navbar"></nav>
+    <nav th:include="temp :: navbar"></nav>
 
-<!-- Page Header -->
-<header class="masthead" style="background-image: url('img/home-bg.jpg')">
-    <div class="overlay"></div>
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('img/home-bg.jpg')">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="site-heading">
+                        <h1>建立审批流程</h1>
+                        <span class="subheading">---这里是要求---</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                <div class="site-heading">
-                    <h1>建立审批流程</h1>
-                    <span class="subheading">---这里是要求---</span>
+            <div class="col-md-3">
+                <div class="row">
+                    <button type="button" class="btn btn-lg btn-primary" onclick="atStart()">流程信息</button>
+                    <br>
+                    <button type="button" class="btn btn-lg btn-primary" onclick="addStage()">添加节点</button>
+                </div>
+                <div id="div_stage_list" class="form-group d-none">
+                    <div id="div_stage" class="row d-none">
+                        <button id="" type="button" class="btn btn-lg btn-link" onclick="showUnitList()">stage</button>
+                        <!--<button th:each="${stageList}"-->
+                        <!--<li th:each="u : ${users}" th:text="${u.name}">user name</li>-->
+                    </div>
+                </div>
+                <div class="row">
+                    <button type="button" class="btn btn-lg btn-primary" onclick="finish()">保存流程</button>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" onclick="create_role()">创建角色</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</header>
+            <div class="col-md-8">
+                <div id="unit_list" class="table d-none">
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th>单元名称</th>
+                            <th>审核状态</th>
+                            <th>审核人员</th>
+                        </tr>
+                        <tr onclick="showUnit()">
+                            <th>1</th>
+                            <th>进行中</th>
+                            <th>1</th>
+                        </tr>
+                        <tr onclick="showUnit()">
+                            <th>1</th>
+                            <th>进行中</th>
+                            <th>1</th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="container">
+                    <form id="create_process">
+                        <div class="form-group">
+                            <label class="label">流程名称</label>
+                            <input id="process_name" class="form-control" type="text" placeholder="名称">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">描述</label>
+                            <textarea id="process_description" class="form-control" rows="5"
+                                placeholder="描述"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-info" onclick="action_create()">保存</button>
+                        </div>
+                    </form>
+                    <form id="create_unit" class="d-none">
+                        <div class="form-group">
+                            <label class="label">单元名称</label>
+                            <input id="unit_name" class="form-control" type="text" placeholder="名称">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">描述</label>
+                            <textarea id="unit_description" class="form-control" rows="5" placeholder="描述"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-info" onclick="action_add_unit()">保存</button>
+                        </div>
 
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-2">
-            <div class="row">
-                <button type="button" class="btn btn-lg btn-primary" onclick="atStart()">流程信息</button>
-                <br>
-                <button type="button" class="btn btn-lg btn-primary" onclick="addStage()">添加节点</button>
-            </div>
-            <div id="div_stage_list" class="form-group d-none">
-                <div id="div_stage" class="row d-none">
-                    <button id="" type="button" class="btn btn-lg btn-link" onclick="showUnitList()">stage</button>
-                    <!--<button th:each="${stageList}"-->
-                    <!--<li th:each="u : ${users}" th:text="${u.name}">user name</li>-->
+                    </form>
+                </div>
+
+                <div id="pop_create_role" class="layui-row layui-form layui-hide">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">角色名: </label>
+                        <div class="layui-input-block">
+                            <input id="input_role_name" type="text" placeholder="请填写角色名" autocomplete="off"
+                                class="layui-input" style="width: 70%">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">角色描述: </label>
+                        <div class="layui-input-block">
+                            <textarea id="textarea_role_description" type="text" placeholder="请填写角色描述"
+                                autocomplete="off" class="layui-textarea" style="width: 70%"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">绑定审批: </label>
+                        <div class="layui-input-block">
+                            <input id="input_role_band" type="checkbox" placeholder="绑定" lay-skin="switch"
+                                lay-text="角色绑定当前审批|角色全局可见" checked>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pop_band_role" class="layui-row layui-form layui-hide">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">角色类型：</label>
+                        <div class="layui-input-block">
+                            <select id="select_role_type" name="type" lay-verify="required">
+                                <option value="-1">请选择</option>
+                                <option value="0">全局范围</option>
+                                <option value="1">审批范围</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" onclick="filt_role_type()">过滤角色</button>
+                        </div>
+                    </div>
+                    <hr class="layui-bg-black">
+                    <div id="item_role_name" class="layui-form-item">
+                        <label class="layui-form-label">角色名称：</label>
+                        <div class="layui-input-block">
+                            <select id="select_role_name" name="name">
+                                <option value="0">无</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <button type="button" class="btn btn-lg btn-primary" onclick="finish()">保存流程</button>
-            </div>
-        </div>
-        <div class="col-md-10">
-            <div id="unit_list" class="table d-none">
-                <table class="table table-bordered table-hover">
-                    <tr>
-                        <th>单元名称</th>
-                        <th>审核状态</th>
-                        <th>审核人员</th>
-                    </tr>
-                    <tr onclick="showUnit()">
-                        <th>1</th>
-                        <th>进行中</th>
-                        <th>1</th>
-                    </tr>
-                    <tr onclick="showUnit()">
-                        <th>1</th>
-                        <th>进行中</th>
-                        <th>1</th>
-                    </tr>
-                </table>
-            </div>
-            <div class="container">
-                <form id="create_process">
-                    <div class="form-group">
-                        <label class="label">流程名称</label>
-                        <input id="process_name" class="form-control" type="text" placeholder="名称">
-                    </div>
-                    <div class="form-group">
-                        <label class="label">描述</label>
-                        <textarea id="process_description" class="form-control" rows="5" placeholder="描述"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-info" onclick="action_create()">保存</button>
-                    </div>
-                </form>
-                <form id="create_unit" class="d-none">
-                    <div class="form-group">
-                        <label class="label">单元名称</label>
-                        <input id="unit_name" class="form-control" type="text" placeholder="名称">
-                    </div>
-                    <div class="form-group">
-                        <label class="label">描述</label>
-                        <textarea id="unit_description" class="form-control" rows="5"
-                                  placeholder="描述"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-info" onclick="action_add_unit()">保存</button>
-                    </div>
-                </form>
-            </div>
+            <div class="layui-col-md1"></div>
         </div>
     </div>
-</div>
 
-<hr>
+    <hr>
 
-<div th:replace="temp :: footer"></div>
+    <div th:replace="temp :: footer"></div>
+
+    <script>
+        layui.use(['layer', 'form']);
+
+        function create_role() {
+            let pop_create_role = $("#pop_create_role");
+            pop_create_role.removeClass("layui-hide");
+
+            layer.open({
+                type: 1
+                , content: pop_create_role
+                , btn: ['添加', '取消']
+                , yes: function (index) {
+                    // 处理输入的role信息
+                    let role = {};
+                    role.name = $('#input_role_name').val();
+                    role.description = $('#textarea_role_description').val();
+                    if ($('.layui-form-onswitch').length === 1) {
+                        if ((!process) || process === '') {
+                            layer.open({
+                                title: '错误'
+                                , content: '如果你想要绑定到当前审批，请先创建审批'
+                            });
+                            layer.close(index);
+                            return;
+                        } else {
+                            role.process_id = process.id;
+                        }
+                    } else {
+                        role.process_id = 0;
+                    }
+
+                    //验证输入是否合法
+                    if (!role.name || role.name === '') {
+                        layer.msg('请输入角色名，这是必填项');
+                        return false;
+                    } else {
+                        $layui_post(url + 'role/action/add', role, function success(json) {
+                            layer.open({
+                                title: '成功'
+                                , content: '创建角色成功'
+                            });
+                        }, function after() {
+                            layer.close(index);
+                        });
+                    }
+                }, btn2: function () {
+                    layer.msg('取消');
+                    // ${url+'', role, function(){}}
+                }
+                , end: function () {
+                    pop_create_role.addClass("layui-hide");
+                }
+            })
+        }
+
+        function filt_role_type() {
+            let role_type = $('#select_role_type').val();
+            let process_id = role_type === "0" ? 0 : process.id;
+            switch (role_type) {
+                case "-1":
+                    layer.msg('请选择一项');
+                    return;
+                case "0":
+                case "1":
+                    $layui_post(url + 'role/layui/select/process', { 'process_id': process_id }, function success(json) {
+                        let select_default_option = $('#select_role_name option[value=0]');
+                        let select = $('#select_role_name');
+                        if (json.data.length !== 0) {                            
+                            select_default_option.addClass('layui-hide');
+                            json.data.forEach(element => {
+                                select.append("<option value='"+ element.id + "'>"+ element.name + "</option>");
+                            //    因为是layer.open所以有点不一样
+                                $("dl").append("<dd lay-value='"+ element.id + "' class='layui-this' >"+ element.name + "</dd>");
+                                
+                                //手动设置role_name控件的点击事件
+                                $("#item_role_name").find("dd").click(function () {
+                                    let value = $(this).text();
+                                    $("#item_role_name").find("input").val(value);
+                                })
+                            });
+                        } else {
+                            select_default_option.removeClass('layui-hide');
+                            select.children('option').remove();
+                            layer.msg('这个范围没有角色，有点奇怪');
+                        }
+                    });
+                    break;
+
+            }
+        }
+
+        function band_role() {
+            let pop_band_role = $("#pop_band_role");
+            pop_band_role.removeClass("layui-hide");
+
+            layer.open({
+                type: 1
+                , title: '请选择角色'
+                , content: pop_band_role
+                , btn: ['绑定', '取消']
+                , yes: function () {
+                    let role_name = $("#item_role_name").find("input").val();
+                    de_log_info(role_name);
+                }, btn2: function () {
+                    layer.msg('取消');
+                }
+                , end: function () {
+                    pop_band_role.addClass("layui-hide");
+                }
+            })
+        }
+    </script>
 
 </body>
 

@@ -12,20 +12,19 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        return true;
-
-//        HttpSession session = request.getSession();
-//        Object ob = session.getAttribute("user");
-//        if (ob != null) {
-//            return true;
-//        }
-//        Log.debug("LoginInterceptor: " + request.getRequestURI());
-//        session.setAttribute("preurl", request.getRequestURI());
-//        StringBuffer url = request.getRequestURL();
-//        //将url转到login
-//        String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append(request.getServletContext().getContextPath()).append("/login").toString();
-//        response.sendRedirect(tempContextUrl);
-//        return false;
+        HttpSession session = request.getSession();
+        Object ob = session.getAttribute("user");
+        if (ob != null) {
+//            如果已经登陆就不拦截
+            return true;
+        }
+        Log.debug("LoginInterceptor: " + request.getRequestURI());
+        session.setAttribute("preurl", request.getRequestURI());
+        StringBuffer url = request.getRequestURL();
+        //将url转到login
+        String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append(request.getServletContext().getContextPath()).append("/login").toString();
+        response.sendRedirect(tempContextUrl);
+        return false;
     }
 
     @Override

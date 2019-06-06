@@ -29,11 +29,23 @@ public class UserService {
         return userMapper.select(pojo);
     }
 
+    public User selectOne(User pojo){
+        List<User> select = userMapper.select(pojo);
+        return select == null || select.size() == 0 ? null : select.get(0);
+    }
+
     public List<User> selectWithLimit(User pojo, int index, int size){
         return userMapper.selectWithLimit(pojo, index, size);
     }
 
     public int update(User pojo){
+        return userMapper.update(pojo);
+    }
+
+    public int updatePassword(String account, String password){
+        User pojo = new User();
+        pojo.setAccount(account);
+        pojo.setPass_word(password);
         return userMapper.update(pojo);
     }
 

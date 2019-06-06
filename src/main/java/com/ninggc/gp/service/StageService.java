@@ -29,6 +29,11 @@ public class StageService {
         return stageMapper.select(pojo);
     }
 
+    public Stage selectOne(Stage pojo){
+        List<Stage> select = stageMapper.select(pojo);
+        return select == null || select.size() == 0 ? null : select.get(0);
+    }
+
     public int update(Stage pojo){
         return stageMapper.update(pojo);
     }

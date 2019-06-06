@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -53,22 +55,25 @@ public class MainApplication implements CommandLineRunner, WebMvcConfigurer {
 //		return new ModelAndView("/idx.html");
 //	}
 	@GetMapping("/")
-	public String home(@SessionAttribute User user) {
+	public ModelAndView home(@SessionAttribute User user) {
+		ModelAndView modelAndView = new ModelAndView();
 		if (user == null) {
-			return "login";
+			modelAndView.setViewName("login");
+		} else {
+			modelAndView.setViewName("index");
 		}
 
-		return "/page/index/index.html";
+		return modelAndView;
 	}
 
-	@GetMapping("/idx.html")
-	public String idx(@SessionAttribute User user) {
-		if (user == null) {
-			return "login";
-		}
-
-		return "/page/index/index.html";
-	}
+//	@GetMapping("/idx.html")
+//	public String idx(@SessionAttribute User user) {
+//		if (user == null) {
+//			return "login";
+//		}
+//
+//		return "page/index/index.html";
+//	}
 //
 //	@GetMapping("/index.html")
 //	public String index() {
@@ -85,7 +90,7 @@ public class MainApplication implements CommandLineRunner, WebMvcConfigurer {
 //	@RequestMapping("/test")
 //	public String test(ModelMap model) {
 //		model.addAttribute("key", "auto_another_deploy");
-//		return "test.html";
+//		return "demo.html";
 //	}
 
 }
