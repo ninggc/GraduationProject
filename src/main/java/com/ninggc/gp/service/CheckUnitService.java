@@ -1,5 +1,6 @@
 package com.ninggc.gp.service;
 
+import com.ninggc.gp.data.Role;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -45,4 +46,7 @@ public class CheckUnitService {
         return checkUnitMapper.update(pojo);
     }
 
+    public int bandRole(Role pojo) {
+        return checkUnitMapper.band(pojo);
+    }
 }

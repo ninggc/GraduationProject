@@ -235,4 +235,18 @@ public class UserController extends IController {
 
         return layuiResult.format();
     }
+
+    @ResponseBody
+    @RequestMapping("/action/addition")
+    public String addition(@SessionAttribute User user) {
+        LayuiResult<String> layuiResult = operateDate(new OperateHandler<String>() {
+            @Override
+            public String onOperate() throws IOException {
+                return user.getAddition();
+            }
+        });
+
+        return layuiResult.format();
+    }
+
 }

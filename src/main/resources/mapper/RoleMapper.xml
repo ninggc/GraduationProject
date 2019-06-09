@@ -90,12 +90,12 @@
     <select id="selectWithUser" resultMap="AllColumnMap">
         SELECT <include refid="all_column"/>
         FROM role, role_has_user
-        where role.id = role_has_user.role_id and user_account = #{account}
+        where role.id = role_has_user.unit_id and user_account = #{account}
         LIMIT 1000
     </select>
 
 <!--         FROM role r, (role_has_check_unit rhu inner join check_unit c on rhu.check_unit_id = c.id and c.process_id = #{process_id})-->
-<!--         where r.id = rhu.role_id;-->
+<!--         where r.id = rhu.unit_id;-->
     <!--auto generated Code-->
     <select id="selectWithProcess" resultMap="AllColumnMap">
         SELECT <include refid="all_column"/>

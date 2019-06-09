@@ -1,5 +1,33 @@
 const url = 'http://localhost:8080/';
 
+function initCheck() {
+    checkAddition();
+}
+
+function checkAddition() {
+    let addition = '';
+// $('#index').remove();
+    $.post(url+'user/action/addition', {}, function (result) {
+        let json = jQuery.parseJSON(result);
+        addition = json.data;
+
+        if (addition === 'student') {
+            // $('#personal').remove();
+            // $('#progress').remove();
+            $('#create').remove();
+            $('#notify').remove();
+            $('#manage').remove();
+            // $('#personal_info').remove();
+            // $('#personal_history').remove();
+            $('#personal_manage').remove();
+        } else if (addition === 'teacher') {
+            $('#manage').remove();
+            $('#personal_manage').remove();
+        }
+    });
+
+}
+
 function $layui_post(full_url, map, success, after) {
     $.post(full_url, map, function (result) {
         de_log_send(JSON.stringify(map));

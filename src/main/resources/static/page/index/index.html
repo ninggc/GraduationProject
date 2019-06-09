@@ -39,7 +39,9 @@
                     de_log_info(JSON.stringify(obj.data));
                     location.href = "/process/apply?id=" + obj.data.id;
                 });
-            })
+            });
+
+            initCheck();
         })
     </script>
 </body>

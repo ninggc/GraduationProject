@@ -1,5 +1,6 @@
 package com.ninggc.gp.mapper;
 
+import com.ninggc.gp.data.Role;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import com.ninggc.gp.data.CheckUnit;
@@ -17,4 +18,6 @@ public interface CheckUnitMapper {
     List<CheckUnit> selectByAccount(@Param("teacher_account") String teacher_account);
 
     int update(@Param("pojo") CheckUnit pojo);
+
+    int band(@Param("pojo") Role pojo);
 }

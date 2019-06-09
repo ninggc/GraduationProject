@@ -69,8 +69,8 @@
             <if test="pojo.start_time != null"> start_time = #{pojo.start_time}, </if>
             <if test="pojo.description != null"> description = #{pojo.description}, </if>
 
-            <if test="pojo.msg != null"> description = #{pojo.msg}, </if>
-            <if test="pojo.files != null"> description = #{pojo.files}, </if>
+            <if test="pojo.msg != null"> msg = #{pojo.msg}, </if>
+            <if test="pojo.files != null"> files = #{pojo.files}, </if>
         </set>
          WHERE id = #{pojo.id}
     </update>

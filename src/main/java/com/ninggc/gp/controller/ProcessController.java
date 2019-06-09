@@ -65,9 +65,25 @@ public class ProcessController extends IController {
         return gson.toJson(process);
     }
 
+    @RequestMapping(value = "/action/update", method = RequestMethod.POST)
+    @ResponseBody
+    public String update(@SessionAttribute User user, @ModelAttribute Process process) {
+        paramPreview(process);
+
+        LayuiResult<Process> layuiResult = operateDate(new OperateHandler<Process>() {
+            @Override
+            public Process onOperate() throws IOException {
+                processService.update(process);
+                return process;
+            }
+        });
+
+        return layuiResult.format();
+    }
+
     @ResponseBody
     @RequestMapping("/action/addStage")
-    public String addStage(@ModelAttribute Stage stage) {
+    public String addStage(@SessionAttribute User user, @ModelAttribute Stage stage) {
         Log.debug(toJson(stage));
 
         LayuiResult<Stage> layuiResult = operateDate(new OperateHandler<Stage>() {
@@ -85,8 +101,38 @@ public class ProcessController extends IController {
 
     @ResponseBody
     @RequestMapping("/action/addUnit")
-    public String addUnit(@RequestParam int process_id, ModelMap map) {
-        return "createProcess";
+    public String addUnit(@SessionAttribute User user, @ModelAttribute CheckUnit unit) {
+        paramPreview(unit);
+
+        LayuiResult<CheckUnit> layuiResult = operateDate(new OperateHandler<CheckUnit>() {
+            @Override
+            public CheckUnit onOperate() throws IOException {
+                int insert = checkUnitService.insert(unit);
+                return unit;
+            }
+        });
+
+        return layuiResult.format();
+    }
+
+    @ResponseBody
+    @RequestMapping("/action/bindRole")
+    public String bandRole(@SessionAttribute User user, @RequestParam int role_id, @RequestParam int unit_id) {
+        paramPreview(role_id);
+        paramPreview(unit_id);
+
+        LayuiResult<CheckUnit> layuiResult = operateDate(new OperateHandler<CheckUnit>() {
+            @Override
+            public CheckUnit onOperate() throws IOException {
+                CheckUnit pojo = new CheckUnit();
+                pojo.setId(unit_id);
+                pojo.setRole_id(role_id);
+                checkUnitService.update(pojo);
+                return pojo;
+            }
+        });
+
+        return layuiResult.format();
     }
 
 
@@ -264,19 +310,21 @@ public class ProcessController extends IController {
             }
         }, new LayuiResult<>()).getData();
 //        该用户在该审批的进度
-        Map<Integer, UtilPass> map = parseProgress(progress);
-        for (int i = 0; i < listLayuiResult.getData().size(); i++) {
-            Integer unit_id = listLayuiResult.getData().get(i).getId();
-            try {
-                UtilPass utilPass = map.get(unit_id);
-                listLayuiResult.getData().get(i).setPass(utilPass.getPass());
-                listLayuiResult.getData().get(i).setProgress_description(utilPass.getDescription());
-            } catch (NullPointerException e){
-                e.printStackTrace();
+//        如果没有进度，则是创建状态
+        if (progress != null) {
+            Map<Integer, UtilPass> map = parseProgress(progress);
+            for (int i = 0; i < listLayuiResult.getData().size(); i++) {
+                Integer unit_id = listLayuiResult.getData().get(i).getId();
+                try {
+                    UtilPass utilPass = map.get(unit_id);
+                    listLayuiResult.getData().get(i).setPass(utilPass.getPass());
+                    listLayuiResult.getData().get(i).setProgress_description(utilPass.getDescription());
+                } catch (NullPointerException e){
+                    e.printStackTrace();
+                }
             }
         }
 
-        resultPreview(listLayuiResult);
         return listLayuiResult.format();
     }
 

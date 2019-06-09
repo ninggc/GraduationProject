@@ -38,7 +38,8 @@ public class CheckUnitMapperTest implements ITest {
     public void select() throws IOException {
         SqlSession session = Factory.openSession();
         CheckUnit pojo = new CheckUnit();
-        pojo.setProcess_id(1);
+//        pojo.setProcess_id(1);
+        pojo.setStage_id(41);
         List<CheckUnit> list = new CheckUnitService(session).select(pojo);
 
         for (CheckUnit unit :

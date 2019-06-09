@@ -47,6 +47,10 @@ public class UserMapperTest {
     }
 
     @Test
+    public void select() throws IOException {
+    }
+
+    @Test
     public void selectUserWithLimit() throws IOException {
         try (SqlSession session = Factory.openSession()) {
             service = new UserService(session);

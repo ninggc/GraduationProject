@@ -13,10 +13,12 @@
 <!--auto generated Code-->
     <sql id="all_column">
         id,
-        process_id,
-        stage_id,
-        name,
-        description
+        check_unit.process_id,
+        check_unit.stage_id,
+        check_unit.name,
+        check_unit.description
+
+        , check_unit.role_id
     </sql>
 
 <!--auto generated Code-->
@@ -28,6 +30,8 @@
             <if test="pojo.stage_id != null"> stage_id, </if>
             <if test="pojo.name != null"> name, </if>
             <if test="pojo.description != null"> description, </if>
+
+            <if test="pojo.role_id != null"> role_id, </if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -36,6 +40,8 @@
             <if test="pojo.stage_id != null"> #{pojo.stage_id}, </if>
             <if test="pojo.name != null"> #{pojo.name}, </if>
             <if test="pojo.description != null"> #{pojo.description}, </if>
+
+            <if test="pojo.role_id != null"> #{pojo.role_id}, </if>
         </trim>
     </insert>
 
@@ -51,6 +57,8 @@
             #{pojo.stage_id},
             #{pojo.name},
             #{pojo.description}
+
+            #{pojo.role_id}
             )
         </foreach>
     </insert>
@@ -63,23 +71,42 @@
             <if test="pojo.process_id != null"> process_id = #{pojo.process_id}, </if>
             <if test="pojo.stage_id != null"> stage_id = #{pojo.stage_id}, </if>
             <if test="pojo.name != null"> name = #{pojo.name}, </if>
-            <if test="pojo.description != null"> description = #{pojo.description} </if>
+            <if test="pojo.description != null"> description = #{pojo.description}, </if>
+
+            <if test="pojo.role_id != null"> role_id = #{pojo.role_id } </if>
         </set>
          WHERE id = #{pojo.id}
     </update>
 
-<!--auto generated Code-->
+    <!--<insert id="band">-->
+        <!--INSERT into role_has_check_unit-->
+            <!--(role_id, check_unit_id)-->
+        <!--VALUES (#{pojo.id}, #{pojo.unit_id})-->
+    <!--</insert>-->
+
+    <!--auto generated Code-->
     <select id="select" resultMap="AllColumnMap">
-        SELECT <include refid="all_column"/>
-        FROM check_unit
+        SELECT
+        c.id,
+        c.process_id,
+        c.stage_id,
+        c.name,
+        c.description,
+        c.role_id ,
+        r.name as roleName
+        FROM check_unit c, role r
         <where>
-            <if test="pojo.id != null"> AND id = #{pojo.id} </if>
-            <if test="pojo.process_id != null"> AND process_id = #{pojo.process_id} </if>
-            <if test="pojo.stage_id != null"> AND stage_id = #{pojo.stage_id} </if>
-            <if test="pojo.name != null"> AND name = #{pojo.name} </if>
-            <if test="pojo.description != null"> AND description = #{pojo.description} </if>
+            <if test="pojo.id != null"> AND c.id = #{pojo.id} </if>
+            <if test="pojo.process_id != null"> AND c.process_id = #{pojo.process_id} </if>
+            <if test="pojo.stage_id != null"> AND c.stage_id = #{pojo.stage_id} </if>
+            <if test="pojo.name != null"> AND c.name = #{pojo.name} </if>
+            <if test="pojo.description != null"> AND c.description = #{pojo.description} </if>
+
+            <if test="pojo.role_id != null"> AND c.role_id = #{pojo.role_id } </if>
+
+            AND c.role_id = r.id
         </where>
-        LIMIT 1000 
+        LIMIT 1000
     </select>
 
     <select id="selectByAccount" resultMap="AllColumnMap">

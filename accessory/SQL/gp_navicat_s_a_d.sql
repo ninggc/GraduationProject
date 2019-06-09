@@ -126,13 +126,13 @@ INSERT INTO `role` VALUES ('7', 'manager', 'update');
 -- ----------------------------
 DROP TABLE IF EXISTS `role_has_check_unit`;
 CREATE TABLE `role_has_check_unit` (
-  `role_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
   `check_unit_id` int(11) NOT NULL,
-  PRIMARY KEY (`role_id`,`check_unit_id`),
+  PRIMARY KEY (`unit_id`,`check_unit_id`),
   KEY `fk_role_has_check_unit_check_unit1_idx` (`check_unit_id`),
-  KEY `fk_role_has_check_unit_role1_idx` (`role_id`),
+  KEY `fk_role_has_check_unit_role1_idx` (`unit_id`),
   CONSTRAINT `fk_role_has_check_unit_check_unit1` FOREIGN KEY (`check_unit_id`) REFERENCES `check_unit` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_role_has_check_unit_role1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_role_has_check_unit_role1` FOREIGN KEY (`unit_id`) REFERENCES `role` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -144,12 +144,12 @@ CREATE TABLE `role_has_check_unit` (
 -- ----------------------------
 DROP TABLE IF EXISTS `role_has_user`;
 CREATE TABLE `role_has_user` (
-  `role_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
   `user_account` varchar(20) NOT NULL,
-  PRIMARY KEY (`role_id`,`user_account`),
+  PRIMARY KEY (`unit_id`,`user_account`),
   KEY `fk_role_has_user_user1_idx` (`user_account`),
-  KEY `fk_role_has_user_role1_idx` (`role_id`),
-  CONSTRAINT `fk_role_has_user_role1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  KEY `fk_role_has_user_role1_idx` (`unit_id`),
+  CONSTRAINT `fk_role_has_user_role1` FOREIGN KEY (`unit_id`) REFERENCES `role` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_role_has_user_user1` FOREIGN KEY (`user_account`) REFERENCES `user` (`account`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

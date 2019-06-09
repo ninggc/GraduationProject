@@ -17,6 +17,8 @@
                 layui.use('element', function () {
                     let element = layui.element;
                 });
+
+                checkAddition();
             });
             $("#footer").load("../template/footer.html");
         })
@@ -40,6 +42,21 @@
 <div id="footer"></div>
 
 <script>
+    function checkAddition() {
+        let addition = 'student';
+
+        if (addition === 'student') {
+            // $('#index').remove();
+            // $('#progress').remove();
+            $('#create').remove();
+            $('#notify').remove();
+            $('#manage').remove();
+            // $('#personal').remove();
+            // $('#personal_info').remove();
+            // $('#personal_history').remove();
+            $('#personal_manage').remove();
+        }
+    }
 </script>
 </body>
 </html>

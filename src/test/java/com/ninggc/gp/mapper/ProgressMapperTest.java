@@ -139,42 +139,60 @@ public class ProgressMapperTest extends IController implements ITest {
 
     @Test
     public void selectByTeacher() throws IOException {
-        SqlSession session = Factory.openSession();
+        LayuiResult<List<Map<String, Object>>> layuiResult = operateDate(new OperateHandler<List<Map<String, Object>>>() {
+            @Override
+            public List<Map<String, Object>> onOperate() {
+                List<Map<String, Object>> selectByTeacher = progressService.selectByTeacher("15031301");
 
-        initService(session);
-
-        List<Map<String, Object>> selectByTeacher = progressService.selectByTeacher("15031301");
-
-        List<Map<String, Object>> list = new ArrayList<>();
-        Type type = new TypeToken<Map<Integer, UtilPass>>() {}.getType();
-        // TODO: 2019/6/4 非常耗时
+                List<Map<String, Object>> list = new ArrayList<>();
+                Type type = new TypeToken<Map<Integer, UtilPass>>() {}.getType();
+                // TODO: 2019/6/4 非常耗时
 //                如果需要审核的unit的前一个stage未完成，则过滤
 //                根据table progress中的current_sequence确定当前的stage
-        for (Map<String, Object> map : selectByTeacher) {
-            int currentSequence = (int) map.get("current_sequence");
-            int stageSequence = (int) map.get("stage_sequence");
-            if (stageSequence == currentSequence) {
-                list.add(map);
-            } else if (stageSequence < currentSequence) {
+                for (Map<String, Object> map : selectByTeacher) {
+
+//                    如果当前审批已经通过（pass=1）则跳过，（pass=0 || pass=2）则加入
+                    Progress progress = new Progress();
+                    progress.setData((String) map.get("data"));
+                    int unit_id = (int) map.get("unit_id");
+                    UtilPass utilPass = progress.parseFromData().get(unit_id);
+                    Byte pass = utilPass.getPass();
+                    if (pass == 1) {
+                        continue;
+                    } else if (pass == 2)  {
+                        map.put("unit_pass_description", "审核不通过：" + utilPass.getDescription());
+                    } else if (pass == 0) {
+                        map.put("unit_pass_description", "未审核：");
+                    }
+
+                    int currentSequence = (int) map.get("current_sequence");
+                    int stageSequence = (int) map.get("stage_sequence");
+                    if (stageSequence == currentSequence) {
+                        list.add(map);
+                    } else if (stageSequence < currentSequence) {
 //                        throw new RuntimeException("遗漏之前的阶段");
-            } else if (stageSequence > currentSequence) {
+                    } else if (stageSequence > currentSequence) {
 //                        throw new RuntimeException("未进行到该阶段");
+                    }
+                }
+
+                for (Map m :
+                        selectByTeacher) {
+                    System.out.println(gson.toJson(m));
+                }
+
+                System.out.println("---下面是筛选---");
+
+                for (Map m :
+                        list) {
+                    System.out.println(gson.toJson(m));
+                }
+
+                return list;
             }
-        }
+        });
 
-        for (Map m :
-                selectByTeacher) {
-            System.out.println(gson.toJson(m));
-        }
 
-        System.out.println("---下面是筛选---");
-
-        for (Map m :
-                list) {
-            System.out.println(gson.toJson(m));
-        }
-
-        session.close();
     }
 
     @Override

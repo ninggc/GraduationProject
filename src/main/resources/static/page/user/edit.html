@@ -18,6 +18,8 @@
                 layui.use('element', function () {
                     let element = layui.element;
                 });
+
+                initCheck();
             });
             $("#footer").load("../template/footer.html");
 
@@ -73,7 +75,6 @@
                 </div>
             </fieldset>
 
-
             <fieldset class="layui-elem-field">
                 <legend>修改密码</legend>
                 <div class="layui-field-box">
@@ -103,10 +104,23 @@
                 </div>
             </fieldset>
 
+            <fieldset class="layui-elem-field">
+                <legend>退出登陆</legend>
+                <div class="layui-field-box">
+                    <div class="layui-row">
+                        <div class="layui-col-space10">
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" onclick="logout()">退出</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
         </div>
     </div>
     <div class="layui-col-sm1 layui-col-md1"></div>
-</div>
 </div>
 
 <div id="footer"></div>
@@ -139,7 +153,12 @@
                 }
             })
         }
+    }
 
+    function logout() {
+        $.post(url + 'logout', {}, function (result) {
+            window.location.href = url;
+        })
     }
 </script>
 </body>

@@ -3,6 +3,7 @@ package com.ninggc.gp.controller;
 import com.ninggc.gp.data.User;
 import com.ninggc.gp.mybatis.Factory;
 import com.ninggc.gp.service.UserService;
+import com.ninggc.gp.tool.LayuiResult;
 import com.ninggc.gp.util.Log;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Controller;
@@ -64,6 +65,21 @@ public class LoginController extends IController {
             Log.info("没有匹配项");
             return "failed";
         }
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/logout")
+    public String logout(@SessionAttribute User user, HttpSession httpSession) {
+        LayuiResult<String> layuiResult = operateDate(new OperateHandler<String>() {
+            @Override
+            public String onOperate() throws IOException {
+                httpSession.setAttribute("user", null);
+                return "logout";
+            }
+        });
+
+        return layuiResult.format();
     }
 
     @ResponseBody

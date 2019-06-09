@@ -29,12 +29,14 @@
                 layui.use('element', function () {
                     let element = layui.element;
                 });
+
+                initCheck();
             });
             $("#footer").load("../template/footer.html");
 
-            if (process === '') {
-                process = {"id": 100};
-            }
+            // if (process === '') {
+            //     process = { "id": 100 };
+            // }
         })
     </script>
 </head>
@@ -43,11 +45,20 @@
 
     <div id="header"></div>
 
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="table_add_unit">新建单元</button>
+            <!--<button class="layui-btn layui-btn-sm" lay-event="addNewUser">添加新用户</button>-->
+        </div>
+    </script>
+
     <!-- Main Content -->
     <div class="layui-row layui-container">
         <div class="layui-container">
             <div class="layui-row">
-                <div class="layui-col-sm4 layui-col-md4">
+                <div class="layui-col-sm3 layui-col-md3">
+                </div>
+                <div class="layui-col-sm8 layui-col-md8 layui-col-space1">
                     <div id="edit_process" class="layui-row layui-form">
                         <fieldset class="layui-elem-field">
                             <legend>审批信息</legend>
@@ -62,33 +73,64 @@
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">审批描述: </label>
                                         <div class="layui-input-block">
-                                            <input id="process_description" type="text" autocomplete="off" class="layui-input">
+                                            <input id="process_description" type="text" autocomplete="off"
+                                                class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">直接信息: </label>
+                                        <div class="layui-input-block">
+                                            <input id="process_msg" type="text" placeholder="请输入需要直接填写的信息，用空格隔开"
+                                                autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">所需文件名: </label>
+                                        <div class="layui-input-block">
+                                            <input id="process_files" type="text" placeholder="请输入需要上传的文件名，用空格隔开"
+                                                autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
                                         <div class="layui-input-block">
-                                            <button class="layui-btn">更新审批信息</button>
+                                            <button class="layui-btn" onclick="action_create()">创建审批</button>
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
                                         <div class="layui-input-block">
-                                            <button class="layui-btn">完成所有信息并保存</button>
+                                            <button class="layui-btn" onclick="update_process()">更新审批信息</button>
                                         </div>
                                     </div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button class="layui-btn" onclick="finish_all()">完成所有信息并保存</button>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button class="layui-btn" onclick="create_role()">创建角色</button>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button class="layui-btn" onclick="addStage()">添加阶段</button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </fieldset>
                     </div>
-                </div>
-                <div class="layui-col-sm7 layui-col-md7 layui-col-space3">
+
                     <!-- 一个layui样式的时间线，用于展示process的各个stage -->
                     <div class="layui-row">
-                        <div class="layui-hide">
-                            <ul>
-                                <li id="li_timeline" class="layui-timeline-item">
+                        <div>
+                            <ul id="ul_timeline">
+                                <li id="sample_li_timeline" class="layui-timeline-item"
+                                    onclick="click_li_timeline(this.id)">
                                     <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                                     <div class="layui-timeline-content layui-text">
-                                        <h3 id="stage_name" class="layui-timeline-title">8月18日</h3>
+                                        <h3 id="stage_name" class="layui-timeline-title">阶段开始</h3>
                                         <div class="layui-row">
                                             <div class="layui-col-md-offset2">
                                                 <table id="list_stage" lay-skin="line" lay-filter="stage"></table>
@@ -98,33 +140,13 @@
                                 </li>
                             </ul>
                         </div>
-                        <div id="div_timeline">
+                        <!-- <div id="div_timeline">
                             <ul id="ul_timeline" id="ul-timeline" class="layui-timeline">
                             </ul> `
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="layui-col-sm1 layui-col-md1">
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" onclick="create_role()">创建角色</button>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" onclick="bind_role()">绑定角色</button>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" onclick="action_create()">创建审批</button>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" onclick="addStage()">添加阶段</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -183,45 +205,47 @@
 
             <div id="pop_sample_stage" class="layui-row layui-form layui-hide">
                 <!-- <fieldset class="layui-elem-field"> -->
-                    <!-- <legend>添加阶段</legend> -->
-                    <div class="layui-field-box">
-                        <div class="layui-row">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">名称</label>
-                                <div class="layui-input-block">
-                                    <input id="stage_name" type="text" autocomplete="off" class="layui-input" style="width: 70%">
-                                </div>
+                <!-- <legend>添加阶段</legend> -->
+                <div class="layui-field-box">
+                    <div class="layui-row">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">名称</label>
+                            <div class="layui-input-block">
+                                <input id="input_stage_name" type="text" autocomplete="off" class="layui-input"
+                                    style="width: 70%">
                             </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">描述</label>
-                                <div class="layui-input-block">
-                                    <input id="stage_description" type="text" autocomplete="off" class="layui-input" style="width: 70%">
-                                </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">描述</label>
+                            <div class="layui-input-block">
+                                <input id="input_stage_description" type="text" autocomplete="off" class="layui-input"
+                                    style="width: 70%">
                             </div>
                         </div>
                     </div>
+                </div>
                 <!-- </fieldset> -->
             </div>
 
             <div id="sample_unit" class="layui-row layui-form layui-hide">
                 <!-- <fieldset class="layui-elem-field"> -->
-                    <!-- <legend>创建单元</legend> -->
-                    <div class="layui-field-box">
-                        <div class="layui-row">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">单元名称</label>
-                                <div class="layui-input-block">
-                                    <input id="unit_name" type="text" autocomplete="off" class="layui-input" disabled>
-                                </div>
+                <!-- <legend>创建单元</legend> -->
+                <div class="layui-field-box">
+                    <div class="layui-row">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">单元名称</label>
+                            <div class="layui-input-block">
+                                <input id="input_unit_name" type="text" autocomplete="off" class="layui-input">
                             </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">单元描述</label>
-                                <div class="layui-input-block">
-                                    <input id="unit_description" type="text" autocomplete="off" class="layui-input" disabled>
-                                </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">单元描述</label>
+                            <div class="layui-input-block">
+                                <input id="input_unit_description" type="text" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
+                </div>
                 <!-- </fieldset> -->
             </div>
         </div>
@@ -233,7 +257,7 @@
         layui.use(['layer', 'form']);
 
         // 初始化每个时间线节点的点击事件
-        init_timeline();
+        // init_timeline();
 
         function create_role() {
             let pop_create_role = $("#pop_create_role");
@@ -308,8 +332,9 @@
 
                                 //手动设置role_name控件的点击事件
                                 $("#item_role_name").find("dd").click(function () {
+                                    let role_id = $(this).attr('id');
                                     let value = $(this).text();
-                                    $("#item_role_name").find("input").attr('id', element.id);
+                                    $("#item_role_name").find("input").attr('id', role_id);
                                     $("#item_role_name").find("input").val(value);
                                 })
                             });
@@ -324,19 +349,30 @@
             }
         }
 
-        function bind_role() {
+        function bind_role(unit_id) {
             let pop_band_role = $("#pop_band_role");
             pop_band_role.removeClass("layui-hide");
+            // let unit_id = '';
+            let role_name = '';
 
             layer.open({
                 type: 1
                 , title: '请选择角色'
                 , content: pop_band_role
                 , btn: ['绑定', '取消']
-                , yes: function () {
-                    let role_id = $("#item_role_name").find("input").attr("id");
-                    let role_name = $("#item_role_name").find("input").val();
+                , yes: function (index) {
+                    role_id = $("#item_role_name").find("input").attr("id");
+                    role_name = $("#item_role_name").find("input").val();
                     de_log_info(role_id + role_name);
+
+                    $layui_post(url+'process/action/bindRole', {'role_id': role_id, 'unit_id': unit_id}, function (result) {
+                        layer.open({
+                            title: '结果'
+                            , content: '绑定成功'
+                        });
+                    }, function () {
+                        layer.close(index);
+                    });
                 }, btn2: function () {
                     layer.msg('取消');
                 }
@@ -346,6 +382,66 @@
             })
         }
 
+        function click_li_timeline(timeline_id) {
+            let id = timeline_id;
+
+            if (id === "sample_li_timeline") {
+                layer.msg('这是开始阶段');
+                return;
+            }
+            // alert(id);
+            layui.use('table', function () {
+                let table = layui.table;
+
+                // unit list
+                table.render({
+                    elem: '#list_unit' + id
+                    , url: url + 'process/layui/list/unit' //数据接口
+                    , where: { "stage_id": id, "process_id": process_id }
+                    , toolbar: '#toolbarDemo'
+                    // , page: true //开启分页
+                    , cols: [[ //表头
+                        { field: 'id', title: 'id', width: 80, sort: true, hide: true }
+                        , { field: 'name', title: '名称', width: 80, sort: true }
+                        // , { field: 'pass', title: '审核状态', width: 160 }
+                        , { field: 'description', title: '描述' }
+                        , { field: 'roleName', title: '绑定角色' }
+                    ]]
+                });
+
+                table.on('row(unit)', function (obj) {
+                    de_log_info(JSON.stringify(obj.data));
+
+                    bind_role(obj.data.id);
+                });
+
+                table.on('toolbar(unit)', function (obj) {
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    let data = obj.data;
+                    switch (obj.event) {
+                        case 'table_add_unit':
+                            //下面参数为table的id，即stage的id
+                            // let stage_id = Object.keys(table.cache)[0];
+                            let stage_id = obj.config.id;
+                            stage_id = stage_id.substr(stage_id.length - 2, 2);
+                            layer.msg(stage_id);
+                            add_unit(stage_id);
+                            break;
+                    }
+                    //     let data = obj.data;
+                    // if (data.pass === 0) {
+                    //     layer.msg('未审核');
+                    // } else if (data.pass === 1) {
+                    //     layer.msg('审核通过');
+                    // } else if (data.pass === 2) {
+                    //     layer.open({
+                    //         title: ''
+                    //         , content: ''
+                    //     })
+                    // }
+                })
+            });
+        }
 
     </script>
 

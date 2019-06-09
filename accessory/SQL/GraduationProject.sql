@@ -111,13 +111,13 @@ ENGINE = InnoDB;
 -- Table `gp`.`role_has_user`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gp`.`role_has_user` (
-  `role_id` INT NOT NULL,
+  `unit_id` INT NOT NULL,
   `user_account` VARCHAR(20) NOT NULL,
-  PRIMARY KEY (`role_id`, `user_account`),
+  PRIMARY KEY (`unit_id`, `user_account`),
   INDEX `fk_role_has_user_user1_idx` (`user_account` ASC),
-  INDEX `fk_role_has_user_role1_idx` (`role_id` ASC),
+  INDEX `fk_role_has_user_role1_idx` (`unit_id` ASC),
   CONSTRAINT `fk_role_has_user_role1`
-    FOREIGN KEY (`role_id`)
+    FOREIGN KEY (`unit_id`)
     REFERENCES `gp`.`role` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -133,13 +133,13 @@ ENGINE = InnoDB;
 -- Table `gp`.`role_has_check_unit`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gp`.`role_has_check_unit` (
-  `role_id` INT NOT NULL,
+  `unit_id` INT NOT NULL,
   `check_unit_id` INT NOT NULL,
-  PRIMARY KEY (`role_id`, `check_unit_id`),
+  PRIMARY KEY (`unit_id`, `check_unit_id`),
   INDEX `fk_role_has_check_unit_check_unit1_idx` (`check_unit_id` ASC),
-  INDEX `fk_role_has_check_unit_role1_idx` (`role_id` ASC),
+  INDEX `fk_role_has_check_unit_role1_idx` (`unit_id` ASC),
   CONSTRAINT `fk_role_has_check_unit_role1`
-    FOREIGN KEY (`role_id`)
+    FOREIGN KEY (`unit_id`)
     REFERENCES `gp`.`role` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,

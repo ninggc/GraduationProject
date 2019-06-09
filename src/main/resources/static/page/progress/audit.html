@@ -90,6 +90,8 @@
     $("#header").load("../template/header.html", function () {
         $("#notify").addClass("layui-this");
 
+        initCheck();
+
         //注意：导航 依赖 element 模块，否则无法进行功能性操作
         layui.use('element', function () {
             var element = layui.element;
@@ -107,11 +109,11 @@
                     {field: 'process_id', title: 'process id', hide: true}
                     , {field: 'stage_id', title: 'stage id', hide: true}
                     , {field: 'unit_id', title: 'unit id', hide: true}
+                    , {field: 'unit_id', title: '教师角色', width: 160}
                     , {field: 'user_name', title: '学生姓名', width: 160}
-                    , {field: 'role_id', title: '教师角色', width: 160}
+                    , {field: 'user_account', title: '学生学号', width: 160}
                     , {field: 'process_name', title: '审批名称', width: 160}
                     , {field: 'unit_name', title: '单元名称', width: 160}
-                    , {field: 'user_account', title: '学生学号', width: 160}
                     , {field: 'unit_description', title: '单元描述'}
                 ]]
             });

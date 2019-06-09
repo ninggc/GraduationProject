@@ -7,7 +7,11 @@ public class CheckUnit extends IEntity {
     private String name;
     private Byte pass;
     private String description;
+
     private String progress_description;
+    private String roleName;
+
+    private Integer role_id;
 
     public Integer getId() {
         return id;
@@ -65,5 +69,21 @@ public class CheckUnit extends IEntity {
 
     public void setProgress_description(String progress_description) {
         this.progress_description = progress_description;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Integer getRole_id() {
+        return role_id;
+    }
+
+    public void setRole_id(Integer role_id) {
+        this.role_id = role_id;
     }
 }
