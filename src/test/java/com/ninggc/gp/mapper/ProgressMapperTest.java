@@ -58,53 +58,53 @@ public class ProgressMapperTest extends IController implements ITest {
 
     @Test
     public void update() throws IOException {
-        UtilPass utilPass = new UtilPass();
-        utilPass.setProcess_id(1);
-        utilPass.setStage_id(1);
-        utilPass.setUnit_id(1);
-        utilPass.setPass((byte) 1);
-        utilPass.setDescription("测试描述");
-
-
-        LayuiResult<Integer> layuiResult = operateDate(new IController.OperateHandler<Integer>() {
-            @Override
-            public Integer onOperate() throws IOException {
-//                从数据库获取进度
-                Progress progress = new Progress().setAccount("15031301");
-                progress.setProcess_id(utilPass.getProcess_id());
-                Progress selectOne = progressService.selectOne(progress);
-                Log.debug(gson.toJson(selectOne));
-
-//              将数据库中新增的unit添加到progress
-                Map<Integer, UtilPass> map = synchronize(selectOne);
-//              更新当前请求
-                map.replace(utilPass.getUnit_id(), utilPass);
-
-//                获取当前stage的sequence
-//                验证 如果当前sequence的unit全部通过审核，则将current_sequence的值加一
-                Stage stage = stageService.selectOne(new Stage().setId(utilPass.getStage_id()));
-                List<CheckUnit> checkUnits = checkUnitService.selectByStageId(utilPass.getStage_id());
-
-                int sequenceAddition = 1;
-                for (CheckUnit u : checkUnits) {
-//                    验证当前stage的所有unit是否全部通过审核
-                    Byte pass = map.get(u.getId()).getPass();
-                    if (!pass.equals(Constant.PASS_YES)) {
-                        sequenceAddition = 0;
-                    }
-                }
-                selectOne.sequenceIncrease(sequenceAddition);
-
-                String data = gson.toJson(map);
-                selectOne.setData(data.replace("\\", ""));
-
-
-//            写回到数据库
-                return progressService.update(selectOne);
-            }
-        });
-
-        layuiResult.format();
+//        UtilPass utilPass = new UtilPass();
+//        utilPass.setProcess_id(1);
+//        utilPass.setStage_id(1);
+//        utilPass.setUnit_id(1);
+//        utilPass.setPass((byte) 1);
+//        utilPass.setDescription("测试描述");
+//
+//
+//        LayuiResult<Integer> layuiResult = operateDate(new IController.OperateHandler<Integer>() {
+//            @Override
+//            public Integer onOperate() throws IOException {
+////                从数据库获取进度
+//                Progress progress = new Progress().setAccount("15031301");
+//                progress.setProcess_id(utilPass.getProcess_id());
+//                Progress selectOne = progressService.selectOne(progress);
+//                Log.debug(gson.toJson(selectOne));
+//
+////              将数据库中新增的unit添加到progress
+//                Map<Integer, UtilPass> map = synchronize(selectOne);
+////              更新当前请求
+//                map.replace(utilPass.getUnit_id(), utilPass);
+//
+////                获取当前stage的sequence
+////                验证 如果当前sequence的unit全部通过审核，则将current_sequence的值加一
+//                Stage stage = stageService.selectOne(new Stage().setId(utilPass.getStage_id()));
+//                List<CheckUnit> checkUnits = checkUnitService.selectByStageId(utilPass.getStage_id());
+//
+//                int sequenceAddition = 1;
+//                for (CheckUnit u : checkUnits) {
+////                    验证当前stage的所有unit是否全部通过审核
+//                    Byte pass = map.get(u.getId()).getPass();
+//                    if (!pass.equals(Constant.PASS_YES)) {
+//                        sequenceAddition = 0;
+//                    }
+//                }
+//                selectOne.sequenceIncrease(sequenceAddition);
+//
+//                String data = gson.toJson(map);
+//                selectOne.setData(data.replace("\\", ""));
+//
+//
+////            写回到数据库
+//                return progressService.update(selectOne);
+//            }
+//        });
+//
+//        layuiResult.format();
     }
 
     //            从数据库获取同步所有的unit id（未写回数据库）

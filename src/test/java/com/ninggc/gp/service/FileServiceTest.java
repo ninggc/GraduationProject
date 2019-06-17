@@ -13,18 +13,18 @@ public class FileServiceTest extends IController implements ITest {
 
     @Test
     public void insert() {
-        LayuiResult<File> layuiResult = operateDate(new OperateHandler<File>() {
-            @Override
-            public File onOperate() {
-                File pojo = new File();
-                pojo.setAccount("1503130115");
-                pojo.setProcess_id(1);
-                int insert = fileService.insert(pojo);
-                return pojo;
-            }
-        });
-
-        layuiResult.format();
+//        LayuiResult<File> layuiResult = operateDate(new OperateHandler<File>() {
+//            @Override
+//            public File onOperate() {
+//                File pojo = new File();
+//                pojo.setAccount("1503130115");
+//                pojo.setProcess_id(1);
+//                int insert = fileService.insert(pojo);
+//                return pojo;
+//            }
+//        });
+//
+//        layuiResult.format();
     }
 
     @Test

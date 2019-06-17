@@ -36,14 +36,14 @@ public class RoleMapperTest implements ITest {
 
     @Test
     public void insert() {
-        Role bean = MainApplicationTests.context.getBean(Role.class);
-        System.out.println(bean.toJson());
-        try (SqlSession session = factory.openSession()) {
-            roleService = new RoleService(session);
-            int i = roleService.insert(bean);
-            session.commit();
-            System.out.println(i);
-        }
+//        Role bean = MainApplicationTests.context.getBean(Role.class);
+//        System.out.println(bean.toJson());
+//        try (SqlSession session = factory.openSession()) {
+//            roleService = new RoleService(session);
+//            int i = roleService.insert(bean);
+//            session.commit();
+//            System.out.println(i);
+//        }
     }
 
     @Test
@@ -69,30 +69,30 @@ public class RoleMapperTest implements ITest {
 
     @Test
     public void update() {
-        Role bean = MainApplicationTests.context.getBean(Role.class);
-        bean.setDescription("update");
-        bean.setId(7);
-        System.out.println(bean.toJson());
-        try (SqlSession session = factory.openSession()) {
-            roleService = new RoleService(session);
-            int i = roleService.update(bean);
-            session.commit();
-            System.out.println(i);
-        }
+//        Role bean = MainApplicationTests.context.getBean(Role.class);
+//        bean.setDescription("update");
+//        bean.setId(7);
+//        System.out.println(bean.toJson());
+//        try (SqlSession session = factory.openSession()) {
+//            roleService = new RoleService(session);
+//            int i = roleService.update(bean);
+//            session.commit();
+//            System.out.println(i);
+//        }
     }
 
     @Test
     public void delete() {
-        Role bean = MainApplicationTests.context.getBean(Role.class);
-        bean.setDescription("update");
-        bean.setId(6);
-        System.out.println(bean.toJson());
-        try (SqlSession session = factory.openSession()) {
-            roleService = new RoleService(session);
-            int i = roleService.delete(bean.getId());
-            session.commit();
-            System.out.println(i);
-        }
+//        Role bean = MainApplicationTests.context.getBean(Role.class);
+//        bean.setDescription("update");
+//        bean.setId(6);
+//        System.out.println(bean.toJson());
+//        try (SqlSession session = factory.openSession()) {
+//            roleService = new RoleService(session);
+//            int i = roleService.delete(bean.getId());
+//            session.commit();
+//            System.out.println(i);
+//        }
     }
 
     @Override

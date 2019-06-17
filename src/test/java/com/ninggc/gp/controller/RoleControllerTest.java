@@ -4,6 +4,7 @@ import com.ninggc.gp.data.Role;
 import com.ninggc.gp.service.RoleService;
 import com.ninggc.gp.tool.LayuiResult;
 import org.apache.ibatis.session.SqlSession;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -31,6 +32,19 @@ public class RoleControllerTest extends IController {
 
     @Test
     public void select() {
+        LayuiResult<List<Role>> listLayuiResult = operateDate(new OperateHandler<List<Role>>() {
+            @Override
+            public List<Role> onOperate() throws IOException {
+                return roleService.select(new Role());
+            }
+        });
+        listLayuiResult.format();
+        for (Role r : listLayuiResult.getData()) {
+            assertNotNull(r);
+        }
+//        Assert.assertEquals(CODE_SUCCESS, listLayuiResult.getCode());
+//        Assert.assertNull(listLayuiResult.getMsg());
+//        Assert.assertEquals(4, listLayuiResult.getData().size());
     }
 
     @Test

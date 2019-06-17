@@ -37,14 +37,14 @@ public class MainApplicationTests {
 		User user = context.getBean("ning", User.class);
 		System.out.println(user.toJson());
 	}
-
-	@Test
-	public void showBeans() {
-		String[] names = context.getBeanDefinitionNames();
-		for (String s :
-				names) {
-			System.out.println(s);
-		}
-	}
+//
+//	@Test
+//	public void showBeans() {
+//		String[] names = context.getBeanDefinitionNames();
+//		for (String s :
+//				names) {
+//			System.out.println(s);
+//		}
+//	}
 
 }

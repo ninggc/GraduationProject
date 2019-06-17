@@ -28,7 +28,7 @@ public abstract class IController {
     }
 
     protected void initService(SqlSession session) throws IOException {
-//        如果Controller有多个Service，可以在这里同意初始化
+//        如果Controller有多个Service，可以在这里统一初始化
     };
 
     String getDebugLocation() {
@@ -124,6 +124,9 @@ public abstract class IController {
             e.printStackTrace();
             layuiResult.failed(e.getMessage());
         } catch (RuntimeException e) {
+            e.printStackTrace();
+            layuiResult.failed(e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
             layuiResult.failed(e.getMessage());
         }

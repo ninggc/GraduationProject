@@ -181,6 +181,22 @@ public class ProcessController extends IController {
         return layuiResult.format();
     }
 
+    @ResponseBody
+    @RequestMapping("/layui/listall")
+//    public String list(@SessionAttribute User user) {
+    public String testlayuiList() {
+
+        LayuiResult<List<Process>> layuiResult = operateDate(new OperateHandler<List<Process>>() {
+            @Override
+            public List<Process> onOperate() {
+                return processService.select(new Process());
+            }
+        });
+
+        resultPreview(layuiResult);
+        return layuiResult.format();
+    }
+
     /**
      * 筛选出用户申请的列表
      * @param user

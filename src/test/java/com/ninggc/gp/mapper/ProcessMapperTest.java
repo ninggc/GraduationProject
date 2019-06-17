@@ -41,22 +41,22 @@ public class ProcessMapperTest implements ITest {
     @Test
     public void insert() throws IOException {
 
-        try(SqlSession session = openSession()) {
-            initService(session);
-
-            Process pojo = new Process();
-            pojo.setName("msg files");
-            List<String> strings = Arrays.asList("qq", "ww", "ee");
-            pojo.setMsg(gson.toJson(strings));
-            pojo.setFiles(gson.toJson(strings));
-            int i = processService.insert(pojo);
-            session.commit();
-
-            System.out.println(gson.toJson(i));
-            System.out.println(gson.toJson(pojo));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try(SqlSession session = openSession()) {
+//            initService(session);
+//
+//            Process pojo = new Process();
+//            pojo.setName("msg files");
+//            List<String> strings = Arrays.asList("qq", "ww", "ee");
+//            pojo.setMsg(gson.toJson(strings));
+//            pojo.setFiles(gson.toJson(strings));
+//            int i = processService.insert(pojo);
+//            session.commit();
+//
+//            System.out.println(gson.toJson(i));
+//            System.out.println(gson.toJson(pojo));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
