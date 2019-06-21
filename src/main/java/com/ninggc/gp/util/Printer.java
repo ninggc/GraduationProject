@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Printer {
     public static Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd hh:mm:ss").create();
@@ -19,8 +20,7 @@ public class Printer {
         return simpleDateFormat.format(timestamp);
     }
 
-
-    public static void print(Timestamp timestamp) {
-        System.out.println(format(timestamp));
+    public static String format(Date date) {
+        return simpleDateFormat.format(date);
     }
 }

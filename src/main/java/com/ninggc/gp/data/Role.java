@@ -8,6 +8,7 @@ public class Role extends IEntity {
     private String scope;
 
     private Integer unit_id;
+    private String process_name;
 
     public Integer getId() {
         return id;
@@ -56,5 +57,13 @@ public class Role extends IEntity {
 
     public void setUnit_id(Integer unit_id) {
         this.unit_id = unit_id;
+    }
+
+    public String getProcess_name() {
+        return process_name;
+    }
+
+    public void setProcess_name(String process_name) {
+        this.process_name = process_name;
     }
 }

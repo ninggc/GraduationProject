@@ -9,7 +9,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
@@ -31,42 +33,53 @@ public class LoginController extends IController {
     }
 
     @RequestMapping(value = "/login", method = {RequestMethod.POST})
-    public String login(@ModelAttribute User user, ModelMap map, HttpSession httpSession) {
+    public ModelAndView login(@ModelAttribute User user, ModelMap map, HttpSession httpSession, HttpServletResponse response) {
 
+        String result = "failed";
         if (user == null || "".equals(user.getName())) {
-            return "failed";
+            result = "failed";
+        } else {
+            Log.debug(user.toJson());
+            try (SqlSession session = Factory.openSession()) {
+                service = new UserService(session);
+                List<User> userList = service.select(new User().setAccount(user.getAccount()));
+                if (userList == null || userList.size() == 0) {
+                    result = "failed";
+                } else {
+                    User currentUser = userList.get(0);
+                    if (currentUser.getPass_word().equals(user.getPass_word())) {
+                        Log.info("密码正确");
+                        map.addAttribute("user", currentUser);
+                        httpSession.setAttribute("user", currentUser);
+//                String preurl = (String) httpSession.getAttribute("preurl");
+//                if (preurl == null || "".equals(preurl)) {
+//                    return preurl;
+//                } else {
+//                    response.setHeader("Location", "url");
+//                    return "index";
+//                }
+                        result = "page/index/index.html";
+                    } else {
+                        result = "failed";
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                result =  "error";
+            } catch (NullPointerException e) {
+                Log.info("没有匹配项");
+                result = "failed";
+            }
         }
 
-        Log.debug(user.toJson());
-        try (SqlSession session = Factory.openSession()) {
-            service = new UserService(session);
-            List<User> userList = service.select(new User().setAccount(user.getAccount()));
-            if (userList == null || userList.size() == 0) {
-                return "failed";
-            }
-            User currentUser = userList.get(0);
-            if (currentUser.getPass_word().equals(user.getPass_word())) {
-                Log.info("密码正确");
-                map.addAttribute("user", currentUser);
-                httpSession.setAttribute("user", currentUser);
-                String preurl = (String) httpSession.getAttribute("preurl");
-                if (preurl == null || "".equals(preurl)) {
-                    return preurl;
-                } else {
-                    return "index";
-                }
-            } else {
-                return "failed";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "error";
-        } catch (NullPointerException e) {
-            Log.info("没有匹配项");
-            return "failed";
-        }
+//        response.setHeader("Location", "http://localhost:8080/" + result);
+        return new ModelAndView("redirect:" + "http://localhost:8080/" + result);
     }
 
+    @RequestMapping("/failed")
+    public String failed(HttpSession session) {
+        return "failed";
+    }
 
     @ResponseBody
     @RequestMapping("/logout")

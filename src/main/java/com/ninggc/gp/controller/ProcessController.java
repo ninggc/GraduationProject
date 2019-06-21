@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 
 @Controller
@@ -166,18 +167,25 @@ public class ProcessController extends IController {
     @ResponseBody
     @RequestMapping("/layui/list")
 //    public String list(@SessionAttribute User user) {
-    public String layuiList(@SessionAttribute User user) {
+    public String layuiList(@SessionAttribute User user, @RequestParam("page") int page, @RequestParam("limit") int size) {
         String account = user.getAccount();
         paramPreview(account);
 
         LayuiResult<List<Process>> layuiResult = operateDate(new OperateHandler<List<Process>>() {
             @Override
             public List<Process> onOperate() {
-                return processService.select(new Process());
+                return processService.selectWithLimit(new Process(), (page - 1) * size, size);
             }
         });
 
-        resultPreview(layuiResult);
+        Integer count = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return processService.selectCount();
+            }
+        }).getData();
+        layuiResult.setCount(count);
+
         return layuiResult.format();
     }
 
@@ -253,19 +261,45 @@ public class ProcessController extends IController {
             return new LayuiResult<>().failed("程序异常，缺少process_id").format();
         }
 
-        LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+//        筛选库中的进度
+        LayuiResult<Progress> progressLayuiResult = operateDate(new OperateHandler<Progress>() {
             @Override
-            public Integer onOperate() {
-                Progress pojo = progress;
+            public Progress onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                Progress pojo = new Progress();
                 pojo.setAccount(user.getAccount());
-
-                pojo.setData(initProgressData(checkUnitService, progress.getProcess_id()));
-
-                return progressService.insert(pojo);
+                pojo.setProcess_id(progress.getProcess_id());
+                return progressService.selectOne(pojo);
             }
         });
 
-        return layuiResult.format();
+//        如果库中存在，就更新而不插入
+        if (progressLayuiResult.getData() != null) {
+            Integer id = progressLayuiResult.getData().getId();
+            LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+                @Override
+                public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                    Progress pojo = progress;
+                    pojo.setAccount(user.getAccount());
+                    pojo.setId(id);
+                    return progressService.update(pojo);
+                }
+            });
+            return layuiResult.format();
+        } else {
+            LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+                @Override
+                public Integer onOperate() {
+                    Progress pojo = progress;
+                    pojo.setAccount(user.getAccount());
+
+                    pojo.setData(initProgressData(checkUnitService, progress.getProcess_id()));
+
+                    return progressService.insert(pojo);
+                }
+            });
+
+            return layuiResult.format();
+        }
     }
 
     private String initProgressData(CheckUnitService unitService, int process_id) {

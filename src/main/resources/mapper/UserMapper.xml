@@ -74,6 +74,14 @@
          WHERE account = #{pojo.account}
     </update>
 
+    <select id="selectCount" resultType="int">
+        select count(*)
+        from user
+        <where>
+            <if test=" addition != null"> AND addition = #{addition}</if>
+        </where>
+    </select>
+
 <!--auto generated Code-->
     <select id="select" resultMap="AllColumnMap">
         SELECT <include refid="all_column"/>
@@ -84,11 +92,11 @@
             <if test="pojo.name != null"> AND name = #{pojo.name} </if>
             <if test="pojo.addition != null"> AND addition = #{pojo.addition} </if>
 
-            <if test="pojo.visible != null"> AND visible = #{pojo.visible} </if>
             <if test="pojo.visible == null"> AND visible = 1 </if>
             <if test="pojo.update_time != null"> AND update_time = #{pojo.update_time} </if>
         </where>
-        LIMIT 1000 
+        order by account
+        LIMIT 1000
     </select>
 
     <select id="selectWithLimit" resultType="com.ninggc.gp.data.User">
@@ -103,7 +111,18 @@
             <if test="pojo.visible != null"> AND visible = #{pojo.visible} </if>
             <if test="pojo.update_time != null"> AND update_time = #{pojo.update_time} </if>
         </where>
-        LIMIT #{index}, #{size}
+        order by account
+        LIMIT #{page}, #{size}
+    </select>
+
+    <select id="selectWithRole" resultType="java.util.HashMap">
+        SELECT user.account as account, user.name as user_name, user.addition as addition
+          , role.name as role_name, role.description as role_description, role.process_id as process_id, role.scope as role_scope
+        FROM user, role, role_has_user
+        where role_has_user.user_account = user.account
+          and role.id = role_has_user.role_id
+          and role.id = #{role.id}
+        order by account
     </select>
 
     <!--auto generated Code-->

@@ -54,4 +54,11 @@ public class RoleService {
         return roleMapper.delete(id);
     }
 
+    public List<Role> selectWithLimit(Role role, int page, int size) {
+        return roleMapper.selectWithLimit(role, page, size);
+    }
+
+    public Integer selectCount() {
+        return roleMapper.selectCount();
+    }
 }

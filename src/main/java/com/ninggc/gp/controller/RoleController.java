@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Controller
@@ -39,7 +40,7 @@ public class RoleController extends IController {
                 sample.setName(role.getName());
 
 //                如果存在同一process_id下相同的角色名，则告知错误
-                if (roleService.selectOne(sample) == null) {
+                if (roleService.selectOne(sample) != null) {
                     String msg = sample.getProcess_id() == 0 ? "全局范围内存在相同的角色名": "当前审批下存在相同的角色名";
                     throw new IOException(msg);
                 } else {
@@ -54,13 +55,21 @@ public class RoleController extends IController {
 
     @ResponseBody
     @RequestMapping("/layui/select")
-    public String select() {
+    public String select(@SessionAttribute User user, @RequestParam("page") int page, @RequestParam("limit") int size) {
         LayuiResult<List<Role>> layuiResult = operateDate(new OperateHandler<List<Role>>() {
             @Override
             public List<Role> onOperate() throws IOException {
-                return roleService.select(new Role());
+                return roleService.selectWithLimit(new Role(), (page - 1)*size, size);
             }
         });
+
+        Integer count = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return roleService.selectCount();
+            }
+        }).getData();
+        layuiResult.setCount(count);
 
         return layuiResult.format();
     }
@@ -106,7 +115,12 @@ public class RoleController extends IController {
 
     @ResponseBody
     @RequestMapping("/layui/delete")
-    public String delete(@SessionAttribute User user, @RequestParam int id) {
+    public String delete(@SessionAttribute User user, @RequestParam("role_id") int id) {
+        LayuiResult checkPrivilegeWithNotAllowed = checkPrivilegeWithNotAllowed(user, "student teacher");
+        if (checkPrivilegeWithNotAllowed != null) {
+            return checkPrivilegeWithNotAllowed.format();
+        }
+
         LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
             @Override
             public Integer onOperate() throws IOException {

@@ -1,6 +1,7 @@
 package com.ninggc.gp.data;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.ninggc.gp.util.AboutExcel.ExcelUser;
 
 import java.sql.Timestamp;
 
@@ -24,6 +25,17 @@ public class User extends IEntity {
     private transient Byte visible;
     @Excel(name = "更新时间", format =  "yy-MM-dd hh:mm:ss", width = 40)
     private Timestamp update_time;
+    private Integer count;
+
+    public static User fromExcelUser(ExcelUser eu) {
+        User user = new User();
+        user.account = eu.getAccount();
+        user.pass_word = eu.getPass_word();
+        user.name = eu.getName();
+        user.addition = eu.getAddition();
+        user.visible = eu.getVisible();
+        return user;
+    }
 
 //    public User(){};
 //
@@ -80,5 +92,13 @@ public class User extends IEntity {
 
     public void setUpdate_time(Timestamp update_time) {
         this.update_time = update_time;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 }

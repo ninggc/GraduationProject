@@ -1,9 +1,17 @@
 package com.ninggc.gp.service;
 
+import com.ninggc.gp.data.Role;
+import com.ninggc.gp.util.AboutExcel.ExcelUser;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import com.ninggc.gp.data.User;
 import com.ninggc.gp.mapper.UserMapper;
 
@@ -21,12 +29,31 @@ public class UserService {
         return userMapper.insert(pojo);
     }
 
-    public int insertList(List< User> pojos){
+    public int insertList(List<User> pojos) throws SQLIntegrityConstraintViolationException {
         return userMapper.insertList(pojos);
+    }
+
+    public int insertListFromExcel (List<ExcelUser> pojos) throws SQLIntegrityConstraintViolationException {
+        ArrayList<User> users = new ArrayList<>();
+        for (ExcelUser eu : pojos) {
+            User user = User.fromExcelUser(eu);
+//            排除账户为空的实体
+            if (user.getAccount() == null) {
+                continue;
+            }
+            user.setUpdate_time(new Timestamp(new Date().getTime()));
+            user.setVisible((byte) 1);
+            users.add(user);
+        }
+        return userMapper.insertList(users);
     }
 
     public List<User> select(User pojo){
         return userMapper.select(pojo);
+    }
+
+    public int selectCount(String addition){
+        return userMapper.selectCount(addition);
     }
 
     public User selectOne(User pojo){
@@ -34,8 +61,19 @@ public class UserService {
         return select == null || select.size() == 0 ? null : select.get(0);
     }
 
-    public List<User> selectWithLimit(User pojo, int index, int size){
-        return userMapper.selectWithLimit(pojo, index, size);
+    /**
+     *
+     * @param pojo
+     * @param page page从0开始计算
+     * @param size
+     * @return
+     */
+    public List<User> selectWithLimit(User pojo, int page, int size){
+        return userMapper.selectWithLimit(pojo, page, size);
+    }
+
+    public List<Map<String, Object>> selectWithRole(Role role){
+        return userMapper.selectWithRole(role);
     }
 
     public int update(User pojo){

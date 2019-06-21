@@ -149,18 +149,20 @@ public class ProgressController extends IController {
                 Progress selectOne = progressService.selectOne(progress);
                 Log.debug(gson.toJson(selectOne));
 
-//              将数据库中新增的unit添加到progress
-                // TODO: 2019/6/6
-//                Map<Integer, UtilPass> map = synchronize(selectOne);
-//              更新当前请求
+//                解析进度列表
                 Map<Integer, UtilPass> map = selectOne.parseFromData();
-                map.replace(utilPass.getUnit_id(), utilPass);
+//              更新当前请求,如果有，就替换，没有，就新增
+                if (map.containsKey(utilPass.getUnit_id())) {
+                    map.replace(utilPass.getUnit_id(), utilPass);
+                } else {
+//              将数据库中新增的unit添加到progress
+                    map.put(utilPass.getUnit_id(), utilPass);
+                }
 
-//                获取当前stage的sequence
-//                验证 如果当前sequence的unit全部通过审核，则将current_sequence的值加一
+//                获取当前stage的sequence并验证，如果当前sequence的unit全部通过审核，则将current_sequence的值加一
                 Stage stage = stageService.selectOne(new Stage().setId(utilPass.getStage_id()));
                 List<CheckUnit> checkUnits = checkUnitService.selectByStageId(utilPass.getStage_id());
-
+//                记录是否进度到下一阶段
                 int sequenceAddition = 1;
                 for (CheckUnit u : checkUnits) {
 //                    验证当前stage的所有unit是否全部通过审核
@@ -171,6 +173,9 @@ public class ProgressController extends IController {
                 }
                 selectOne.sequenceIncrease(sequenceAddition);
 
+//                检索审批是否全部结果，如果全部结束，进度的finish值设为1
+
+//                这里可能并不需要，怀疑json的字符串可能有问题，但是去掉也可以
                 String data = gson.toJson(map);
                 selectOne.setData(data.replace("\\", ""));
 
@@ -229,18 +234,54 @@ public class ProgressController extends IController {
         return layuiResult.format();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/layui/select/checkExist")
+    public String selectByAccountAndProcess(@SessionAttribute User user, @ModelAttribute Progress progress) {
+        paramPreview(progress);
+        if (progress.getProcess_id() == null) {
+            return new LayuiResult().failed("进程编号为空").format();
+        }
+
+        progress.setAccount(user.getAccount());
+        LayuiResult<Progress> layuiResult = operateDate(new OperateHandler<Progress>() {
+            @Override
+            public Progress onOperate() throws IOException {
+                return progressService.selectOne(progress);
+            }
+        });
+
+        if (layuiResult.getData() != null && layuiResult.getData().getId() != null) {
+            layuiResult.setCount(1);
+        }
+        return layuiResult.format();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/layui/delete")
+    public String delete(@SessionAttribute User user, @RequestParam int progress_id) {
+        paramPreview(progress_id);
+
+        LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException {
+                return progressService.delete(progress_id);
+            }
+        });
+
+        return layuiResult.format();
+    }
+
     /**
      *
      * @param user
      * @return 根据教师account返回需要审核的unit list
      */
     @ResponseBody
-    @RequestMapping(value = "/review")
+    @RequestMapping(value = "/layui/review")
     public String review(@SessionAttribute User user) {
         paramPreview(user);
 
         LayuiResult layuiResult1 = checkPrivilegeWithNotAllowed(user, "student");
-
         if (layuiResult1 != null) {
             return layuiResult1.format();
         }

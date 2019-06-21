@@ -44,4 +44,7 @@ public class ProgressService {
         return progressMapper.update(pojo);
     }
 
+    public int delete(int progress_id) {
+        return progressMapper.delete(progress_id);
+    }
 }

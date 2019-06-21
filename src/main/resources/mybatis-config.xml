@@ -35,6 +35,7 @@
         <mapper resource="mapper/RoleMapper.xml"/>
         <mapper resource="mapper/StageMapper.xml"/>
         <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/RoleHasUserMapper.xml"/>
         <!--<mapper class="com.ninggc.gp.mapper.UserMapper"/>-->
         <!--<package name="com.ninggc.gp.data"/>-->
     </mappers>

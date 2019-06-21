@@ -1,10 +1,10 @@
 package com.ninggc.gp.mapper;
 
-import com.ninggc.gp.MainApplicationTests;
+import com.ninggc.gp.controller.IController;
 import com.ninggc.gp.data.Role;
-import com.ninggc.gp.mapper.RoleMapper;
 import com.ninggc.gp.mybatis.Factory;
 import com.ninggc.gp.service.RoleService;
+import com.ninggc.gp.tool.LayuiResult;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.After;
@@ -14,13 +14,13 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.websocket.Session;
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RoleMapperTest implements ITest {
+public class RoleMapperTest extends IController implements ITest {
 
     SqlSessionFactory factory = null;
     RoleService roleService = null;
@@ -65,6 +65,17 @@ public class RoleMapperTest implements ITest {
         } finally {
             session.close();
         }
+    }
+
+    @Test
+    public void selectWithUser() throws IOException {
+        LayuiResult<List<Role>> listLayuiResult = operateDate(new OperateHandler<List<Role>>() {
+            @Override
+            public List<Role> onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return roleService.selectWithUser("15031301");
+            }
+        });
+        listLayuiResult.format();
     }
 
     @Test

@@ -1,12 +1,14 @@
 package com.ninggc.gp.service;
 
-import com.ninggc.gp.data.CheckUnit;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import java.util.List;
 import com.ninggc.gp.data.Process;
 import com.ninggc.gp.mapper.ProcessMapper;
+import com.ninggc.gp.util.Printer;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class ProcessService {
@@ -19,6 +21,7 @@ public class ProcessService {
     }
 
     public int insert(Process pojo){
+        pojo.setStart_time(Printer.format(new Date()));
         return processMapper.insert(pojo);
     }
 
@@ -33,6 +36,14 @@ public class ProcessService {
 
     public List<Process> select(Process pojo){
         return processMapper.select(pojo);
+    }
+
+    public List<Process> selectWithLimit(Process pojo, int page, int size){
+        return processMapper.selectWithLimit(pojo, page, size);
+    }
+
+    public int selectCount() {
+        return processMapper.selectCount();
     }
 
     public List<Process> selectAllByUser(String account){

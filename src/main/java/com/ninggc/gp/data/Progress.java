@@ -14,6 +14,7 @@ public class Progress extends IEntity {
     private String msg;
     private String files;
     private Integer current_sequence;
+    private Byte finish;
 
     public Map<Integer, UtilPass> parseFromData() {
         Map<Integer, UtilPass> map = gson.fromJson(data, new TypeToken<Map<Integer, UtilPass>>() {}.getType());
@@ -77,6 +78,14 @@ public class Progress extends IEntity {
 
     public void setCurrent_sequence(Integer current_sequence) {
         this.current_sequence = current_sequence;
+    }
+
+    public Byte getFinish() {
+        return finish;
+    }
+
+    public void setFinish(Byte finish) {
+        this.finish = finish;
     }
 
     public void sequenceIncrease(int addition) {

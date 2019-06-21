@@ -11,6 +11,10 @@ import org.apache.ibatis.session.SqlSession;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+
+import static com.ninggc.gp.tool.LayuiResult.*;
 
 public abstract class IController {
 
@@ -120,17 +124,19 @@ public abstract class IController {
             T t = handler.onOperate();
             session.commit();
             layuiResult.success(0, t);
+        }  catch (SQLIntegrityConstraintViolationException e) {
+            layuiResult.failedWithCode(LAYUI_CODE_ERROR_SQL_CONSTRAINT, "数据库约束异常: " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            layuiResult.failed(e.getMessage());
+            layuiResult.failedWithCode(LAYUI_CODE_ERROR_IO, e.getMessage());
         } catch (RuntimeException e) {
             e.printStackTrace();
-            layuiResult.failed(e.getMessage());
+            layuiResult.failedWithCode(LAYUI_CODE_ERROR_RUNTIME, e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            layuiResult.failed(e.getMessage());
+            layuiResult.failedWithCode(LAYUI_CODE_ERROR_EXCEPTION, e.getMessage());
         }
-        resultPreview("in operateData: " + layuiResult);
+//        resultPreview("in operateData: " + layuiResult);
         return layuiResult;
     }
 
@@ -139,11 +145,17 @@ public abstract class IController {
      * @param <T> 操作的结果
      */
     protected interface OperateHandler<T> {
-        T onOperate() throws IOException;
+        T onOperate() throws IOException, SQLIntegrityConstraintViolationException;
 //        T onSuccess();
 //        T onFailed();
     }
 
+    /**
+     *
+     * @param user 用户信息
+     * @param notAllowed 不允许列表，如"student teacher"
+     * @return
+     */
     protected LayuiResult checkPrivilegeWithNotAllowed(User user, String notAllowed)  {
         LayuiResult<Object> layuiResult = new LayuiResult<>();
 

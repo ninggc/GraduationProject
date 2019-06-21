@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ninggc.gp.mapper.RoleHasUserMapper">
+
+<!--auto generated Code-->
+    <!--<resultMap id="AllColumnMap" type="com.ninggc.gp.data.Role">-->
+        <!--<result column="id" property="id"/>-->
+        <!--<result column="name" property="name"/>-->
+        <!--<result column="description" property="description"/>-->
+    <!--</resultMap>-->
+
+<!--auto generated Code-->
+    <!--<sql id="all_column">-->
+        <!--role.id,-->
+        <!--role.name,-->
+        <!--role.description,-->
+        <!--role.process_id,-->
+        <!--role.scope-->
+    <!--</sql>-->
+
+<!--auto generated Code-->
+    <insert id="insert">
+        INSERT INTO role_has_user
+        (role_id, user_account)
+         values (#{role_id}, #{account})
+    </insert>
+
+<!--auto generated Code-->
+    <select id="select" resultType="java.util.Map">
+        SELECT role_id, user_account
+        FROM role_has_user
+        <where>
+            <if test="role_id != null"> AND role_id = #{role_id} </if>
+            <if test="account != null"> AND user_account = #{account} </if>
+        </where>
+    </select>
+
+<!--auto generated Code-->
+    <delete id="delete">
+        DELETE FROM role_has_user
+        <where>
+            <if test="role_id != null"> AND role_id = #{role_id} </if>
+            <if test="account != null"> AND user_account = #{account} </if>
+        </where>
+    </delete>
+</mapper>

@@ -369,6 +369,10 @@
                         layer.open({
                             title: '结果'
                             , content: '绑定成功'
+                            ,yes: function (index1) {
+                                layui.layer.close(index);
+                                layui.layer.close(index1);
+                            }
                         });
                     }, function () {
                         layer.close(index);

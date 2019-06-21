@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色信息管理</title>
+
+    <script src="../layui/jquery-3.4.1.min.js"></script>
+    <script src="../../page-js/global.js"></script>
+    <script src="../../page-js/debug.js"></script>
+    <script src="../layui/layui.js"></script>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+
+    <script>
+        $(document).ready(function () {
+            $("#header").load("../template/header.html", function () {
+                $("#role_manage").addClass("layui-this");
+                layui.use('element', function () {
+                    let element = layui.element;
+                });
+            });
+            $("#footer").load("../template/footer.html");
+        });
+
+        //-1表示是角色列表
+        var page_role_id = -1;
+    </script>
+</head>
+<body>
+<div id="header"></div>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-sm2 layui-col-md2"></div>
+        <div class="layui-col-sm9 layui-col-md9">
+            <div class="layui-row">
+                <table id="role_list" lay-filter="list"></table>
+            </div>
+        </div>
+        <div class="layui-col-sm1 layui-col-md1"></div>
+    </div>
+
+    <div id="pop_add_role_has_user" class="layui-row layui-form layui-hide">
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号: </label>
+            <div class="layui-input-block">
+                <input id="input_account" type="text" placeholder="请填写账号" autocomplete="off"
+                       class="layui-input" style="width: 70%">
+            </div>
+        </div>
+    </div>
+
+    <div id="pop_create_role" class="layui-row layui-form layui-hide">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名: </label>
+            <div class="layui-input-block">
+                <input id="input_role_name" type="text" placeholder="请填写角色名" autocomplete="off"
+                       class="layui-input" style="width: 70%">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色描述: </label>
+            <div class="layui-input-block">
+                        <textarea id="textarea_role_description" type="text" placeholder="请填写角色描述" autocomplete="off"
+                                  class="layui-textarea" style="width: 70%"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="footer"></div>
+
+<script type="text/html" id="role_toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add_role">添加全局角色</button>
+    </div>
+</script>
+
+    <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="show">查看关联用户</a>
+</script>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="back_role_list">返回到角色列表</button>
+        <button class="layui-btn layui-btn-sm" lay-event="add_role_has_user">添加关联</button>
+    </div>
+</script>
+
+<script type="text/html" id="rhu_bar">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    var table_role;
+    var table_role_has_user;
+
+    layui.use(['table', 'layer'], function () {
+        var table = layui.table;
+
+        table_role = table.render({
+            elem: '#role_list'
+            , url: url + 'role/layui/select'
+            , cellMinWidth: 80
+            , toolbar: '#role_toolbar'
+            , cols: [[
+                {field: 'id', title: '编号', hide: true}
+                , {field: 'name', title: '角色名'}
+                , {field: 'description', title: '角色描述'}
+                , {field: 'scope', title: '角色范围（预留）', hide: true}
+                , {field: 'process_id', title: '角色作用范围'}
+                , {field: 'process_name', title: '绑定审批名'}
+                , { fixed: 'right', title: '操作', toolbar: '#barDemo'}
+            ]]
+            , page: true
+            , done: function (res, page, count) {
+                $("[data-field='process_id']").children().each(function () {
+                    if ($(this).text() === '0') {
+                        $(this).text('全局范围');
+                    } else if ($(this).text() !== '角色作用范围') {
+                        $(this).text('审批范围');
+                    }
+                })
+            }
+        });
+
+
+        table.on('row(list)', function (obj) {
+
+        });
+
+        table.on('toolbar(list)', function (obj) {
+            // layui.layer.msg(obj.event);
+            switch (obj.event) {
+                case 'add_role':
+                    let pop_create_role = $("#pop_create_role");
+                    pop_create_role.removeClass("layui-hide");
+                    layer.open({
+                        type: 1
+                        , content: pop_create_role
+                        , btn: ['添加', '取消']
+                        , yes: function (index) {
+                            // 处理输入的role信息
+                            let role = {};
+                            role.name = $('#input_role_name').val();
+                            role.description = $('#textarea_role_description').val();
+                            // if ($('.layui-form-onswitch').length === 1) {
+                            //     if ((!process) || process === '') {
+                            //         layer.open({
+                            //             title: '错误'
+                            //             , content: '如果你想要绑定到当前审批，请先创建审批'
+                            //         });
+                            //         layer.close(index);
+                            //         return;
+                            //     } else {
+                            //         role.process_id = process.id;
+                            //     }
+                            // } else {
+                            //     role.process_id = 0;
+                            // }
+                            //默认全局类型
+                            role.process_id = 0;
+
+                            //验证输入是否合法
+                            if (!role.name || role.name === '') {
+                                layer.msg('请输入角色名，这是必填项');
+                                return false;
+                            } else {
+                                $layui_post(url + 'role/action/add', role, function success(json) {
+                                    layer.open({
+                                        title: '成功'
+                                        , content: '创建角色成功'
+                                    });
+                                    table_role.reload();
+                                }, function after() {
+                                    layer.close(index);
+                                });
+                            }
+                        }, btn2: function () {
+                            layer.msg('取消');
+                            // ${url+'', role, function(){}}
+                        }
+                        , end: function () {
+                            pop_create_role.addClass("layui-hide");
+                        }
+                    });
+                    break;
+                case 'back_role_list':
+                    page_role_id = -1;
+                    table_role.reload();
+                    break;
+                case 'add_role_has_user':
+                    $('#pop_add_role_has_user').removeClass('layui-hide');
+                    layer.open({
+                        type: 1
+                        , content: $('#pop_add_role_has_user')
+                        , btn: ['添加', '取消']
+                        , yes: function(index, layer) {
+                            let account = $('#pop_add_role_has_user #input_account').val();
+
+                            if (account === '') {
+                                layui.layer.msg('请输入账号');
+                            } else {
+                                $layui_post(url+'user/layui/rhu/insert', {
+                                    'user_account': account
+                                    , 'role_id': page_role_id
+                                }, function success(result) {
+                                    if (result.code === 0) {
+                                        layui.layer.msg('添加关联成功');
+                                        table_role_has_user.reload();
+                                        layui.layer.close(index);
+                                    } else {
+                                        layui.layer.msg('添加关联失败: ' + json.msg);
+                                        layui.layer.close(index);
+                                    }
+                                });
+                            }
+                        }, btn2: function() {
+                        }, end: function() {
+                            $('#pop_add_role_has_user').addClass('layui-hide');
+                        }
+                    });
+                    break;
+            }
+        });
+
+        table.on('tool(list)', function (obj) {
+            // layui.layer.msg(obj.event);
+            switch (obj.event) {
+                case 'edit':
+                    if (page_role_id === -1) {
+                        //    编辑角色
+
+                    }
+                    break;
+                case 'del':
+                    if (page_role_id === -1) {
+                    //    删除角色
+                        if (!obj.data.id) {
+                            layer.open({
+                                title: '异常'
+                                , content: '请刷新界面'
+                                , yes: function () {
+                                    window.location.href = url + 'page/role/manage.html';
+                                }
+                            });
+                        } else {
+                            $layui_post(url + 'role/layui/delete', {
+                                'role_id': obj.data.id
+                            }, function success(result) {
+                                if (result.code === 0) {
+                                    if (result.data === 0) {
+                                        layui.layer.msg('数据库没有这个角色！');
+                                    } else {
+                                        layui.layer.msg('删除角色成功');
+                                        table_role.reload();
+                                    }
+                                }
+                            }, function exception(result) {
+                                if (result.code === 103 || result.code === 101) {
+                                    layer.open({
+                                        title: '逻辑异常'
+                                        , content: '请先删除关联的用户'
+                                    });
+                                } else {
+                                    layer.open({
+                                        title: '逻辑异常'
+                                        , content: result.msg
+                                    });
+                                }
+                            })
+                        }
+                    } else {
+                    //    删除用户的关联
+                        if (!obj.data.account) {
+                            layer.open({
+                                title: '异常'
+                                , content: '请刷新界面'
+                                , yes: function () {
+                                    window.location.href = url + 'page/role/manage.html';
+                                }
+                            });
+                        } else {
+                            $layui_post(url + 'user/layui/rhu/delete', {
+                                'role_id': page_role_id
+                                , 'user_account': obj.data.account
+                            }, function success(result) {
+                                if (result.code === 0) {
+                                    layui.layer.msg('删除关联成功');
+                                    table_role_has_user.reload();
+                                }
+                            })
+                        }
+                    }
+                    break;
+                case 'show':
+                    //记录角色id
+                    page_role_id = obj.data.id;
+                    layui.use('table', function () {
+                        var table = layui.table;
+
+                        table_role_has_user = table.render({
+                            elem: '#role_list'
+                            , url: url + 'user/layui/select/by/role'
+                            , where: {role_id: obj.data.id}
+                            , cellMinWidth: 80
+                            , toolbar: '#toolbar'
+                            , cols: [[
+                                {field: 'account', title: '账号'}
+                                , {field: 'user_name', title: '姓名'}
+                                , {field: 'addition', title: '身份'}
+                                , {field: 'role_name', title: '角色名'}
+                                , {field: 'role_description', title: '角色描述'}
+                                , {field: 'role_scope', title: '角色范围', hide: true}
+                                , {field: 'process_id', title: '审批编号'}
+                                , { fixed: 'right', title: '操作', toolbar: '#rhu_bar'}
+                            ]]
+                        });
+                    });
+                    break;
+            }
+        })
+    });
+</script>
+</body>
+</html>

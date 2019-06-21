@@ -12,70 +12,105 @@
 
     <script>
         $(document).ready(function () {
-            // alert('ready');
-            let msg = $(".msg").attr("id");
-            msg = msg.substr(1, msg.length - 2);
-            let files = $(".files").attr("id");
-            files = files.substr(1, files.length - 2);
+            function initInpuAndButton(process_id, exist_data) {
+                let msg = $(".msg").attr("id");
+                msg = msg.substr(1, msg.length - 2);
+                let files = $(".files").attr("id");
+                files = files.substr(1, files.length - 2);
 
-            de_log_info(msg);
-            de_log_info(files);
+                de_log_info(msg);
+                de_log_info(files);
 
-            let msg_list = msg.split(",");
-            let file_list = files.split(",");
+                let msg_list = msg.split(",");
+                let file_list = files.split(",");
 
-            de_log_info(msg_list.length);
+                de_log_info(msg_list.length);
 
-            //循环生成文件上传按钮
-            for (let i = 0; i < file_list.length; i++) {
-                let value = file_list[i].trim();
-                de_log_info(value);
+                //循环生成文件上传按钮
+                for (let i = 0; i < file_list.length; i++) {
+                    let value = file_list[i].trim();
+                    de_log_info(value);
 
-                let file_sample = $("#file_sample").clone();
-                file_sample.removeClass("layui-hide");
-                $(file_sample).children("button").text("请上传文件：" + value);
-                $(file_sample).children("button").attr("id", value);
-                // $(input_sample).children("input").attr("placeholder", "测试");
-                $("#files").append(file_sample);
+                    let file_sample = $("#file_sample").clone();
+                    file_sample.removeClass("layui-hide");
+                    $(file_sample).children("button").text("请上传文件：" + value);
+                    $(file_sample).children("button").attr("id", value);
+                    // $(input_sample).children("input").attr("placeholder", "测试");
+                    $("#files").append(file_sample);
 
-
-                layui.use('upload', function () {
-                    var upload = layui.upload;
-                    var upload_url = url + 'file/upload/' + process_id;
-                    de_log_info(url + upload_url);
-                    var uploadInst = upload.render({
-                        elem: '#' + value
-                        , url: upload_url
-                        , accept: 'file'
-                        , done: function (res) {
-                            de_log_receive(JSON.stringify(res));
-                            let data = res.data;
-                            de_log_receive(data);
-                            de_log_receive(data.id);
-                            $('#'+value).attr("value", data.id);
-                            alert('上传成功');
-                            $('#'+value).text(value + "已上传");
-
+                    //如果存在，就初始化
+                    if (exist_data) {
+                        let exist_files = exist_data.files;
+                        if (exist_files) {
+                            exist_files = jQuery.parseJSON(exist_files);
+                            $('#' + value).attr("value", exist_files[value]);
+                            $('#' + value).text(value + "已上传");
+                            $('#submit_apply').text('更新申请信息');
                         }
-                        , error: function () {
-                            alert('上传失败')
+                    }
+
+                    layui.use('upload', function () {
+                        var upload = layui.upload;
+                        var upload_url = url + 'file/upload/' + process_id;
+                        de_log_info(url + upload_url);
+                        var uploadInst = upload.render({
+                            elem: '#' + value
+                            , url: upload_url
+                            , accept: 'file'
+                            , done: function (res) {
+                                de_log_receive(JSON.stringify(res));
+                                let data = res.data;
+                                de_log_receive(data);
+                                de_log_receive(data.id);
+                                $('#' + value).attr("value", data.id);
+                                $('#' + value).text(value + "已上传");
+                                alert('上传成功');
+                            }
+                            , error: function () {
+                                alert('上传失败')
+                            }
+                        })
+                    });
+                }
+
+                //循环生成输入框
+                for (let i = 0; i < msg_list.length; i++) {
+                    var string = msg_list[i];
+
+                    let input_sample = $("#input_sample").clone();
+                    input_sample.removeClass("layui-hide");
+                    $(input_sample).children("label").text(string);
+
+                    $(input_sample).children("div").children("input").attr("id", string);
+                    $("#msg").append(input_sample);
+
+                    //如果存在，就初始化
+                    if (exist_data) {
+                        let exist_msg = exist_data.msg;
+                        if (exist_msg) {
+                            exist_msg = jQuery.parseJSON(exist_msg);
+                            $(input_sample).children("div").children("input").val(exist_msg[string]);
+                            $('#submit_apply').text('更新申请信息');
                         }
-                    })
-                });
+                    }
+                }
             }
 
-            //循环生成输入框
-            for (let i = 0; i < msg_list.length; i++) {
-                var string = msg_list[i];
+// alert('ready');
 
-                let input_sample = $("#input_sample").clone();
-                input_sample.removeClass("layui-hide");
-                $(input_sample).children("label").text(string);
+            $layui_post(url + 'progress/layui/select/checkExist', {
+                'process_id':$("#process_id").attr("value")
+            }, function(result){
+                if (result.count !== 0) {
+                    let exist_data = result.data;
+                    initInpuAndButton(process_id, exist_data);
+                }
+            }, function Exception() {
+                initInpuAndButton(process_id);
+            }, function after() {
+            });
 
-                $(input_sample).children("div").children("input").attr("id", string);
-                $("#msg").append(input_sample);
-
-            }
+            initCheck();
         })
     </script>
 </head>
@@ -117,7 +152,7 @@
                     </div>
                     <div class="layui-nav-item">
                         <div class="layui-input-block">
-                            <button class="layui-btn" onclick="apply()">立即提交</button>
+                            <button id="submit_apply" class="layui-btn" onclick="apply()">立即提交</button>
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                         </div>
                     </div>
@@ -141,6 +176,7 @@
         let msg = {};
         let files = {};
 
+        //测试msg是否都被输入，并保存输入的信息
         for (let i = 0; i < $("#msg input").length; i++) {
             var input_msg = $("#msg input");
             var value = input_msg[i].value;
@@ -154,6 +190,7 @@
 
         de_log_info(JSON.stringify(msg));
 
+        //保存上传的文件信息
         for (let i = 0; i < $("#files button").length; i++) {
             let button_file = $("#files button");
             files[button_file[i].id] = button_file[i].value;
@@ -168,10 +205,11 @@
         }, function (result) {
             let json = jQuery.parseJSON(result);
             de_log_receive(result);
-            if (!json.data) {
+            if (!json) {
                 alert("服务器出错");
             } else if (json.code === 0) {
                 alert("申请成功");
+                window.location.href = window.location.href;
             } else if(json.code === 1) {
                 alert("申请失败： "  + json.msg)
             }

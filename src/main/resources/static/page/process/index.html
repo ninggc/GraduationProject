@@ -70,6 +70,7 @@
         // 页面有效，存储当前所查看的process
         var process = {};
         var process_id;
+        var progress_id = -1;
         //注意：导航 依赖 element 模块，否则无法进行功能性操作
         layui.use('element', function () {
             var element = layui.element;
@@ -86,7 +87,7 @@
                 , url: url + 'process/layui/list/user' //数据接口
                 , page: true //开启分页
                 , cols: [[ //表头
-                    { field: 'id', title: 'id', width: 80, sort: true }
+                    { field: 'id', title: 'id', width: 80, sort: true, hide: true}
                     , { field: 'progress_id', title: 'id', width: 80, sort: true, hide: true }
                     , { field: 'name', title: '用户名', width: 160, sort: true }
                     , { field: 'start_time', title: '开始时间', width: 200, sort: true }
@@ -104,6 +105,7 @@
 
                 process.id = obj.data.id;
                 process_id = process.id;
+                progress_id = obj.data.progress_id;
 
                 // stage list
                 $.post(url + "progress/detail/stage", {"process_id": process.id}, function(json) {

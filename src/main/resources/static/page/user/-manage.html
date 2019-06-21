@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <!--<meta http-equiv="Access-Control-Allow-Origin" content="*" />-->
+    <title>用户管理</title>
+
+    <link rel="stylesheet" href="../layui/css/layui.css">
+
+    <style>
+        body {
+            padding: 20px;
+            /*overflow-y: scroll;*/
+        }
+    </style>
+
+    <script src="../../page-js/global.js"></script>
+    <script src="../../page-js/debug.js"></script>
+    <script src="../../vendor/jquery/jquery.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+        })
+    </script>
+</head>
+
+<body>
+
+    <div id="header"></div>
+
+    <script>
+        $("#header").load("../template/header.html", function () {
+            $("#manage").addClass("layui-this");
+
+            initCheck();
+            //注意：导航 依赖 element 模块，否则无法进行功能性操作
+            layui.use('element', function () {
+                var element = layui.element;
+
+                //…
+            });
+
+        });
+    </script>
+
+    <script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <!--<button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>-->
+        <button id="import_from_excel" class="layui-btn layui-btn-sm" lay-event="importFromExcel">从Excel导入用户</button>
+        <!--<button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>-->
+        <button class="layui-btn layui-btn-sm" lay-event="addNewUser">添加新用户</button>
+    </div>
+</script>
+
+    <div class="layui-container">
+        <div class="layui-row">
+            <!--<div class="layui-col-sm3 layui-col-md3"></div>-->
+            <div class="layui-col-space3">
+                <div class="layui-row">
+                    <table id="test" lay-filter="test"></table>
+                </div>
+            </div>
+            <!--<div class="layui-col-sm1 layui-col-md1"></div>-->
+        </div>
+    </div>
+
+    <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+    <script type="text/html" id="usernameTpl">
+    <a href="" class="layui-table-link">{{d.username || ''}}</a>
+</script>
+
+    <script type="text/html" id="switchTpl">
+    <input type="checkbox" name="yyy" lay-skin="switch" lay-text="女|男">
+</script>
+
+    <script type="text/html" id="checkboxTpl">
+    <input type="checkbox" name="" title="锁定" checked>
+</script>
+
+    <script type="text/html" id="LAY_table_tpl_email">
+    <span {{# if(!d.activate){ }}style="color:#999"{{# } }}>{{ d.email }}</span>
+</script>
+
+    <div class="">
+        <div id="layer_add" class="layui-hide">
+            <div class="layui-row">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">学号</label>
+                    <div class="layui-input-block">
+                        <input id="account" type="text" placeholder="请输入学号" autocomplete="off" class="layui-input" style="width: 70%">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                        <input id="password" type="text" placeholder="请输入密码" autocomplete="off" class="layui-input" style="width: 70%">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-block">
+                        <input id="name" type="text" placeholder="请输入姓名" autocomplete="off" class="layui-input" style="width: 70%">
+                    </div>
+                </div>
+                <div class="layui-form-item pane">
+                    <label class="layui-form-label">身份</label>
+                    <select name="身份">
+                            <option value="student" selected>学生</option>
+                            <option value="teacher">教师</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../layui/layui.js" charset="utf-8"></script>
+    <script>
+        layui.use('table', function () {
+            var table = layui.table;
+            //return;
+
+            //渲染
+            window.ins1 = table.render({
+                elem: '#test'
+                , title: '用户数据表'
+                , url: url + 'user/action/list'
+                //,size: 'lg'
+                , page: true
+                , autoSort: false
+                //,loading: false
+                , totalRow: true
+                , limit: 30
+                , toolbar: '#toolbarDemo'
+                //,defaultToolbar: ['filter']
+                , cols: [[
+                    { type: 'checkbox', fixed: 'left' }
+                    , { field: 'account', title: '账户', width: 240, sort: true }
+                    , { field: 'name', title: '姓名', width: 160, sort: true }
+                    , { field: 'update_time', title: '更新时间', width: 240, sort: true }
+                    // ,{field:'id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计：'}
+                    // ,{field:'username', title:'用户名', hide: true, width:120, edit: 'text', templet: '#usernameTpl'}
+                    // ,{field:'email', title:'邮箱', hide: true, width:150, edit: 'text', templet: function(x){
+                    //         return '<em>'+ x.email +'</em>'
+                    //     }}
+                    // ,{field:'sex', title:'性别', width:80, edit: 'text', sort: true}
+                    // ,{field:'city', title:'城市', width:100}
+                    // ,{field:'sign', title:'签名'}
+                    // ,{field:'experience', title:'积分', width:80, sort: true, totalRow: true}
+                    // ,{field:'ip', title:'IP', width:120}
+                    // ,{field:'logins', title:'登入次数', width:100, sort: true, totalRow: true}
+                    // ,{field:'joinTime', title:'加入时间', width:120}
+                    , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+                ]]
+                /*
+                ,response: {
+                  statusName: 'status'
+                  ,statusCode: 200
+                }
+                ,parseData: function(res){
+                  return {
+                    "code": res.code
+                    ,"msg": res.msg
+                    ,"count": res.count
+                    ,"data": res.data
+                  };
+                }
+                */
+            });
+
+            //工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'add':
+                        layer.msg('添加');
+                        break;
+                    case 'update':
+                        layer.msg('编辑');
+                        break;
+                    case 'delete':
+                        layer.msg('删除');
+                        break;
+                    case 'getCheckData':
+                        var data = checkStatus.data;
+                        layer.alert(JSON.stringify(data));
+                        break;
+                    case 'importFromExcel':
+                        var data = checkStatus.data;
+
+                        break;
+                    case 'isAll':
+                        layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                        break;
+                    case 'addNewUser':
+                        // layer.msg('添加新用户');
+                        $('#layer_add').removeClass('layui-hide');
+                        layer.open({
+                            type: 1
+                            , content: $('#layer_add')
+                            , btn: ['添加', '取消']
+                            , yes: function(index, layero) {
+                                let account = $('#layer_add #account').val();
+                                let password = $('#layer_add #password').val();
+                                let name = $('#layer_add #name').val();
+                                let addition = $('#layer_add option:selected').val();
+                                
+                                if (account === '') {
+                                    layer.msg('请输入账号');
+                                } else if (password === '') {
+                                    layer.msg('请输入密码');
+                                } else if (name === '') {
+                                    layer.msg('请输入用户名');
+                                } else {
+                                    $.post(url+'user/action/insert', {
+                                        'account': account
+                                        , 'pass_word': password
+                                        , 'name': name
+                                        , 'addition': addition
+                                    }, function(result) {
+                                        let json = jQuery.parseJSON(result);
+                                        de_log_receive(result);
+                                        if (json.code === 0) {
+                                            layer.msg('添加成功');
+                                            layer.close(index);
+                                        } else {
+                                            layer.msg('添加失败: ' + json.msg);
+                                            layer.close(index);
+                                        }
+                                    }).fail(function() {
+                                        layer.close(index);
+                                        layer.msg('服务器异常');
+                                    });
+                                }
+                            }, btn2: function() {
+                            }, end: function() {
+                                $('#layer_add').addClass('layui-hide');
+                            }
+                        });
+                        break;
+                }
+            });
+
+            table.on('row(test)', function (obj) {
+                console.log(obj);
+                //layer.closeAll('tips');
+            });
+
+
+
+
+            //监听表格行点击
+            table.on('tr', function (obj) {
+                console.log(obj)
+            });
+
+            //监听表格复选框选择
+            table.on('checkbox(test)', function (obj) {
+                console.log(obj)
+            });
+
+            //监听表格单选框选择
+            table.on('radio(test)', function (obj) {
+                console.log(obj)
+            });
+
+            //监听表格单选框选择
+            table.on('rowDouble(test)', function (obj) {
+                console.log(obj);
+            });
+
+            //监听单元格编辑
+            table.on('edit(test)', function (obj) {
+                var value = obj.value //得到修改后的值
+                    , data = obj.data //得到所在行所有键值
+                    , field = obj.field; //得到字段
+
+                console.log(obj)
+            });
+
+            //监听行工具事件
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                //console.log(obj)
+                if (obj.event === 'del') {
+                    layer.confirm('确定要删除吗', function (index) {
+                        de_log('confirm');
+                        //向服务端发送删除指令
+
+                        var number = obj.data['account'];
+                        $.post(url + 'user/action/delete', { "msg": number }, function (msg) {
+                            de_log(obj.data);
+                            de_log(typeof (obj.data));
+                            de_log_send(number);
+                            let json = jQuery.parseJSON(msg);
+                            if (json.code === 0) {
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.close(index);
+                                layer.msg('删除成功');
+                                de_log_receive(json);
+                            } else {
+                                de_log("server error.");
+                                layer.msg('服务器异常: ' + json.msg);
+                            }
+                        });
+                    }, function (index) {
+                        de_log('cancel')
+                    });
+
+                } else if (obj.event === 'edit') {
+                    de_log_info(JSON.stringify(data));
+                    layer.prompt({
+                        formType: 2
+                        , value: JSON.stringify(data)
+                    }, function (value, index) {
+                        json = jQuery.parseJSON(value);
+                        obj.update({
+                            data: value
+                        });
+                        de_log_info(value);
+                        de_log_info(jQuery.parseJSON(value).account);
+
+                        json.update_time = null;
+                        $.ajax({
+                            type: "POST"
+                            , contentType: 'application/json;charset=UTF-8'//关键是要加上这行
+                            , traditional: true//这使json格式的字符不会被转码
+                            , dateType: "JSON"
+                            , url: url + "user/action/update"
+                            , data: JSON.stringify(json)
+                            , success: function (data) {
+                                de_log_info(data);
+                            }
+                        });
+
+                        // $.post(url + "user/action/update", value, function(msg) {
+                        //     let json = jQuery.parseJSON(msg);
+                        //     if (json.code === 200) {
+                        //         alert('修改成功');
+                        //     } else {
+                        //         alert('修改失败：' + 'msg');
+                        //     }
+                        // })
+                        layer.close(index);
+                    });
+                }
+            });
+
+            //监听排序
+            table.on('sort(test)', function (obj) {
+                console.log(this);
+
+                //return;
+                layer.msg('服务端排序。order by ' + obj.field + ' ' + obj.type);
+                //服务端排序
+                table.reload('test', {
+                    initSort: obj
+                    //,page: {curr: 1} //重新从第一页开始
+                    , where: { //重新请求服务端
+                        key: obj.field //排序字段
+                        , order: obj.type //排序方式
+                    }
+                });
+            });
+
+            //return;
+
+            var $ = layui.jquery, active = {
+                parseTable: function () {
+                    table.init('parse-table-demo', {
+                        limit: 3
+                    });
+                }
+                , add: function () {
+                    table.addRow('test')
+                }
+            };
+            $('i').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+            $('.layui-btn').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
+
+            layui.use('upload', function () {
+                var upload = layui.upload;
+                var uploadInst = upload.render({
+                    elem: '#import_from_excel'
+                    , url: url + 'user/action/import'
+                    , accept: 'file'
+                    , done: function (res) {
+                        de_log_receive(JSON.stringify(res));
+                        if (res.code === 0) {
+                            layer.open({
+                                title: '成功'
+                                , content: '导入成功'
+                                , yes: function () {
+                                    window.location.href = url + 'page/user/manage.html';
+                                }
+                            });
+                        } else {
+                            layer.open({
+                                title: '失败'
+                                , content: res.msg
+                            });
+                        }
+                    }
+                    , error: function () {
+                        alert('服务器异常，上传失败')
+                    }
+                })
+            });
+        });
+    </script>
+</body>
+
+</html>

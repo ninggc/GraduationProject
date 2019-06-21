@@ -12,6 +12,10 @@ import com.ninggc.gp.util.Printer;
 public class LayuiResult<T> {
     public transient static final int LAYUI_CODE_SUCCESS = 0;
     public transient static final int LAYUI_CODE_FAILED = 1;
+    public transient static final int LAYUI_CODE_ERROR_EXCEPTION = 10;
+    public transient static final int LAYUI_CODE_ERROR_RUNTIME = 101;
+    public transient static final int LAYUI_CODE_ERROR_IO = 102;
+    public transient static final int LAYUI_CODE_ERROR_SQL_CONSTRAINT = 103;
     private transient Gson gson = Constant.gson;
 
     private int code;
@@ -64,6 +68,12 @@ public class LayuiResult<T> {
         setMsg(msg);
         setCount(0);
         setData(null);
+        return this;
+    }
+
+    public LayuiResult failedWithCode(int code, String msg) {
+        failed(msg);
+        setCode(code);
         return this;
     }
 

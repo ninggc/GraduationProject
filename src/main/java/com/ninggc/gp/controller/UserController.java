@@ -3,34 +3,44 @@ package com.ninggc.gp.controller;
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.ninggc.gp.data.DataSample;
+import com.ninggc.gp.data.Role;
 import com.ninggc.gp.data.User;
+import com.ninggc.gp.service.RoleHasUserService;
 import com.ninggc.gp.service.UserService;
-import com.ninggc.gp.tool.ModelPackage;
-import com.ninggc.gp.tool.Result;
 import com.ninggc.gp.tool.LayuiResult;
+import com.ninggc.gp.tool.ModelPackage;
+import com.ninggc.gp.util.AboutExcel.ExcelEasypoiUtil;
+import com.ninggc.gp.util.AboutExcel.ExcelUser;
 import com.ninggc.gp.util.ExcelUtil;
-import com.ninggc.gp.util.Log;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/user")
 public class UserController extends IController {
     int pageSize = 35;
     UserService userService = null;
+    RoleHasUserService roleHasUserService = null;
 
     @Override
     public void initService(SqlSession session) throws IOException {
         userService = new UserService(session);
+        roleHasUserService = new RoleHasUserService(session);
     }
 
     /**
@@ -71,25 +81,25 @@ public class UserController extends IController {
         return "student_manage";
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/action/nextPage", method = RequestMethod.GET)
-    public String next(@ModelAttribute ModelPackage modelPackage) {
-        Result result = initResult();
-        int index = modelPackage.getNumber() + pageSize;
-
-        try (SqlSession session = openSession()) {
-            initService(session);
-            List<User> list = userService.selectWithLimit(DataSample.getStudent(), index, pageSize);
-            result.success(toJson(list));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            result.failed(e.getMessage());
-        }
-
-        Log.debug(toJson(result));
-        return toJson(result);
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "/action/nextPage", method = RequestMethod.GET)
+//    public String next(@ModelAttribute ModelPackage modelPackage) {
+//        Result result = initResult();
+//        int index = modelPackage.getNumber() + pageSize;
+//
+//        try (SqlSession session = openSession()) {
+//            initService(session);
+//            List<User> list = userService.selectWithLimit(DataSample.getStudent(), index, pageSize);
+//            result.success(toJson(list));
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            result.failed(e.getMessage());
+//        }
+//
+//        Log.debug(toJson(result));
+//        return toJson(result);
+//    }
 
     @ResponseBody
     @RequestMapping(value = "/action/update")
@@ -139,21 +149,15 @@ public class UserController extends IController {
     @ResponseBody
     @RequestMapping(value = "/action/delete")
     public String delete(@ModelAttribute ModelPackage modelPackage) {
-        Result result = initResult();
-        String account = modelPackage.getMsg();
+        LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                String account = modelPackage.getMsg();
+                return userService.delete(account);
+            }
+        });
 
-        try (SqlSession session = openSession()) {
-            initService(session);
-            int delete = userService.delete(account);
-            session.commit();
-            result.success(toJson(delete));
-        } catch (IOException e) {
-            e.printStackTrace();
-            result.failed(e.getMessage());
-        }
-
-        Log.debug(toJson(result));
-        return toJson(result);
+        return layuiResult.format();
     }
 
     @RequestMapping("/page/manage")
@@ -169,12 +173,54 @@ public class UserController extends IController {
             return checkLayuiResult.format();
         }
 
-        LayuiResult<List<User>> layuiResult = operateData(new OperateHandler<List<User>>() {
+        User student = DataSample.getStudent();
+        LayuiResult<List<User>> layuiResult = operateDate(new OperateHandler<List<User>>() {
             @Override
-            public List<User> onOperate() {
-                return userService.select(DataSample.getStudent());
+            public List<User> onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return userService.select(student);
             }
-        }, new LayuiResult<List<User>>());
+        });
+
+        operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                int count = userService.selectCount(student.getAddition());
+                layuiResult.setCount(count);
+                return count;
+            }
+        });
+
+        return layuiResult.format();
+    }
+
+    @ResponseBody
+    @RequestMapping("/action/list/limit")
+    public String listLimit(@SessionAttribute User user, @RequestParam("page") int page, @RequestParam("limit") int size, @RequestParam(name = "addition", required = false) String addition) {
+        LayuiResult checkLayuiResult = checkPrivilegeWithNotAllowed(user, "student");
+        if (checkLayuiResult != null) {
+            return checkLayuiResult.format();
+        }
+
+//        User sampleUser = DataSample.getStudent();
+        User sampleUser = new User();
+        if (addition != null && ! "".equals(addition) && "all".equals(addition)) {
+            sampleUser.setAddition(addition);
+        }
+        LayuiResult<List<User>> layuiResult = operateDate(new OperateHandler<List<User>>() {
+            @Override
+            public List<User> onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return userService.selectWithLimit(sampleUser, (page - 1) * size, size);
+            }
+        });
+
+        operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                int count = userService.selectCount(sampleUser.getAddition());
+                layuiResult.setCount(count);
+                return count;
+            }
+        });
 
         return layuiResult.format();
     }
@@ -249,4 +295,150 @@ public class UserController extends IController {
         return layuiResult.format();
     }
 
+    @ResponseBody
+    @RequestMapping("/layui/select/by/role")
+    public String selectByRole(@SessionAttribute User user, @RequestParam int role_id) {
+        LayuiResult checkPrivilegeWithNotAllowed = checkPrivilegeWithNotAllowed(user, "student teacher");
+        if (checkPrivilegeWithNotAllowed != null) {
+            return checkPrivilegeWithNotAllowed.format();
+        }
+
+        LayuiResult<List<Map<String, Object>>> mapLayuiResult = operateDate(new OperateHandler<List<Map<String, Object>>>() {
+            @Override
+            public List<Map<String, Object>> onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return userService.selectWithRole(new Role().setId(role_id));
+            }
+        });
+
+        return mapLayuiResult.format();
+    }
+
+    @ResponseBody
+    @RequestMapping("/action/import")
+    public String importUser(@SessionAttribute User user, @RequestParam("file")MultipartFile file, HttpServletRequest request) {
+        LayuiResult checkPrivilegeWithNotAllowed = checkPrivilegeWithNotAllowed(user, "student teacher");
+        if (checkPrivilegeWithNotAllowed != null) {
+            return checkPrivilegeWithNotAllowed.format();
+        }
+
+        LayuiResult<Integer> layuiResult = new LayuiResult<>();
+        FileController fileController = new FileController();
+        try {
+            String upload = fileController.upload(user, 0, file, request);
+
+            LayuiResult<com.ninggc.gp.data.File> fileLayuiResult = gson.fromJson(upload,
+                new TypeToken<LayuiResult<com.ninggc.gp.data.File>>() {}.getType());
+            String location = fileLayuiResult.getData().getLocation();
+
+            List<ExcelUser> excelUsers = new ExcelEasypoiUtil().importFromExcel(location, "");
+            layuiResult = operateDate(new OperateHandler<Integer>() {
+                @Override
+                public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                    return userService.insertListFromExcel(excelUsers);
+                }
+            });
+        } catch (FileNotFoundException e) {
+            layuiResult.failed("文件不存在！");
+        } catch (JsonSyntaxException e) {
+            layuiResult.failed("文件上传异常！");
+        } catch (NullPointerException e) {
+            layuiResult.failed("解析文件地址失败！");
+        }
+
+        return layuiResult.format();
+    }
+
+    @ResponseBody
+    @RequestMapping("/action/export")
+    public void exportUser(@SessionAttribute User user, HttpServletResponse response) {
+        LayuiResult checkPrivilegeWithNotAllowed = checkPrivilegeWithNotAllowed(user, "student teacher");
+        if (checkPrivilegeWithNotAllowed != null) {
+            return;
+        }
+
+        List<User> list = operateDate(new OperateHandler<List<User>>() {
+            @Override
+            public List<User> onOperate() throws IOException {
+                return userService.select(new User());
+            }
+        }).getData();
+
+        File file = new ExcelEasypoiUtil().exportFile(list);
+        LayuiResult<String> layuiResult = new LayuiResult<>();
+
+        try (InputStream inputStream = new FileInputStream(file);
+             OutputStream outputStream = response.getOutputStream();) {
+
+            //设置内容类型为下载类型
+            response.setContentType("application/x-download");
+            //设置请求头 和 文件下载名称
+            response.addHeader("Content-Disposition", "attachment;filename=" + "all_user_info.xls");
+            //用 common-io 工具 将输入流拷贝到输出流
+            IOUtils.copy(inputStream, outputStream);
+            outputStream.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            layuiResult.failed("文件不存在！");
+        } catch (IOException e) {
+            e.printStackTrace();
+            layuiResult.failed("IO异常！");
+        }
+    }
+
+//    #################################
+//
+    @ResponseBody
+    @RequestMapping("/layui/rhu/delete")
+    public String deleteRoleHasUser(@SessionAttribute User user, @RequestParam(name = "role_id", required = false) int role_id, @RequestParam(name = "user_account", required = false) String user_account) {
+        LayuiResult checkPrivilegeWithNotAllowed = checkPrivilegeWithNotAllowed(user, "student teacher");
+        if (checkPrivilegeWithNotAllowed != null) {
+            return checkPrivilegeWithNotAllowed.format();
+        }
+
+        LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return roleHasUserService.delete(role_id, user_account);
+            }
+        });
+
+        return layuiResult.format();
+    }
+
+    @ResponseBody
+    @RequestMapping("/layui/rhu/select")
+    public String selectRoleHasUser(@SessionAttribute User user, @RequestParam(name = "role_id", required = false) int role_id, @RequestParam(name = "user_account", required = false) String user_account) {
+        LayuiResult checkPrivilegeWithNotAllowed = checkPrivilegeWithNotAllowed(user, "student teacher");
+        if (checkPrivilegeWithNotAllowed != null) {
+            return checkPrivilegeWithNotAllowed.format();
+        }
+
+        LayuiResult<List<Map<String, Object>>> layuiResult = operateDate(new OperateHandler<List<Map<String, Object>>>() {
+            @Override
+            public List<Map<String, Object>> onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return roleHasUserService.select(role_id, user_account);
+            }
+        });
+
+        layuiResult.setCount(layuiResult.getData().size());
+        return layuiResult.format();
+    }
+
+   @ResponseBody
+    @RequestMapping("/layui/rhu/insert")
+    public String insertRoleHasUser(@SessionAttribute User user, @RequestParam(name = "role_id") int role_id, @RequestParam(name = "user_account") String user_account) {
+       LayuiResult checkPrivilegeWithNotAllowed = checkPrivilegeWithNotAllowed(user, "student teacher");
+       if (checkPrivilegeWithNotAllowed != null) {
+           return checkPrivilegeWithNotAllowed.format();
+       }
+
+       LayuiResult<Integer> layuiResult = operateDate(new OperateHandler<Integer>() {
+            @Override
+            public Integer onOperate() throws IOException, SQLIntegrityConstraintViolationException {
+                return roleHasUserService.insert(role_id, user_account);
+            }
+        });
+
+        return layuiResult.format();
+    }
 }

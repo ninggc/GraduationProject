@@ -23,4 +23,7 @@ public interface RoleMapper {
 
     int delete(@Param("id") int id);
 
+    List<Role> selectWithLimit(@Param("pojo") Role role, @Param("page") int page, @Param("size") int size);
+
+    Integer selectCount();
 }

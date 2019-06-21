@@ -30,9 +30,11 @@
                     elem: '#list_process'
                     , url: url+'process/layui/list'
                     , cols: [[
-                        {field: 'name', title: '名称'}
+                        {field: 'id', title: '审批编号', hide: true}
+                        , {field: 'name', title: '名称'}
                         , {field: 'description', title: '描述'}
                     ]]
+                    , page: true
                 });
 
                 table.on('row(processes)', function(obj){
