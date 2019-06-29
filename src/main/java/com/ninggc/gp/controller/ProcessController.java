@@ -243,6 +243,8 @@ public class ProcessController extends IController {
         });
 
         Process data = layuiResult.getData();
+        data.setName("名称：" + data.getName());
+        data.setDescription("描述：" + data.getDescription());
         map.addAttribute("process", data);
         map.addAttribute("msg", (List<String>) gson.fromJson(data.getMsg(), new TypeToken<List<String>>(){}.getType()));
         map.addAttribute("files", (List<String>) gson.fromJson(data.getFiles(), new TypeToken<List<String>>(){}.getType()));

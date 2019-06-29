@@ -39,7 +39,8 @@ function addStage() {
                 $layui_post(url + '/process/action/addStage', stage, function success(json) {
                     layer.open({
                         title: '成功'
-                        , content: '添加阶段成功：\n' + JSON.stringify(json)
+                        , content: '添加阶段成功'
+                        // , content: '添加阶段成功：\n' + JSON.stringify(json)
                     });
                     add_timeline(json.data.id, json.data.name);
                     layer.close(index);
@@ -101,7 +102,8 @@ function add_unit(stage_id) {
                 $layui_post(url + '/process/action/addUnit', unit, function success(json) {
                     layer.open({
                         title: '成功'
-                        , content: '添加单元成功：\n' + JSON.stringify(json)
+                        , content: '添加单元成功'
+                        // , content: '添加单元成功：\n' + JSON.stringify(json)
                     });
                     layer.close(index);
                 })

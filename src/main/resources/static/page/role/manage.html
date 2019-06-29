@@ -313,9 +313,27 @@
                                 , {field: 'role_name', title: '角色名'}
                                 , {field: 'role_description', title: '角色描述'}
                                 , {field: 'role_scope', title: '角色范围', hide: true}
-                                , {field: 'process_id', title: '审批编号'}
+                                    , {field: 'process_id', title: '作用范围'}
                                 , { fixed: 'right', title: '操作', toolbar: '#rhu_bar'}
                             ]]
+                            , done: function (res, page, count) {
+                                $("[data-field='process_id']").children().each(function () {
+                                    if ($(this).text() === '0') {
+                                        $(this).text('全局范围');
+                                    } else if ($(this).text() !== '角色作用范围') {
+                                        $(this).text('审批范围');
+                                    }
+                                });
+                                $("[data-field='addition']").children().each(function () {
+                                    if ($(this).text() === 'manager') {
+                                        $(this).text('管理员');
+                                    } else if ($(this).text() === 'teacher') {
+                                        $(this).text('教师');
+                                    } else if ($(this).text() === 'student') {
+                                        $(this).text('学生');
+                                    }
+                                })
+                            }
                         });
                     });
                     break;

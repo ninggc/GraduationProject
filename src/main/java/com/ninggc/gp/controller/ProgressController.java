@@ -317,6 +317,9 @@ public class ProgressController extends IController {
                     int currentSequence = (int) map.get("current_sequence");
                     int stageSequence = (int) map.get("stage_sequence");
                     if (stageSequence == currentSequence) {
+                        // TODO: 2019/6/23 从数据中查出角色信息
+                        map.put("role_name", "审批角色1");
+
                         list.add(map);
                     } else if (stageSequence < currentSequence) {
 //                        throw new RuntimeException("遗漏之前的阶段");

@@ -104,6 +104,8 @@
                 if (result.count !== 0) {
                     let exist_data = result.data;
                     initInpuAndButton(process_id, exist_data);
+                } else {
+                    initInpuAndButton(process_id);
                 }
             }, function Exception() {
                 initInpuAndButton(process_id);
@@ -119,17 +121,19 @@
 
 <div class="layui-container">
     <div class="layui-row">
-        <div class="layui-col-sm3 layui-col-md6">
+        <div class="layui-col-sm6 layui-col-md6">
             <div class="layui-row">
-                <div class="layui-col-sm3 layui-col-md3">
-                    <br>
-                    <br>
-                    <h2>名称：</h2><h2 th:text="*{process.name}"></h2>
-                    <br>
-                    <h2>描述：</h2><h2 th:text="*{process.description}"></h2>
-                </div>
             </div>
             <div class="layui-row">
+                <div class="">
+                    <br>
+                    <br>
+                    <!--<h2><p>名称：</p><p th:text="*{process.name}"></p></h2>-->
+                    <h2 th:text="*{process.name}"></h2>
+                    <br>
+                    <!--<h2><p>名称：</p><p th:text="*{process.name}"></p></h2>-->
+                    <h2 th:text="*{process.description}"></h2>
+                </div>
                 <div id = "process_id" th:value="*{process.id}">
                     <div id="input_sample" class="layui-form-item layui-hide">
                         <label class="layui-form-label">输入框</label>

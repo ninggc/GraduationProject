@@ -65,58 +65,63 @@
                             <div class="layui-field-box">
                                 <div class="layui-row">
                                     <div class="layui-form-item">
-                                        <label class="layui-form-label">审批名称: </label>
+                                        <label class="layui-form-label">名称: </label>
                                         <div class="layui-input-block">
                                             <input id="process_name" type="text" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
-                                        <label class="layui-form-label">审批描述: </label>
+                                        <label class="layui-form-label">描述: </label>
                                         <div class="layui-input-block">
                                             <input id="process_description" type="text" autocomplete="off"
                                                 class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
-                                        <label class="layui-form-label">直接信息: </label>
+                                        <label class="layui-form-label">信息: </label>
                                         <div class="layui-input-block">
                                             <input id="process_msg" type="text" placeholder="请输入需要直接填写的信息，用空格隔开"
                                                 autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
-                                        <label class="layui-form-label">所需文件名: </label>
+                                        <label class="layui-form-label">文件: </label>
                                         <div class="layui-input-block">
                                             <input id="process_files" type="text" placeholder="请输入需要上传的文件名，用空格隔开"
                                                 autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
-                                    <div class="layui-form-item">
-                                        <div class="layui-input-block">
-                                            <button class="layui-btn" onclick="action_create()">创建审批</button>
+                                    <div class="layui-row">
+                                        <div class="layui-col-md6 layui-col-sm6">
+                                            <div class="layui-form-item">
+                                                <div class="layui-input-block">
+                                                    <button class="layui-btn" onclick="action_create()">创建审批</button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <div class="layui-input-block">
+                                                    <button class="layui-btn" onclick="update_process()">更新审批信息</button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <div class="layui-input-block">
+                                                    <button class="layui-btn" onclick="finish_all()">完成所有信息并保存</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md6 layui-col-sm6">
+                                            <div class="layui-form-item">
+                                                <div class="layui-input-block">
+                                                    <button class="layui-btn" onclick="create_role()">创建角色</button>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <div class="layui-input-block">
+                                                    <button class="layui-btn" onclick="addStage()">添加阶段</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="layui-form-item">
-                                        <div class="layui-input-block">
-                                            <button class="layui-btn" onclick="update_process()">更新审批信息</button>
-                                        </div>
-                                    </div>
-                                    <div class="layui-form-item">
-                                        <div class="layui-input-block">
-                                            <button class="layui-btn" onclick="finish_all()">完成所有信息并保存</button>
-                                        </div>
-                                    </div>
-                                    <div class="layui-form-item">
-                                        <div class="layui-input-block">
-                                            <button class="layui-btn" onclick="create_role()">创建角色</button>
-                                        </div>
-                                    </div>
-                                    <div class="layui-form-item">
-                                        <div class="layui-input-block">
-                                            <button class="layui-btn" onclick="addStage()">添加阶段</button>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                         </fieldset>
