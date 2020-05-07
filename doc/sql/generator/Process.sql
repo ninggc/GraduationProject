@@ -1,5 +1,5 @@
 -- auto Generated on 2019-04-19 15:47:33 
--- DROP TABLE IF EXISTS `process`; 
+DROP TABLE IF EXISTS `process`;
 CREATE TABLE process(
     `id` INTEGER(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
     `name` VARCHAR(45) NOT NULL DEFAULT '' COMMENT 'name',
