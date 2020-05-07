@@ -133,11 +133,11 @@ CREATE TABLE `process` (
 -- ----------------------------
 -- Records of process
 -- ----------------------------
-INSERT INTO `process` VALUES ('0', '(全局有效)', '0000-0-0 00:00', null, null);
-INSERT INTO `process` VALUES ('1', '大学生创新创业项目申请', '2015-1-1 19:00', '大学生创新创业项目', '[\"m1\", \"m2\"]');
-INSERT INTO `process` VALUES ('19', '审批2', null, '审批描述', '[\"qq\", \"ww\", \"ee\"]');
-INSERT INTO `process` VALUES ('22', '毕业设计', '2015-1-1 19:00', '毕业设计题目审批', '[\"指导老师\", \"申请项目\"]');
-INSERT INTO `process` VALUES ('25', 'test', '19-06-19 03:29:52', 'test', '[\"信息1\", \"信息2\"]');
+INSERT INTO `process` VALUES ('0', '(全局有效)', '0000-0-0 00:00', null, null, null, 1);
+INSERT INTO `process` VALUES ('1', '大学生创新创业项目申请', '2015-1-1 19:00', '大学生创新创业项目', '[\"m1\", \"m2\"]', null, 1);
+INSERT INTO `process` VALUES ('19', '审批2', null, '审批描述', '[\"qq\", \"ww\", \"ee\"]', null, 1);
+INSERT INTO `process` VALUES ('22', '毕业设计', '2015-1-1 19:00', '毕业设计题目审批', '[\"指导老师\", \"申请项目\"]', null, 1);
+INSERT INTO `process` VALUES ('25', 'test', '19-06-19 03:29:52', 'test', '[\"信息1\", \"信息2\"]', null, 1);
 
 -- ----------------------------
 -- Table structure for progress
@@ -181,16 +181,16 @@ CREATE TABLE `role` (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES ('0', '特殊角色', '负责审核所有未绑定角色的单元', null);
-INSERT INTO `role` VALUES ('1', '审批员1', '1号审批员', null);
-INSERT INTO `role` VALUES ('10', '全局-管理1', '管理员', null);
-INSERT INTO `role` VALUES ('11', '全局-管理2', '管理员', null);
-INSERT INTO `role` VALUES ('12', '全局-管理3', '管理员', null);
-INSERT INTO `role` VALUES ('13', '全局-管理4', '管理员', null);
-INSERT INTO `role` VALUES ('14', '全局-管理5', '管理员', null);
-INSERT INTO `role` VALUES ('15', '全局-管理6', '管理员', null);
-INSERT INTO `role` VALUES ('16', '全局-管理7', '管理员', null);
-INSERT INTO `role` VALUES ('17', '全局-管理8', '管理员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('0', '特殊角色', '负责审核所有未绑定角色的单元', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('1', '审批员1', '1号审批员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('10', '全局-管理1', '管理员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('11', '全局-管理2', '管理员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('12', '全局-管理3', '管理员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('13', '全局-管理4', '管理员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('14', '全局-管理5', '管理员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('15', '全局-管理6', '管理员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('16', '全局-管理7', '管理员', null);
+INSERT INTO `role`(id, name, description, scope) VALUES ('17', '全局-管理8', '管理员', null);
 
 -- ----------------------------
 -- Table structure for role_has_check_unit
@@ -323,8 +323,8 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`ninggc`@`%` SQL SECURITY DEFINER VIEW `ap` A
 -- ----------------------------
 -- View structure for role with progress
 -- ----------------------------
-DROP VIEW IF EXISTS `role with progress`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`ninggc`@`%` SQL SECURITY DEFINER VIEW `role with progress` with progress` AS select `user`.`account` AS `account`,`role`.`name` AS `rolename`,`user`.`name` AS `username`,`check_unit`.`id` AS `c_id`,`check_unit`.`name` AS `unitname`,`check_unit`.`description` AS `description`,`process`.`name` AS `processname` from (((`role_has_user` join `role` on((`role_has_user`.`role_id` = `role`.`id`))) join `user` on((`role_has_user`.`user_account` = `user`.`account`))) join (`process` join `check_unit` on((`check_unit`.`process_id` = `process`.`id`)))) ;
+# DROP VIEW IF EXISTS `role with progress`;
+# CREATE ALGORITHM=UNDEFINED DEFINER=`ninggc`@`%` SQL SECURITY DEFINER VIEW `role with progress` with progress` AS select `user`.`account` AS `account`,`role`.`name` AS `rolename`,`user`.`name` AS `username`,`check_unit`.`id` AS `c_id`,`check_unit`.`name` AS `unitname`,`check_unit`.`description` AS `description`,`process`.`name` AS `processname` from (((`role_has_user` join `role` on((`role_has_user`.`role_id` = `role`.`id`))) join `user` on((`role_has_user`.`user_account` = `user`.`account`))) join (`process` join `check_unit` on((`check_unit`.`process_id` = `process`.`id`)))) ;
 
 -- ----------------------------
 -- View structure for user_progress

@@ -169,7 +169,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`ninggc`@`%` SQL SECURITY DEFINER VIEW `ap` A
 -- View structure for role with progress
 -- ----------------------------
 DROP VIEW IF EXISTS `role with progress`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`ninggc`@`%` SQL SECURITY DEFINER VIEW `role with progress` with progress` AS select `user`.`account` AS `account`,`role`.`name` AS `rolename`,`user`.`name` AS `username`,`check_unit`.`id` AS `c_id`,`check_unit`.`name` AS `unitname`,`check_unit`.`description` AS `description`,`process`.`name` AS `processname` from (((`role_has_user` join `role` on((`role_has_user`.`role_id` = `role`.`id`))) join `user` on((`role_has_user`.`user_account` = `user`.`account`))) join (`process` join `check_unit` on((`check_unit`.`process_id` = `process`.`id`)))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`ninggc`@`%` SQL SECURITY DEFINER VIEW `role with progress` AS select `user`.`account` AS `account`,`role`.`name` AS `rolename`,`user`.`name` AS `username`,`check_unit`.`id` AS `c_id`,`check_unit`.`name` AS `unitname`,`check_unit`.`description` AS `description`,`process`.`name` AS `processname` from (((`role_has_user` join `role` on((`role_has_user`.`role_id` = `role`.`id`))) join `user` on((`role_has_user`.`user_account` = `user`.`account`))) join (`process` join `check_unit` on((`check_unit`.`process_id` = `process`.`id`)))) ;
 
 -- ----------------------------
 -- View structure for user_progress
